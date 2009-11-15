@@ -26,4 +26,16 @@ func main() {
 	fmt.Printf("R = %v\n\n", R);
 
 	fmt.Printf("Q.Times(R) = %v\n\n", Q.Times(R));
+
+
+
+	T := MakeMatrixFlat([]float64{0.1, 0.1, 0.1, 0.1,
+					  10, 10, 10, 10,
+					  100, 100, 100, 100,
+					  1000, 1000, 1000, 1000,
+								},
+					4, 4);
+	fmt.Printf("T = %v\n\n", T);
+
+	fmt.Printf("A.ElementMult(T) = %v\n\n", A.ElementMult(T));
 }

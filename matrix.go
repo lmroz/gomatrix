@@ -79,6 +79,10 @@ type Matrix interface {
 	Times(B Matrix) Matrix;
 	//multiply every element in this matrix by a scalar
 	Scale(f float64) Matrix;
+	//multiply each element in this matrix by the corresponding element in another
+	ElementMult(B Matrix) Matrix;
+	
+	
 
 	Transpose() Matrix;
 	Inverse() Matrix;
@@ -204,6 +208,20 @@ func (A *matrix) Times(B Matrix) Matrix {
 	}
 	return C;
 }
+
+func (A *matrix) ElementMult(B Matrix) Matrix {
+	if A.Cols() != B.Rows() {
+		return nil
+	}
+	C := zeros(A.Rows(), B.Cols());
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < B.Cols(); j++ {
+			C.Set(i,j,A.Get(i,j)*B.Get(i,j))
+		}
+	}
+	return C;
+}
+
 func (A *matrix) Scale(f float64) Matrix {
 	B := zeros(A.Rows(), A.Cols());
 	for i := 0; i < A.Rows(); i++ {
