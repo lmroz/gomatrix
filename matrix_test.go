@@ -20,4 +20,10 @@ func main() {
 	fmt.Printf("x = %v\n\n", x);
 	fmt.Printf("Ax = %v\n\n", A.Times(x));
 	fmt.Printf("A.Inverse() = %v\n\n", A.Inverse());
+	
+	Q, R := A.QR();
+	fmt.Printf("Q = %v\n\n", Q);
+	fmt.Printf("R = %v\n\n", R);
+
+	fmt.Printf("Q.Times(R) = %v\n\n", Q.Times(R));
 }

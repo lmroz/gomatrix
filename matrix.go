@@ -84,6 +84,7 @@ type Matrix interface {
 	Inverse() Matrix;
 	Cholesky() Matrix;
 	LU() (Matrix, Matrix, Matrix);
+	QR() (Matrix, Matrix);
 
 	//get the lower portion of this matrix
 	L() Matrix;
