@@ -37,5 +37,5 @@ func main() {
 					4, 4);
 	fmt.Printf("T = %v\n\n", T);
 
-	fmt.Printf("A.ElementMult(T) = %v\n\n", A.ElementMult(T));
+	fmt.Printf("A.ElementMult(T) = %v\n\n", A.ElementMult(T) );
 }
