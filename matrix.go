@@ -3,6 +3,7 @@ package matrix
 
 import (
 	"fmt";
+	"math"
 )
 
 /*
@@ -92,8 +93,13 @@ type Matrix interface {
 	//multiply every element in this matrix by a scalar in place, return self
 	ScaleInPlace(f float64) Matrix;
 	
+	//run the multiplication with each dot product done in parallel
+	ParallelTimes(B Matrix, threads int) Matrix;
+	
 	//check element-wise equality
 	Equals(B Matrix) bool;
+	//check that each element is within ε
+	Approximates(B Matrix, ε float64) bool;
 
 	Transpose() Matrix;
 	Inverse() Matrix;
@@ -223,15 +229,65 @@ func (A *matrix) Times(B Matrix) Matrix {
 		return nil
 	}
 	C := zeros(A.Rows(), B.Cols());
+	
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < B.Cols(); j++ {
 			sum := float64(0);
 			for k := 0; k < A.Cols(); k++ {
 				sum += A.Get(i, k) * B.Get(k, j)
 			}
-			C.Set(i, j, sum);
+			C.Set(i, j, sum)
 		}
 	}
+	
+	return C;
+}
+
+
+type ij struct {
+	i int;
+	j int;
+};
+
+func dotRowCol(A Matrix, B Matrix, C Matrix, in chan ij, quit chan bool) {
+	for ;true; {
+		select {
+		case ij_ := <- in:
+			sum := float64(0);
+			for k := 0; k < A.Cols(); k++ {
+				sum += A.Get(ij_.i, k) * B.Get(k, ij_.j)
+			}
+			C.Set(ij_.i, ij_.j, sum)
+		case <- quit:
+			return
+		}
+	}
+}
+
+func (A *matrix) ParallelTimes(B Matrix, threads int) Matrix {
+	if A.Cols() != B.Rows() {
+		return nil
+	}
+	C := zeros(A.Rows(), B.Cols());
+	
+	in := make(chan ij);
+	quit := make(chan bool);
+	
+	for i:=0; i<threads; i++ {
+		go dotRowCol(A, B, C, in, quit)
+	}
+	
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < B.Cols(); j++ {
+			ij_ := ij{i, j};
+			in <- ij_
+		}
+	}
+	
+	for i:=0; i<threads; i++ {
+		quit <- true
+	}
+	
 	return C;
 }
 
@@ -293,6 +349,20 @@ func (A *matrix) Equals(B Matrix) bool {
 	Belements := B.Elements();
 	for i:=0; i<len(A.elements); i++ {
 		if A.elements[i] != Belements[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func (A *matrix) Approximates(B Matrix, ε float64) bool {
+	if A.rows != B.Rows() || A.cols != B.Cols() {
+		return false
+	}
+	Belements := B.Elements();
+	for i:=0; i<len(A.elements); i++ {
+		if !(math.Fabs(A.elements[i] - Belements[i]) < ε) {
+			fmt.Printf("%f > %f\n", math.Fabs(A.elements[i] - Belements[i]), ε);
 			return false
 		}
 	}
