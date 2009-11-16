@@ -27,7 +27,7 @@ func (A *matrix) Inverse() Matrix {
 			if k == i {
 				continue
 			}
-			aug.scaleAddRow(k, i, -aug.Get(k, i))
+			aug.scaleAddRow(k, i, -aug.Get(k, i));
 		}
 	}
 	return aug.GetMatrix(0, A.Cols(), A.Rows(), A.Cols());

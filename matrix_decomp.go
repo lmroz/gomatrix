@@ -110,71 +110,67 @@ func (A *matrix) QR() (Matrix, Matrix) {
 	m := A.rows;
 	n := A.cols;
 	QR := A.getMatrix(0, 0, m, n);
-	Q := zeros(m,n);
-	R := zeros(m,n);
-	i,j,k := 0,0,0;
+	Q := zeros(m, n);
+	R := zeros(m, n);
+	i, j, k := 0, 0, 0;
 	norm := float64(0.0);
 	s := float64(0.0);
 
-       for k = 0; k < n; k++ {
-          norm = 0;
-          for i = k; i < m; i++ {
-             norm = math.Hypot(norm,QR.Get(i,k));
-          }
- 
-          if norm != 0.0 {
-             if QR.Get(k,k) < 0 {
-                norm = -norm;
-             }
- 
-            for i = k; i < m; i++ {
-                QR.Set(i,k, QR.Get(i,k)/norm);
-             }
-             QR.Set(k,k,QR.Get(k,k)+1.0);
- 
-             for j = k+1; j < n; j++ {
-                s = 0.0; 
-                for i = k; i < m; i++ {
-                   s += QR.Get(i,k)*QR.Get(i,j);
-                }
-                s = -s/QR.Get(k,k);
-                for i = k; i < m; i++ {
-                   QR.Set(i,j,QR.Get(i,j)+s*QR.Get(i,k));
+	for k = 0; k < n; k++ {
+		norm = 0;
+		for i = k; i < m; i++ {
+			norm = math.Hypot(norm, QR.Get(i, k))
+		}
 
-			if i < j {
-				R.Set(i,j,QR.Get(i,j));
+		if norm != 0.0 {
+			if QR.Get(k, k) < 0 {
+				norm = -norm
 			}
-                }
 
-             }
-          }
-          
-	R.Set(k,k,-norm);
+			for i = k; i < m; i++ {
+				QR.Set(i, k, QR.Get(i, k)/norm)
+			}
+			QR.Set(k, k, QR.Get(k, k)+1.0);
 
-       }
+			for j = k + 1; j < n; j++ {
+				s = 0.0;
+				for i = k; i < m; i++ {
+					s += QR.Get(i, k) * QR.Get(i, j)
+				}
+				s = -s / QR.Get(k, k);
+				for i = k; i < m; i++ {
+					QR.Set(i, j, QR.Get(i, j)+s*QR.Get(i, k));
+
+					if i < j {
+						R.Set(i, j, QR.Get(i, j))
+					}
+				}
+
+			}
+		}
+
+		R.Set(k, k, -norm);
+
+	}
 
 	//Q Matrix:
-	i,j,k = 0,0,0;
+	i, j, k = 0, 0, 0;
 
-       for k = n-1; k >= 0; k-- {
-          Q.Set(k,k,1.0);
-          for j = k; j < n; j++ {
-             if QR.Get(k,k) != 0 {
-                s = 0.0;
-                for i = k; i < m; i++ {
-                   s += QR.Get(i,k)*Q.Get(i,j);
-                }
-                s = -s/QR.Get(k,k);
-                for i = k; i < m; i++ {
-                   Q.Set(i,j,Q.Get(i,j) + s*QR.Get(i,k));
-                }
-             }
-          }
-       }
+	for k = n - 1; k >= 0; k-- {
+		Q.Set(k, k, 1.0);
+		for j = k; j < n; j++ {
+			if QR.Get(k, k) != 0 {
+				s = 0.0;
+				for i = k; i < m; i++ {
+					s += QR.Get(i, k) * Q.Get(i, j)
+				}
+				s = -s / QR.Get(k, k);
+				for i = k; i < m; i++ {
+					Q.Set(i, j, Q.Get(i, j)+s*QR.Get(i, k))
+				}
+			}
+		}
+	}
 
-
-
-	return Q,R;
+	return Q, R;
 }
-
-

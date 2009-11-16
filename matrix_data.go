@@ -16,16 +16,16 @@ func min(x float64, y float64) float64 {
 
 //This returns a slice referencing the matrix data. Changes to the slice
 //effect changes to the matrix
-func (A *matrix) Elements() []float64	{ return A.elements[0:A.rows*A.cols] }
+func (A *matrix) Elements() []float64	{ return A.elements[0 : A.rows*A.cols] }
 
 //This returns an array of slices referencing the matrix data. Changes to
 //the slices effect changes to the matrix
 func (A *matrix) Arrays() [][]float64 {
 	a := make([][]float64, A.rows);
-	for i:=0; i<A.rows; i++ {
-		a[i] = A.elements[i*A.cols:(i+1)*A.cols]
+	for i := 0; i < A.rows; i++ {
+		a[i] = A.elements[i*A.cols : (i+1)*A.cols]
 	}
-	return a
+	return a;
 }
 
 
@@ -45,7 +45,7 @@ func (A *matrix) Set(i int, j int, v float64) {
 //returns a copy of the row (not a slice)
 func (A *matrix) GetRow(i int) []float64 {
 	row := make([]float64, A.cols);
-	for j:=0; j<A.cols; j++ {
+	for j := 0; j < A.cols; j++ {
 		row[j] = A.Get(i, j)
 	}
 	return row;
@@ -91,14 +91,12 @@ func (A *matrix) BufferDiagonal(buf []float64) {
 	}
 }
 
-func (A *matrix) Copy() Matrix {
-	return MakeMatrixFlat(A.elements, A.rows, A.cols)
-}
+func (A *matrix) Copy() Matrix	{ return MakeMatrixFlat(A.elements, A.rows, A.cols) }
 
 func (A *matrix) copy() Matrix {
 	B := new(matrix);
 	B.elements = make([]float64, len(A.elements));
-	for i:=0; i<len(B.elements); i++ {
+	for i := 0; i < len(B.elements); i++ {
 		B.elements[i] = A.elements[i]
 	}
 	B.rows = A.rows;
@@ -109,7 +107,7 @@ func (A *matrix) copy() Matrix {
 func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
 	A := new(matrix);
 	A.elements = make([]float64, len(elements));
-	for i:=0; i<len(A.elements); i++ {
+	for i := 0; i < len(A.elements); i++ {
 		A.elements[i] = elements[i]
 	}
 	A.rows = rows;
