@@ -361,8 +361,7 @@ func (A *matrix) Approximates(B Matrix, ε float64) bool {
 	}
 	Belements := B.Elements();
 	for i:=0; i<len(A.elements); i++ {
-		if !(math.Fabs(A.elements[i] - Belements[i]) < ε) {
-			fmt.Printf("%f > %f\n", math.Fabs(A.elements[i] - Belements[i]), ε);
+		if math.Fabs(A.elements[i] - Belements[i]) > ε {
 			return false
 		}
 	}
