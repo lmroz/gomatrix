@@ -76,6 +76,8 @@ type Matrix interface {
 
 	//add this matrix to another
 	Plus(B Matrix) Matrix;
+	//subtract the other matrix from this one
+	Minus(B Matrix) Matrix;
 	//multiply this matrix by another
 	Times(B Matrix) Matrix;
 	//multiply every element in this matrix by a scalar
@@ -83,7 +85,8 @@ type Matrix interface {
 	//multiply each element in this matrix by the corresponding element in another
 	ElementMult(B Matrix) Matrix;
 	
-	
+	//check element-wise equality
+	Equals(B Matrix) bool;
 
 	Transpose() Matrix;
 	Inverse() Matrix;
@@ -193,6 +196,21 @@ func (A *matrix) Plus(B Matrix) Matrix {
 	return C;
 }
 
+func (A *matrix) Minus(B Matrix) Matrix {
+	if A.cols != B.Cols() || A.rows != B.Rows() {
+		return nil
+	}
+
+	C := zeros(A.Rows(), A.Cols());
+
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			C.Set(i, j, A.Get(i, j)-B.Get(i, j))
+		}
+	}
+	return C;
+}
+
 func (A *matrix) Times(B Matrix) Matrix {
 	if A.Cols() != B.Rows() {
 		return nil
@@ -230,6 +248,20 @@ func (A *matrix) Scale(f float64) Matrix {
 		}
 	}
 	return B;
+}
+
+func (A *matrix) Equals(B Matrix) bool {
+	if A.rows != B.Rows() || A.cols != B.Cols() {
+		return false
+	}
+	Belements := B.Elements();
+	for i:=0; i<len(A.elements); i++ {
+		if A.elements[i] != Belements[i] {
+			fmt.Printf("%f != %f\n", A.elements[i], Belements[i]);
+			return false
+		}
+	}
+	return true
 }
 
 func (A *matrix) Transpose() Matrix {
