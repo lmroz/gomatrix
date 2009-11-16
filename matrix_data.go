@@ -15,6 +15,14 @@ func min(x float64, y float64) float64 {
 }
 
 func (A *matrix) Elements() []float64	{ return A.elements }
+func (A *matrix) Arrays() [][]float64 {
+	a := make([][]float64, A.rows);
+	for i:=0; i<A.rows; i++ {
+		a[i] = A.elements[i*A.cols:(i+1)*A.cols]
+	}
+	return a
+}
+
 
 func (A *matrix) Rows() int	{ return A.rows }
 
@@ -67,6 +75,18 @@ func (A *matrix) BufferDiagonal(buf []float64) {
 	for i := 0; i < A.rows && i < A.cols; i++ {
 		buf[i] = A.Get(i, i)
 	}
+}
+
+func (A *matrix) Copy() Matrix {
+	return MakeMatrixFlat(A.elements, A.rows, A.cols)
+}
+
+func (A *matrix) copy() Matrix {
+	B := new(matrix);
+	B.elements = A.elements[0:len(A.elements)];
+	B.rows = A.rows;
+	B.cols = A.cols;
+	return B;
 }
 
 func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {

@@ -37,6 +37,8 @@ func (A *matrix) Cholesky() Matrix {
 	return L;
 }
 
+
+//returns L,U,P such that PLU=A. I realize that it's supposed to be LUP.
 func (A *matrix) LU() (Matrix, Matrix, Matrix) {
 	m := A.rows;
 	n := A.cols;

@@ -43,6 +43,7 @@ type Matrix interface {
 
 	// get at the raw data
 	Elements() []float64;
+	Arrays() [][]float64;
 
 	Rows() int;
 	Cols() int;
@@ -210,14 +211,13 @@ func (A *matrix) Times(B Matrix) Matrix {
 }
 
 func (A *matrix) ElementMult(B Matrix) Matrix {
-	if A.Cols() != B.Rows() {
+	if A.rows != B.Rows() || A.cols != B.Cols(){
 		return nil
 	}
-	C := zeros(A.Rows(), B.Cols());
-	for i := 0; i < A.Rows(); i++ {
-		for j := 0; j < B.Cols(); j++ {
-			C.Set(i,j,A.Get(i,j)*B.Get(i,j))
-		}
+	C := zeros(A.rows, A.cols);
+	Belements := B.Elements();
+	for i:=0; i<len(C.elements); i++ {
+		C.elements[i] = A.elements[i]*Belements[i]
 	}
 	return C;
 }
@@ -263,8 +263,6 @@ func (A *matrix) U() Matrix {
 	B.matrixType = upper;
 	return B;
 }
-
-func (A *matrix) Copy() Matrix	{ return MakeMatrixFlat(A.elements, A.rows, A.cols) }
 
 func zeros(rows int, cols int) *matrix {
 	A := new(matrix);
