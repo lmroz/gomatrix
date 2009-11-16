@@ -46,9 +46,9 @@ func (A *matrix) Set(i int, j int, v float64) {
 func (A *matrix) GetRow(i int) []float64 {
 	row := make([]float64, A.cols);
 	for j:=0; j<A.cols; j++ {
-		col[j] = A.Get(i, j)
+		row[j] = A.Get(i, j)
 	}
-	return col;
+	return row;
 }
 
 //returns a copy of the column (not a slice)
