@@ -46,6 +46,8 @@ type Matrix interface {
 	Elements() []float64;
 	Arrays() [][]float64;
 
+	Symmetric() bool;
+
 	Rows() int;
 	Cols() int;
 
@@ -110,6 +112,7 @@ type Matrix interface {
 	Cholesky() Matrix;
 	LU() (Matrix, Matrix, Matrix);
 	QR() (Matrix, Matrix);
+	Eigen() (Matrix, Matrix);
 
 	//get the lower portion of this matrix
 	L() Matrix;
@@ -147,6 +150,20 @@ func (m *matrix) scaleAddRow(rd int, rs int, f float64) {
 	for i := 0; i < m.cols; i++ {
 		m.elements[rd*m.cols+i] += m.elements[rs*m.cols+i] * f
 	}
+}
+
+func (A *matrix) Symmetric() bool {
+	if A.rows != A.cols {
+		return false
+	}
+	for i:=0; i<A.rows; i++ {
+		for j:=0; j<i; j++ {
+			if A.elements[i*A.cols+j] != A.elements[j*A.cols+i] {
+				return false
+			}
+		}
+	}
+	return true;
 }
 
 func (A *matrix) StackHorizontal(B Matrix) Matrix {

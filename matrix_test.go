@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	//"fmt";
+	"fmt";
 	"testing";
 	"time";
 	"rand";
@@ -35,11 +35,43 @@ func TestTimes(t *testing.T) {
 
 }
 
+func TestSymmetric(t *testing.T) {
+	A := MakeMatrixFlat([]float64
+		{6, -2, -4, 4,
+		3, -3, -6, 1,
+		-12, 8, 21, -8,
+		-6, 0, -10, 7,}, 4, 4);
+	if A.Symmetric() {
+		t.Fail()
+	}
+	B := MakeMatrixFlat([]float64
+		{6, 3, -12, -6,
+		3, -3, 8, 0,
+		-12, 8, 21, -10,
+		-6, 0, -10, 7,}, 4, 4);
+	if !B.Symmetric() {
+		t.Fail()
+	}
+}
+
+func TestEigen(t *testing.T) {
+	A := MakeMatrixFlat([]float64
+		{2, 1,
+		1, 2}, 2, 2);
+	D,V := A.Eigen();
+	
+	Aguess := V.Times(D).Times(V.Transpose());
+	
+	if !A.Approximates(Aguess, ε) {
+		t.Fail()
+	}
+}
+
 func TestParallelTimes(t *testing.T) {
 	w := 100;
 	h := 10;
 	
-	threads := 2;
+	threads := 1;
 	
 	A := zeros(h, w);
 	B := zeros(w, h);
@@ -118,14 +150,13 @@ func TestInverse(t *testing.T) {
 	Ainv := A.Inverse();
 	
 	Ainvtrue := MakeMatrixFlat([]float64
-		{-0.1146,   -0.4792,   -0.2083,   -0.1042,
-		-0.7188,   -1.7875,   -0.7250,   -0.1625,
-		0.3750,    0.5500,    0.3000,    0.0500,
-		0.4375,    0.3750,    0.2500,    0.1250},
+		{-0.114583, -0.479167, -0.208333, -0.104167,
+		-0.718750, -1.787500, -0.725000, -0.162500,
+		0.375000, 0.550000, 0.300000, 0.050000,
+		0.437500, 0.375000, 0.250000, 0.125000},
 		4, 4);
 
-	
-	if !Ainv.Approximates(Ainvtrue, .001) {
+	if !Ainv.Approximates(Ainvtrue, ε) {
 		t.Fail()
 	}
 }
