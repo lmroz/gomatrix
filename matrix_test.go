@@ -37,7 +37,7 @@ func TestTimes(t *testing.T) {
 
 func TestParallelTimes(t *testing.T) {
 	w := 100;
-	h := 2;
+	h := 10;
 	
 	threads := 2;
 	
@@ -105,6 +105,27 @@ func TestSolve(t *testing.T) {
 	xtrue := MakeMatrixFlat([]float64{-0.906250, -3.393750, 1.275000, 1.187500}, 4, 1);
 	
 	if !x.Equals(xtrue) {
+		t.Fail()
+	}
+}
+
+func TestInverse(t *testing.T) {
+	A := MakeMatrixFlat([]float64
+		{6, -2, -4, 4,
+		3, -3, -6, 1,
+		-12, 8, 21, -8,
+		-6, 0, -10, 7,}, 4, 4);
+	Ainv := A.Inverse();
+	
+	Ainvtrue := MakeMatrixFlat([]float64
+		{-0.1146,   -0.4792,   -0.2083,   -0.1042,
+		-0.7188,   -1.7875,   -0.7250,   -0.1625,
+		0.3750,    0.5500,    0.3000,    0.0500,
+		0.4375,    0.3750,    0.2500,    0.1250},
+		4, 4);
+
+	
+	if !Ainv.Approximates(Ainvtrue, .001) {
 		t.Fail()
 	}
 }

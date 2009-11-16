@@ -455,7 +455,7 @@ func (A *matrix) String() string {
 			}
 		}
 		if i != A.rows-1 {
-			s += "; "
+			s += ";\n"
 		}
 	}
 	s += "]";

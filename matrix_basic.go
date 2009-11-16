@@ -23,7 +23,10 @@ func (A *matrix) Inverse() Matrix {
 			return nil
 		}
 		aug.scaleRow(i, 1.0/aug.Get(i, i));
-		for k := i + 1; k < aug.Rows(); k++ {
+		for k := 0; k < aug.Rows(); k++ {
+			if k == i {
+				continue
+			}
 			aug.scaleAddRow(k, i, -aug.Get(k, i))
 		}
 	}
