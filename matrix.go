@@ -85,6 +85,13 @@ type Matrix interface {
 	//multiply each element in this matrix by the corresponding element in another
 	ElementMult(B Matrix) Matrix;
 	
+	//add this matrix to another in place, return self
+	PlusInPlace(B Matrix) Matrix;
+	//subtract the other matrix from this one in place, return self
+	MinusInPlace(B Matrix) Matrix;
+	//multiply every element in this matrix by a scalar in place, return self
+	ScaleInPlace(f float64) Matrix;
+	
 	//check element-wise equality
 	Equals(B Matrix) bool;
 
@@ -250,6 +257,35 @@ func (A *matrix) Scale(f float64) Matrix {
 	return B;
 }
 
+func (A *matrix) PlusInPlace(B Matrix) Matrix {
+	if A.rows != B.Rows() || A.cols != B.Cols() {
+		return nil
+	}
+	Belements := B.Elements();
+	for i:=0; i<len(A.elements); i++ {
+		A.elements[i] += Belements[i]
+	}
+	return A
+}
+
+func (A *matrix) MinusInPlace(B Matrix) Matrix {
+	if A.rows != B.Rows() || A.cols != B.Cols() {
+		return nil
+	}
+	Belements := B.Elements();
+	for i:=0; i<len(A.elements); i++ {
+		A.elements[i] -= Belements[i]
+	}
+	return A
+}
+
+func (A *matrix) ScaleInPlace(f float64) Matrix {
+	for i:=0; i<len(A.elements); i++ {
+		A.elements[i] *= f
+	}
+	return A
+}
+
 func (A *matrix) Equals(B Matrix) bool {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return false
@@ -257,7 +293,6 @@ func (A *matrix) Equals(B Matrix) bool {
 	Belements := B.Elements();
 	for i:=0; i<len(A.elements); i++ {
 		if A.elements[i] != Belements[i] {
-			fmt.Printf("%f != %f\n", A.elements[i], Belements[i]);
 			return false
 		}
 	}

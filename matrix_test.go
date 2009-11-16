@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"fmt";
+	//"fmt";
 	"testing"
 )
 
@@ -19,10 +19,10 @@ func TestTimes(t *testing.T) {
 	C := A.Times(B);
 	
 	Ctrue := MakeMatrixFlat([]float64
-		{48.000000, 14.000000, -56.000000, -46.000000,
-		66.000000, -21.000000, -10.000000, -108.000000,
-		-240.000000, 68.000000, 101.000000, 356.000000,
-		114.000000, -122.000000, -56.000000, -203.000000}, 4, 4);
+		{48, 14, -56, -46,
+		66, -21, -10, -108,
+		-240, 68, 101, 356,
+		114, -122, -56, -203}, 4, 4);
 		
     if !C.Equals(Ctrue) {
     	t.Fail()
@@ -45,49 +45,96 @@ func TestElementMult(t *testing.T) {
     C := A.ElementMult(T);
     
     Ctrue := MakeMatrixFlat([]float64
-    	{0.600000, -0.200000, -0.400000, 0.400000,
-    	30.000000, -30.000000, -60.000000, 10.000000,
-    	-1200.000000, 800.000000, 2100.000000, -800.000000,
-    	-6000.000000, 0.000000, -10000.000000, 7000.000000}, 4, 4);
+    	{0.6, -0.2, -0.4, 0.4,
+    	30, -30, -60, 10,
+    	-1200, 800, 2100, -800,
+    	-6000, 0, -10000, 7000}, 4, 4);
 
-	fmt.Printf("%v\n%v\n", C, Ctrue);
     if !C.Equals(Ctrue) {
     	t.Fail()
     }
 }
 
-
-func foo() {
-	b := MakeMatrixFlat([]float64{1, 1, 1, 1}, 4, 1);
-	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+func TestSolve(t *testing.T) {
+	A := MakeMatrixFlat([]float64
+		{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
-		-6, 0, -10, 7,
-	},
-		4, 4);
-	fmt.Printf("Hello, world!\n");
-	fmt.Printf("A = %v\n\n", A);
-	fmt.Printf("b = %v\n\n", b);
+		-6, 0, -10, 7,}, 4, 4);
+	b := MakeMatrixFlat([]float64{1, 1, 1, 1}, 4, 1);
 	x := A.Solve(b);
-	fmt.Printf("x = %v\n\n", x);
-	fmt.Printf("Ax = %v\n\n", A.Times(x));
-	fmt.Printf("A.Inverse() = %v\n\n", A.Inverse());
 	
-	Q, R := A.QR();
-	fmt.Printf("Q = %v\n\n", Q);
-	fmt.Printf("R = %v\n\n", R);
+	xtrue := MakeMatrixFlat([]float64{-0.906250, -3.393750, 1.275000, 1.187500}, 4, 1);
+	
+	if !x.Equals(xtrue) {
+		t.Fail()
+	}
+}
 
-	fmt.Printf("Q.Times(R) = %v\n\n", Q.Times(R));
+func TestLU(t *testing.T) {
+	A := MakeMatrixFlat([]float64
+		{6, -2, -4, 4,
+		3, -3, -6, 1,
+		-12, 8, 21, -8,
+		-6, 0, -10, 7,},
+		4, 4);
+	L,U,P := A.LU();
+	
+	Ltrue := MakeMatrixFlat([]float64
+		{1, 0, 0, 0,
+		0.5, 1, 0, 0,
+		-2, -2, 1, 0,
+		-1, 1, -2, 1},
+		4, 4);
+		
+	Utrue := MakeMatrixFlat([]float64
+		{6, -2, -4, 4,
+		0, -2, -4, -1,
+		0, 0, 5, -2,
+		0, 0, 0, 8},
+		4, 4);
+		
+	Ptrue := MakeMatrixFlat([]float64
+		{1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1},
+		4, 4);
+		
+	PLU := P.Times(L.Times(U));
+	
+	if !L.Equals(Ltrue) || !U.Equals(Utrue) || !P.Equals(Ptrue) || !A.Equals(PLU) {
+		t.Fail()
+	}
+	
+}
 
-
-
-	T := MakeMatrixFlat([]float64{0.1, 0.1, 0.1, 0.1,
-					  10, 10, 10, 10,
-					  100, 100, 100, 100,
-					  1000, 1000, 1000, 1000,
-								},
-					4, 4);
-	fmt.Printf("T = %v\n\n", T);
-
-	fmt.Printf("A.ElementMult(T) = %v\n\n", A.ElementMult(T) );
+func TestQR(t *testing.T) {
+	A := MakeMatrixFlat([]float64
+		{6, -2, -4, 4,
+		3, -3, -6, 1,
+		-12, 8, 21, -8,
+		-6, 0, -10, 7,},
+		4, 4);
+	Q,R := A.QR();
+	
+	Qtrue := MakeMatrixFlat([]float64
+		{-0.4, 0.278610, 0.543792, -0.683130,
+		-0.2, -0.358213, -0.699161, -0.585540,
+		0.8, 0.437816, -0.126237, -0.390360,
+		0.4, -0.776129, 0.446686, -0.195180},
+		4, 4);
+		
+	Rtrue := MakeMatrixFlat([]float64
+		{-15, 7.8, 15.6, -5.4,
+		0, 4.019950, 17.990272, -8.179206,
+		0, 0, -5.098049, 5.612709,
+		0, 0, 0, -1.561440},
+		4, 4);
+	
+	QR := Q.Times(R);
+		
+	if !Q.Equals(Qtrue) || !R.Equals(Rtrue) || !A.Equals(QR) {
+		t.Fail()
+	}
 }
