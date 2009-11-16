@@ -14,7 +14,12 @@ func min(x float64, y float64) float64 {
 	return y;
 }
 
-func (A *matrix) Elements() []float64	{ return A.elements }
+//This returns a slice referencing the matrix data. Changes to the slice
+//effect changes to the matrix
+func (A *matrix) Elements() []float64	{ return A.elements[0:A.rows*A.cols] }
+
+//This returns an array of slices referencing the matrix data. Changes to
+//the slices effect changes to the matrix
 func (A *matrix) Arrays() [][]float64 {
 	a := make([][]float64, A.rows);
 	for i:=0; i<A.rows; i++ {
@@ -37,8 +42,16 @@ func (A *matrix) Set(i int, j int, v float64) {
 	A.elements[i*A.cols+j] = v;
 }
 
-func (A *matrix) GetRow(i int) []float64	{ return A.elements[i*A.cols : (i+1)*A.cols] }
+//returns a copy of the row (not a slice)
+func (A *matrix) GetRow(i int) []float64 {
+	row := make([]float64, A.cols);
+	for j:=0; j<A.cols; j++ {
+		col[j] = A.Get(i, j)
+	}
+	return col;
+}
 
+//returns a copy of the column (not a slice)
 func (A *matrix) GetCol(j int) []float64 {
 	col := make([]float64, A.rows);
 	for i := 0; i < A.rows; i++ {
@@ -47,6 +60,7 @@ func (A *matrix) GetCol(j int) []float64 {
 	return col;
 }
 
+//returns a copy of the diagonal (not a slice)
 func (A *matrix) GetDiagonal() []float64 {
 	span := A.rows;
 	if A.cols < span {
@@ -83,7 +97,10 @@ func (A *matrix) Copy() Matrix {
 
 func (A *matrix) copy() Matrix {
 	B := new(matrix);
-	B.elements = A.elements[0:len(A.elements)];
+	B.elements = make([]float64, len(A.elements));
+	for i:=0; i<len(B.elements); i++ {
+		B.elements[i] = A.elements[i]
+	}
 	B.rows = A.rows;
 	B.cols = A.cols;
 	return B;
@@ -91,7 +108,10 @@ func (A *matrix) copy() Matrix {
 
 func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
 	A := new(matrix);
-	A.elements = elements[0:len(elements)];
+	A.elements = make([]float64, len(elements));
+	for i:=0; i<len(A.elements); i++ {
+		A.elements[i] = elements[i]
+	}
 	A.rows = rows;
 	A.cols = cols;
 	return A;
