@@ -36,10 +36,11 @@ func TestTimes(t *testing.T) {
 }
 
 func TestParallelTimes(t *testing.T) {
-	w := 10;
-	h := 10;
+	w := 100;
+	h := 2;
 	
-	threads := 1;
+	threads := 2;
+	
 	A := zeros(h, w);
 	B := zeros(w, h);
 	rand.Seed(time.Nanoseconds());
@@ -54,12 +55,12 @@ func TestParallelTimes(t *testing.T) {
 	//start := time.Nanoseconds();
 	C = A.ParallelTimes(B, threads);
 	//end := time.Nanoseconds();
-	//fmt.Printf("%fns for parallel\n", end-start);
+	//fmt.Printf("%fns for parallel\n", float(end-start)/1000000000);
 	
 	//start = time.Nanoseconds();
 	Ctrue := A.Times(B);
 	//end = time.Nanoseconds();
-	//fmt.Printf("%fns for synchronous\n", end-start);
+	//fmt.Printf("%fns for synchronous\n", float(end-start)/1000000000);
 	
     if !C.Equals(Ctrue) {
     	t.Fail()

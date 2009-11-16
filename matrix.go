@@ -100,6 +100,10 @@ type Matrix interface {
 	Equals(B Matrix) bool;
 	//check that each element is within ε
 	Approximates(B Matrix, ε float64) bool;
+	
+	OneNorm() float64;
+	TwoNorm() float64;
+	InfinityNorm() float64;
 
 	Transpose() Matrix;
 	Inverse() Matrix;
@@ -366,6 +370,27 @@ func (A *matrix) Approximates(B Matrix, ε float64) bool {
 		}
 	}
 	return true
+}
+
+func (A *matrix) OneNorm() (ε float64) {
+	for i:=0; i<len(A.elements); i++ {
+		if A.elements[i] > ε {
+			ε = A.elements[i]
+		}
+	}
+	return
+}
+
+func (A *matrix) TwoNorm() float64 {
+	//requires computing of eigenvalues
+	return 0
+}
+
+func (A *matrix) InfinityNorm() (ε float64) {
+	for i:=0; i<len(A.elements); i++ {
+		ε += A.elements[i]
+	}
+	return
 }
 
 func (A *matrix) Transpose() Matrix {
