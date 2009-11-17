@@ -487,6 +487,18 @@ func eye(span int) *matrix {
 
 func Eye(span int) Matrix	{ return eye(span) }
 
+func diagonal(d []float64) *matrix {
+	n := len(d);
+	A := zeros(n, n);
+	for i:=0; i<n; i++ {
+		A.Set(i, i, d[i])
+	}
+	return A
+}
+func Diagonal(d []float64) Matrix {
+	return diagonal(d)
+}
+
 func (A *matrix) String() string {
 	s := "{";
 	for i := 0; i < A.rows; i++ {
