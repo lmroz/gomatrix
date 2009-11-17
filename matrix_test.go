@@ -1,13 +1,14 @@
 package matrix
 
 import (
-//	"fmt";
+	"fmt";
 	"testing";
 	"time";
 	"rand";
 )
 
 const ε = 0.000001
+const verbose = false
 
 func TestTimes(t *testing.T) {
 	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
@@ -91,7 +92,7 @@ func TestEigen(t *testing.T) {
 }
 
 func TestParallelTimes(t *testing.T) {
-	w := 100;
+	w := 10;
 	h := 10;
 
 	threads := 1;
@@ -107,15 +108,20 @@ func TestParallelTimes(t *testing.T) {
 	}
 
 	var C Matrix;
-	//start := time.Nanoseconds();
+	var start, end int64;
+	start = time.Nanoseconds();
 	C = A.ParallelTimes(B, threads);
-	//end := time.Nanoseconds();
-	//fmt.Printf("%fns for parallel\n", float(end-start)/1000000000);
+	end = time.Nanoseconds();
+	if verbose {
+		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000);
+	}
 
-	//start = time.Nanoseconds();
+	start = time.Nanoseconds();
 	Ctrue := A.Times(B);
-	//end = time.Nanoseconds();
-	//fmt.Printf("%fns for synchronous\n", float(end-start)/1000000000);
+	end = time.Nanoseconds();
+	if verbose {
+		fmt.Printf("%fs for synchronous\n", float(end-start)/1000000000);
+	}
 
 	if !C.Equals(Ctrue) {
 		t.Fail()
