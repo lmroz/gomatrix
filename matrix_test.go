@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"fmt";
+	//"fmt";
 	"testing";
 	"time";
 	"rand";
@@ -39,7 +39,8 @@ func TestTimes(t *testing.T) {
 }
 
 func TestSymmetric(t *testing.T) {
-	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+	A := MakeMatrixFlat([]float64{
+		6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
@@ -48,7 +49,8 @@ func TestSymmetric(t *testing.T) {
 	if A.Symmetric() {
 		t.Fail()
 	}
-	B := MakeMatrixFlat([]float64{6, 3, -12, -6,
+	B := MakeMatrixFlat([]float64{
+		6, 3, -12, -6,
 		3, -3, 8, 0,
 		-12, 8, 21, -10,
 		-6, 0, -10, 7,
@@ -60,15 +62,30 @@ func TestSymmetric(t *testing.T) {
 }
 
 func TestEigen(t *testing.T) {
-	A := MakeMatrixFlat([]float64{2, 1,
+	A := MakeMatrixFlat([]float64{
+		2, 1,
 		1, 2,
-	},
-		2, 2);
-	D, V := A.Eigen();
+	}, 2, 2);
+	V, D := A.Eigen();
 
 	Aguess := V.Times(D).Times(V.Transpose());
 
 	if !A.Approximates(Aguess, ε) {
+		t.Fail()
+	}
+
+	B := MakeMatrixFlat([]float64{
+		6, -2, -4, 4,
+		3, -3, -6, 1,
+		-12, 8, 21, -8,
+		-6, 0, -10, 7,
+	},
+		4, 4);
+
+	B = B.Times(B.Transpose());
+	V,D = B.Eigen();
+
+	if !B.Approximates(V.Times(D).Times(V.Transpose()), ε) {
 		t.Fail()
 	}
 }
