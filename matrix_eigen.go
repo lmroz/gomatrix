@@ -12,6 +12,7 @@ func (A *matrix) Eigen() (Matrix, Matrix) {
 		e := make([]float64, n);
 
 		tred2(V[0:n], d[0:n], e[0:n]);	//pass slices so they're references
+
 		tql2(V[0:n], d[0:n], e[0:n]);
 
 		D := zeros(n, n);
@@ -19,7 +20,7 @@ func (A *matrix) Eigen() (Matrix, Matrix) {
 			D.Set(i, i, d[i])
 		}
 
-		return D, MakeMatrix(V);
+		return MakeMatrix(V), D;
 	} else {
 		//other stuff
 	}
@@ -28,23 +29,39 @@ func (A *matrix) Eigen() (Matrix, Matrix) {
 
 func tred2(V [][]float64, d []float64, e []float64) {
 	n := len(V);
+
+	//  This is derived from the Algol procedures tred2 by
+	//  Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
+	//  Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
+	//  Fortran subroutine in EISPACK.
+
 	for j := 0; j < n; j++ {
 		d[j] = V[n-1][j]
 	}
+
+
+	// Householder reduction to tridiagonal form.
+
 	for i := n - 1; i > 0; i-- {
+
+		// Scale to avoid under/overflow.
+
 		scale := float64(0);
 		h := float64(0);
 		for k := 0; k < i; k++ {
-			scale += math.Fabs(d[k])
+			scale = scale + math.Fabs(d[k])
 		}
-		if scale == 0 {
+		if scale == 0.0 {
 			e[i] = d[i-1];
 			for j := 0; j < i; j++ {
 				d[j] = V[i-1][j];
-				V[i][j] = 0;
-				V[j][i] = 0;
+				V[i][j] = 0.0;
+				V[j][i] = 0.0;
 			}
 		} else {
+
+			// Generate Householder vector.
+
 			for k := 0; k < i; k++ {
 				d[k] /= scale;
 				h += d[k] * d[k];
@@ -55,11 +72,12 @@ func tred2(V [][]float64, d []float64, e []float64) {
 				g = -g
 			}
 			e[i] = scale * g;
-			h -= f * g;
+			h = h - f*g;
 			d[i-1] = f - g;
 			for j := 0; j < i; j++ {
-				e[j] = 0
+				e[j] = 0.0
 			}
+			// Apply similarity transformation to remaining columns.
 
 			for j := 0; j < i; j++ {
 				f = d[j];
@@ -67,10 +85,11 @@ func tred2(V [][]float64, d []float64, e []float64) {
 				g = e[j] + V[j][j]*f;
 				for k := j + 1; k <= i-1; k++ {
 					g += V[k][j] * d[k];
-					e[k] += V[k][k] * f;
+					e[k] += V[k][j] * f;
 				}
 				e[j] = g;
 			}
+			
 			f = 0.0;
 			for j := 0; j < i; j++ {
 				e[j] /= h;
@@ -80,6 +99,8 @@ func tred2(V [][]float64, d []float64, e []float64) {
 			for j := 0; j < i; j++ {
 				e[j] -= hh * d[j]
 			}
+			
+			
 			for j := 0; j < i; j++ {
 				f = d[j];
 				g = e[j];
@@ -92,6 +113,9 @@ func tred2(V [][]float64, d []float64, e []float64) {
 		}
 		d[i] = h;
 	}
+
+
+	// Accumulate transformations.
 
 	for i := 0; i < n-1; i++ {
 		V[n-1][i] = V[i][i];
@@ -121,7 +145,6 @@ func tred2(V [][]float64, d []float64, e []float64) {
 	}
 	V[n-1][n-1] = 1.0;
 	e[0] = 0.0;
-
 }
 
 
