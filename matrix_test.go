@@ -168,6 +168,28 @@ func TestSolve(t *testing.T) {
 	}
 }
 
+func TestLUInPlace(t *testing.T) {
+
+	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+		3, -3, -6, 1,
+		-12, 8, 21, -8,
+		-6, 0, -10, 7,
+	}, 4, 4);
+	Ltrue,Utrue,Ptrue := A.LU();
+	
+	P := A.LUInPlace();
+	L := A.L();
+	U := A.U();
+	
+	for i:=0; i<L.Rows(); i++ {
+		L.Set(i, i, 1)
+	}
+	
+	if !P.Times(L).Times(U).Equals(Ptrue.Times(Ltrue).Times(Utrue)) {
+		t.Fail()
+	}
+}
+
 func TestInverse(t *testing.T) {
 	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
@@ -198,30 +220,9 @@ func TestLU(t *testing.T) {
 		4, 4);
 	L, U, P := A.LU();
 
-	Ltrue := MakeMatrixFlat([]float64{1, 0, 0, 0,
-		0.5, 1, 0, 0,
-		-2, -2, 1, 0,
-		-1, 1, -2, 1,
-	},
-		4, 4);
-
-	Utrue := MakeMatrixFlat([]float64{6, -2, -4, 4,
-		0, -2, -4, -1,
-		0, 0, 5, -2,
-		0, 0, 0, 8,
-	},
-		4, 4);
-
-	Ptrue := MakeMatrixFlat([]float64{1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1,
-	},
-		4, 4);
-
 	PLU := P.Times(L.Times(U));
 
-	if !L.Equals(Ltrue) || !U.Equals(Utrue) || !P.Equals(Ptrue) || !A.Equals(PLU) {
+	if !A.Equals(PLU) {
 		t.Fail()
 	}
 

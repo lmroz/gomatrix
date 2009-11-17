@@ -55,34 +55,36 @@ func (A *matrix) Trace() (r float64) {
 	return;
 }
 
+func solveLower(A Matrix, b Matrix) Matrix {
+	x := make([]float64, A.Cols());
+	for i := 0; i < A.Rows(); i++ {
+		x[i] = b.Get(i, 0);
+		for j := 0; j < i; j++ {
+			x[i] -= x[j] * A.Get(i, j)
+		}
+		//the diagonal defined to be ones
+		//x[i] /= A.Get(i, i);
+	}
+	return MakeMatrixFlat(x, A.Cols(), 1);
+}
+
+func solveUpper(A Matrix, b Matrix) Matrix {
+	x := make([]float64, A.Cols());
+	for i := A.Rows() - 1; i >= 0; i-- {
+		x[i] = b.Get(i, 0);
+		for j := i + 1; j < A.Cols(); j++ {
+			x[i] -= x[j] * A.Get(i, j)
+		}
+		x[i] /= A.Get(i, i);
+	}
+	return MakeMatrixFlat(x, A.Cols(), 1);
+}
+
 func (A *matrix) Solve(b Matrix) Matrix {
-	if A.matrixType == lower {
-		x := make([]float64, A.cols);
-		for i := 0; i < A.rows; i++ {
-			x[i] = b.Get(i, 0);
-			for j := 0; j < i; j++ {
-				x[i] -= x[j] * A.Get(i, j)
-			}
-			x[i] /= A.Get(i, i);
-		}
-		return MakeMatrixFlat(x, A.cols, 1);
-	}
-
-	if A.matrixType == upper {
-		x := make([]float64, A.cols);
-		for i := A.rows - 1; i >= 0; i-- {
-			x[i] = b.Get(i, 0);
-			for j := i + 1; j < A.cols; j++ {
-				x[i] -= x[j] * A.Get(i, j)
-			}
-			x[i] /= A.Get(i, i);
-		}
-		return MakeMatrixFlat(x, A.cols, 1);
-	}
-
-	L, U, P := A.LU();
+	Acopy := A.Copy();
+	P := Acopy.LUInPlace();
 	pb := P.Inverse().Times(b);
-	y := L.Solve(pb);
-	x := U.Solve(y);
+	y := solveLower(Acopy, pb);
+	x := solveUpper(Acopy, y);
 	return x;
 }

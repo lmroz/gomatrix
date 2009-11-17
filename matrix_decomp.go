@@ -74,7 +74,7 @@ func (A *matrix) LU() (Matrix, Matrix, Matrix) {
 				p = i
 			}
 		}
-		if false && p != j {
+		if p != j {
 			LU.swapRows(p, j);
 			k := piv[p];
 			piv[p] = piv[j];
@@ -103,6 +103,67 @@ func (A *matrix) LU() (Matrix, Matrix, Matrix) {
 	U := LU.U();
 
 	return L, U, P;
+}
+
+
+func (LU *matrix) LUInPlace() Matrix {
+	m := LU.rows;
+	n := LU.cols;
+	LUcolj := make([]float64, m);
+	LUrowi := make([]float64, n);
+	piv := make([]int, m);
+	for i := 0; i < m; i++ {
+		piv[i] = i
+	}
+	pivsign := float64(1.0);
+
+	for j := 0; j < n; j++ {
+		LU.BufferCol(j, LUcolj);
+		for i := 0; i < m; i++ {
+			LU.BufferRow(i, LUrowi);
+			kmax := i;
+			if j < i {
+				kmax = j
+			}
+			s := float64(0);
+			for k := 0; k < kmax; k++ {
+				s += LUrowi[k] * LUcolj[k]
+			}
+			LUcolj[i] -= s;
+			LUrowi[j] = LUcolj[i];
+			LU.Set(i, j, LUrowi[j]);
+		}
+
+		p := j;
+		for i := j + 1; i < m; i++ {
+			if math.Fabs(LUcolj[i]) > math.Fabs(LUcolj[p]) {
+				p = i
+			}
+		}
+		if p != j {
+			LU.swapRows(p, j);
+			k := piv[p];
+			piv[p] = piv[j];
+			piv[j] = k;
+			pivsign = -pivsign;
+		}
+
+		if j < m && LU.elements[j*n+j] != 0.0 {
+			for i := j + 1; i < m; i++ {
+				LU.elements[i*n+j] /= LU.elements[j*n+j]
+			}
+		}
+	}
+	
+
+	P := zeros(LU.rows, LU.cols);
+	for i := 0; i < LU.rows; i++ {
+		P.Set(piv[i], i, 1)
+	}
+	P.matrixType = pivot;
+	P.pivotSign = pivsign;
+
+	return P;
 }
 
 

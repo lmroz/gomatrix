@@ -113,6 +113,10 @@ type Matrix interface {
 	LU() (Matrix, Matrix, Matrix);
 	QR() (Matrix, Matrix);
 	Eigen() (Matrix, Matrix);
+	
+	TransposeInPlace() Matrix;
+	//puts [L\U] in the matrix, L's diagonal defined to be 1s. returns the pivot
+	LUInPlace() Matrix;
 
 	//get the lower portion of this matrix
 	L() Matrix;
@@ -134,9 +138,10 @@ type Matrix interface {
 
 func (m *matrix) swapRows(r1 int, r2 int) {
 	for i := 0; i < m.cols; i++ {
-		tmp := m.elements[r1*m.cols+i];
-		m.elements[r1*m.cols+i] = m.elements[r2*m.cols+i];
-		m.elements[r2*m.cols+i] = tmp;
+		i1, i2 := r1*m.cols+i, r2*m.cols+i;
+		tmp := m.elements[i1];
+		m.elements[i1] = m.elements[i2];
+		m.elements[i2] = tmp;
 	}
 }
 
@@ -420,6 +425,17 @@ func (A *matrix) Transpose() Matrix {
 	return B;
 }
 
+func (A *matrix) TransposeInPlace() Matrix {
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			tmp := A.elements[i*A.cols+j];
+			A.elements[i*A.cols+j] = A.elements[j*A.cols+i];
+			A.elements[j*A.cols+i] = tmp
+		}
+	}
+	return A
+}
+
 func (A *matrix) L() Matrix {
 	B := zeros(A.rows, A.cols);
 	for i := 0; i < A.rows; i++ {
@@ -463,18 +479,21 @@ func eye(span int) *matrix {
 func Eye(span int) Matrix	{ return eye(span) }
 
 func (A *matrix) String() string {
-	s := "[";
+	s := "{";
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
 			s += fmt.Sprintf("%f", A.Get(i, j));
+			if i != A.rows-1 || j != A.cols-1 {
+				s += ","
+			}
 			if j != A.cols-1 {
 				s += " "
 			}
 		}
 		if i != A.rows-1 {
-			s += ";\n"
+			s += "\n"
 		}
 	}
-	s += "]";
+	s += "}";
 	return s;
 }
