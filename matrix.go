@@ -42,7 +42,7 @@ type Matrix interface {
 	// i1 = i1+f*i2
 	scaleAddRow(i1 int, i2 int, f float64);
 
-	// get at the raw data
+	// get at the raw data - returns slices so it's a reference
 	Elements() []float64;
 	Arrays() [][]float64;
 
@@ -269,45 +269,41 @@ func (A *matrix) Times(B Matrix) Matrix {
 	return C;
 }
 
-
-type ij struct {
-	i	int;
-	j	int;
-}
-
-func dotRowCol(A Matrix, B Matrix, C Matrix, in chan ij, quit chan bool) {
-	for true {
-		select {
-		case ij_ := <-in:
-			sum := float64(0);
-			for k := 0; k < A.Cols(); k++ {
-				sum += A.Get(ij_.i, k) * B.Get(k, ij_.j)
-			}
-			C.Set(ij_.i, ij_.j, sum);
-		case <-quit:
-			return
-		}
-	}
-}
-
 func (A *matrix) ParallelTimes(B Matrix, threads int) Matrix {
 	if A.Cols() != B.Rows() {
 		return nil
 	}
+	
 	C := zeros(A.Rows(), B.Cols());
 
-	in := make(chan ij);
+	in := make(chan int);
 	quit := make(chan bool);
 
+	dotRowCol := func() {
+		for true {
+			select {
+			case i := <-in:
+				sums := make([]float64, B.Cols());
+				for k := 0; k < A.Cols(); k++ {
+					for j:=0; j<B.Cols(); j++ {
+						sums[j] += A.Get(i, k) * B.Get(k, j)
+					}
+				}
+				for j:=0; j<B.Cols(); j++ {
+					C.Set(i, j, sums[j])
+				}
+			case <-quit:
+				return
+			}
+		}
+	};
+
 	for i := 0; i < threads; i++ {
-		go dotRowCol(A, B, C, in, quit)
+		go dotRowCol()
 	}
 
 	for i := 0; i < A.Rows(); i++ {
-		for j := 0; j < B.Cols(); j++ {
-			ij_ := ij{i, j};
-			in <- ij_;
-		}
+		in <- i
 	}
 
 	for i := 0; i < threads; i++ {
