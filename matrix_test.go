@@ -90,15 +90,15 @@ func TestParallelTimes(t *testing.T) {
 	}
 
 	var C Matrix;
-	//start := time.Nanoseconds();
+	start := time.Nanoseconds();
 	C = A.ParallelTimes(B, threads);
-	//end := time.Nanoseconds();
-	//fmt.Printf("%fns for parallel\n", float(end-start)/1000000000);
+	end := time.Nanoseconds();
+	fmt.Printf("%fns for parallel\n", float(end-start)/1000000000);
 
-	//start = time.Nanoseconds();
+	start = time.Nanoseconds();
 	Ctrue := A.Times(B);
-	//end = time.Nanoseconds();
-	//fmt.Printf("%fns for synchronous\n", float(end-start)/1000000000);
+	end = time.Nanoseconds();
+	fmt.Printf("%fns for synchronous\n", float(end-start)/1000000000);
 
 	if !C.Equals(Ctrue) {
 		t.Fail()
