@@ -452,6 +452,19 @@ func zeros(rows int, cols int) *matrix {
 
 func Zeros(rows int, cols int) Matrix	{ return zeros(rows, cols) }
 
+func numbers(rows int, cols int, num float64) *matrix {
+	A := new(matrix);
+	A.elements = make([]float64, rows*cols);
+	for i := 0; i < rows*cols; i++ {
+		A.elements[i] = num
+	}
+	A.rows = rows;
+	A.cols = cols;
+	return A;
+}
+
+func Numbers(rows int, cols int, num float64) Matrix	{ return numbers(rows, cols, num) }
+
 func eye(span int) *matrix {
 	A := zeros(span, span);
 	for i := 0; i < span; i++ {
