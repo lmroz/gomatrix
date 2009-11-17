@@ -258,3 +258,18 @@ func TestQR(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestNumbers(t *testing.T) {
+	n := float64(1.0);
+	A := Numbers(3,3,n);
+//	fmt.Printf("%v\n\n\n",A.String());
+
+	Atrue := MakeMatrixFlat([]float64{n, n, n,
+		n, n, n, 
+		n, n, n,  
+	},
+		3, 3);
+	if !A.Equals(Atrue) {
+		t.Fail()
+	}
+}
