@@ -115,6 +115,14 @@ func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
 	return A;
 }
 
+func MakeMatrixReference(elements []float64, rows int, cols int) Matrix {
+	A := new(matrix);
+	A.elements = elements;
+	A.rows = rows;
+	A.cols = cols;
+	return A;
+}
+
 func MakeMatrix(data [][]float64) Matrix {
 	rows := len(data);
 	cols := len(data[0]);
