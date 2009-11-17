@@ -154,7 +154,6 @@ func (LU *matrix) LUInPlace() Matrix {
 			}
 		}
 	}
-	
 
 	P := zeros(LU.rows, LU.cols);
 	for i := 0; i < LU.rows; i++ {

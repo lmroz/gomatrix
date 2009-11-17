@@ -113,7 +113,7 @@ type Matrix interface {
 	LU() (Matrix, Matrix, Matrix);
 	QR() (Matrix, Matrix);
 	Eigen() (Matrix, Matrix);
-	
+
 	TransposeInPlace() Matrix;
 	//puts [L\U] in the matrix, L's diagonal defined to be 1s. returns the pivot
 	LUInPlace() Matrix;
@@ -273,7 +273,7 @@ func (A *matrix) ParallelTimes(B Matrix, threads int) Matrix {
 	if A.Cols() != B.Rows() {
 		return nil
 	}
-	
+
 	C := zeros(A.Rows(), B.Cols());
 
 	in := make(chan int);
@@ -285,11 +285,11 @@ func (A *matrix) ParallelTimes(B Matrix, threads int) Matrix {
 			case i := <-in:
 				sums := make([]float64, B.Cols());
 				for k := 0; k < A.Cols(); k++ {
-					for j:=0; j<B.Cols(); j++ {
+					for j := 0; j < B.Cols(); j++ {
 						sums[j] += A.Get(i, k) * B.Get(k, j)
 					}
 				}
-				for j:=0; j<B.Cols(); j++ {
+				for j := 0; j < B.Cols(); j++ {
 					C.Set(i, j, sums[j])
 				}
 			case <-quit:
@@ -426,10 +426,10 @@ func (A *matrix) TransposeInPlace() Matrix {
 		for j := 0; j < A.cols; j++ {
 			tmp := A.elements[i*A.cols+j];
 			A.elements[i*A.cols+j] = A.elements[j*A.cols+i];
-			A.elements[j*A.cols+i] = tmp
+			A.elements[j*A.cols+i] = tmp;
 		}
 	}
-	return A
+	return A;
 }
 
 func (A *matrix) L() Matrix {
@@ -475,7 +475,9 @@ func numbers(rows int, cols int, num float64) *matrix {
 	return A;
 }
 
-func Numbers(rows int, cols int, num float64) Matrix	{ return numbers(rows, cols, num) }
+func Numbers(rows int, cols int, num float64) Matrix {
+	return numbers(rows, cols, num)
+}
 
 func eye(span int) *matrix {
 	A := zeros(span, span);
@@ -490,14 +492,12 @@ func Eye(span int) Matrix	{ return eye(span) }
 func diagonal(d []float64) *matrix {
 	n := len(d);
 	A := zeros(n, n);
-	for i:=0; i<n; i++ {
+	for i := 0; i < n; i++ {
 		A.Set(i, i, d[i])
 	}
-	return A
+	return A;
 }
-func Diagonal(d []float64) Matrix {
-	return diagonal(d)
-}
+func Diagonal(d []float64) Matrix	{ return diagonal(d) }
 
 func (A *matrix) String() string {
 	s := "{";

@@ -15,8 +15,8 @@ func (A *matrix) Eigen() (Matrix, Matrix) {
 
 		tql2(V[0:n], d[0:n], e[0:n]);
 
-		return MakeMatrix(V), makeD(d, e)
-	} 
+		return MakeMatrix(V), makeD(d, e);
+	}
 	//else
 	H := A.GetMatrix(0, 0, n, n).Copy().Arrays();
 	ort := make([]float64, n);
@@ -34,18 +34,18 @@ func makeD(d []float64, e []float64) Matrix {
 	n := len(d);
 	X := zeros(n, n);
 	D := X.Arrays();
-      for i := 0; i < n; i++ {
-         for j := 0; j < n; j++ {
-            D[i][j] = 0.0;
-         }
-         D[i][i] = d[i];
-         if (e[i] > 0) {
-            D[i][i+1] = e[i];
-         } else if (e[i] < 0) {
-            D[i][i-1] = e[i];
-         }
-      }
-      return X
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			D[i][j] = 0.0
+		}
+		D[i][i] = d[i];
+		if e[i] > 0 {
+			D[i][i+1] = e[i]
+		} else if e[i] < 0 {
+			D[i][i-1] = e[i]
+		}
+	}
+	return X;
 }
 
 func tred2(V [][]float64, d []float64, e []float64) {

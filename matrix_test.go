@@ -66,7 +66,8 @@ func TestEigen(t *testing.T) {
 	A := MakeMatrixFlat([]float64{
 		2, 1,
 		1, 2,
-	}, 2, 2);
+	},
+		2, 2);
 	V, D := A.Eigen();
 
 	Aguess := V.Times(D).Times(V.Inverse());
@@ -84,23 +85,23 @@ func TestEigen(t *testing.T) {
 		4, 4);
 
 	//B = B.Times(B.Transpose());
-	V,D = B.Eigen();
+	V, D = B.Eigen();
 
 	if !B.Approximates(V.Times(D).Times(V.Inverse()), ε) {
 		if verbose {
 			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
 		}
-		t.Fail()
+		t.Fail();
 	}
-	
+
 	B = B.Times(B.Transpose());
-	V,D = B.Eigen();
+	V, D = B.Eigen();
 
 	if !B.Approximates(V.Times(D).Times(V.Inverse()), ε) {
 		if verbose {
 			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
 		}
-		t.Fail()
+		t.Fail();
 	}
 }
 
@@ -126,14 +127,14 @@ func TestParallelTimes(t *testing.T) {
 	C = A.ParallelTimes(B, threads);
 	end = time.Nanoseconds();
 	if verbose {
-		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000);
+		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000)
 	}
 
 	start = time.Nanoseconds();
 	Ctrue := A.Times(B);
 	end = time.Nanoseconds();
 	if verbose {
-		fmt.Printf("%fs for synchronous\n", float(end-start)/1000000000);
+		fmt.Printf("%fs for synchronous\n", float(end-start)/1000000000)
 	}
 
 	if !C.Equals(Ctrue) {
@@ -193,17 +194,18 @@ func TestLUInPlace(t *testing.T) {
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
-	}, 4, 4);
-	Ltrue,Utrue,Ptrue := A.LU();
-	
+	},
+		4, 4);
+	Ltrue, Utrue, Ptrue := A.LU();
+
 	P := A.LUInPlace();
 	L := A.L();
 	U := A.U();
-	
-	for i:=0; i<L.Rows(); i++ {
+
+	for i := 0; i < L.Rows(); i++ {
 		L.Set(i, i, 1)
 	}
-	
+
 	if !P.Times(L).Times(U).Equals(Ptrue.Times(Ltrue).Times(Utrue)) {
 		t.Fail()
 	}
@@ -222,7 +224,7 @@ func TestInverse(t *testing.T) {
 		if verbose {
 			fmt.Printf("A\n%v\n\nAinv\n%v\n\nA*Ainv\n%v\n", A, Ainv, A.Times(Ainv))
 		}
-		t.Fail()
+		t.Fail();
 	}
 }
 
@@ -277,18 +279,15 @@ func TestQR(t *testing.T) {
 
 func TestNumbers(t *testing.T) {
 	n := float64(1.0);
-	A := Numbers(3,3,n);
-//	fmt.Printf("%v\n\n\n",A.String());
+	A := Numbers(3, 3, n);
+	//	fmt.Printf("%v\n\n\n",A.String());
 
 	Atrue := MakeMatrixFlat([]float64{n, n, n,
-		n, n, n, 
-		n, n, n,  
+		n, n, n,
+		n, n, n,
 	},
 		3, 3);
 	if !A.Equals(Atrue) {
 		t.Fail()
 	}
 }
-
-
-
