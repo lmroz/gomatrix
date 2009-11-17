@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"fmt";
+//	"fmt";
 	"testing";
 	"time";
 	"rand";
@@ -90,15 +90,15 @@ func TestParallelTimes(t *testing.T) {
 	}
 
 	var C Matrix;
-	start := time.Nanoseconds();
+	//start := time.Nanoseconds();
 	C = A.ParallelTimes(B, threads);
-	end := time.Nanoseconds();
-	fmt.Printf("%fns for parallel\n", float(end-start)/1000000000);
+	//end := time.Nanoseconds();
+	//fmt.Printf("%fns for parallel\n", float(end-start)/1000000000);
 
-	start = time.Nanoseconds();
+	//start = time.Nanoseconds();
 	Ctrue := A.Times(B);
-	end = time.Nanoseconds();
-	fmt.Printf("%fns for synchronous\n", float(end-start)/1000000000);
+	//end = time.Nanoseconds();
+	//fmt.Printf("%fns for synchronous\n", float(end-start)/1000000000);
 
 	if !C.Equals(Ctrue) {
 		t.Fail()
@@ -241,3 +241,22 @@ func TestQR(t *testing.T) {
 		t.Fail()
 	}
 }
+
+
+func TestNumbers(t *testing.T) {
+	n := float64(1.0);
+	A := Numbers(3,3,n);
+//	fmt.Printf("%v\n\n\n",A.String());
+
+	Atrue := MakeMatrixFlat([]float64{n, n, n,
+		n, n, n, 
+		n, n, n,  
+	},
+		3, 3);
+	if !A.Equals(Atrue) {
+		t.Fail()
+	}
+}
+
+
+
