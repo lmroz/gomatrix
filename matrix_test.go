@@ -69,7 +69,7 @@ func TestEigen(t *testing.T) {
 	}, 2, 2);
 	V, D := A.Eigen();
 
-	Aguess := V.Times(D).Times(V.Transpose());
+	Aguess := V.Times(D).Times(V.Inverse());
 
 	if !A.Approximates(Aguess, ε) {
 		t.Fail()
@@ -83,17 +83,30 @@ func TestEigen(t *testing.T) {
 	},
 		4, 4);
 
+	//B = B.Times(B.Transpose());
+	V,D = B.Eigen();
+
+	if !B.Approximates(V.Times(D).Times(V.Inverse()), ε) {
+		if verbose {
+			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
+		}
+		t.Fail()
+	}
+	
 	B = B.Times(B.Transpose());
 	V,D = B.Eigen();
 
-	if !B.Approximates(V.Times(D).Times(V.Transpose()), ε) {
+	if !B.Approximates(V.Times(D).Times(V.Inverse()), ε) {
+		if verbose {
+			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
+		}
 		t.Fail()
 	}
 }
 
 func TestParallelTimes(t *testing.T) {
-	w := 10;
-	h := 10;
+	w := 10000;
+	h := 4;
 
 	threads := 1;
 
@@ -205,14 +218,10 @@ func TestInverse(t *testing.T) {
 		4, 4);
 	Ainv := A.Inverse();
 
-	Ainvtrue := MakeMatrixFlat([]float64{-0.114583, -0.479167, -0.208333, -0.104167,
-		-0.718750, -1.787500, -0.725000, -0.162500,
-		0.375000, 0.550000, 0.300000, 0.050000,
-		0.437500, 0.375000, 0.250000, 0.125000,
-	},
-		4, 4);
-
-	if !Ainv.Approximates(Ainvtrue, ε) {
+	if !Eye(A.Rows()).Approximates(A.Times(Ainv), ε) {
+		if verbose {
+			fmt.Printf("A\n%v\n\nAinv\n%v\n\nA*Ainv\n%v\n", A, Ainv, A.Times(Ainv))
+		}
 		t.Fail()
 	}
 }
