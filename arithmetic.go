@@ -6,10 +6,12 @@ func (A *matrix) Equals(B Matrix) bool {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return false
 	}
-	Belements := B.Elements();
-	for i := 0; i < len(A.elements); i++ {
-		if A.elements[i] != Belements[i] {
-			return false
+	
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			if A.Get(i, j) != B.Get(i, j) {
+				return false
+			}
 		}
 	}
 	return true;
@@ -19,10 +21,12 @@ func (A *matrix) Approximates(B Matrix, ε float64) bool {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return false
 	}
-	Belements := B.Elements();
-	for i := 0; i < len(A.elements); i++ {
-		if math.Fabs(A.elements[i]-Belements[i]) > ε {
-			return false
+	
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			if math.Fabs(A.Get(i, j) - B.Get(i, j)) > ε {
+				return false
+			}
 		}
 	}
 	return true;
@@ -165,9 +169,10 @@ func (A *matrix) ElementMult(B Matrix) Matrix {
 		return nil
 	}
 	C := zeros(A.rows, A.cols);
-	Belements := B.Elements();
-	for i := 0; i < len(C.elements); i++ {
-		C.elements[i] = A.elements[i] * Belements[i]
+	for i := 0; i < C.rows; i++ {
+		for j := 0; j < C.cols; j++ {
+			C.Set(i, j, A.Get(i, j)*B.Get(i, j))
+		}
 	}
 	return C;
 }
@@ -183,7 +188,9 @@ func Scaled(A Matrix, f float64) Matrix {
 }
 
 func (A *matrix) Scale(f float64) {
-	for i := 0; i < len(A.elements); i++ {
-		A.elements[i] *= f
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			A.Set(i, j, A.Get(i, j)*f)
+		}
 	}
 }

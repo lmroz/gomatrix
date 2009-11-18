@@ -12,10 +12,10 @@ func (A *matrix) Cholesky() Matrix {
 	isspd := A.cols == n;
 
 	for j := 0; j < n; j++ {
-		Lrowj := L.GetRow(j);
+		Lrowj := L.RowCopy(j);
 		d := float64(0);
 		for k := 0; k < j; k++ {
-			Lrowk := L.GetRow(k);
+			Lrowk := L.RowCopy(k);
 			s := float64(0);
 			for i := 0; i < k; i++ {
 				s += Lrowk[i] * Lrowj[i]
@@ -98,9 +98,9 @@ func (LU *matrix) LUInPlace() Matrix {
 			pivsign = -pivsign;
 		}
 
-		if j < m && LU.elements[j*n+j] != 0.0 {
+		if j < m && LU.Get(j, j) != 0 {
 			for i := j + 1; i < m; i++ {
-				LU.elements[i*n+j] /= LU.elements[j*n+j]
+				LU.Set(i, j, LU.Get(i, j)/LU.Get(j, j))
 			}
 		}
 	}

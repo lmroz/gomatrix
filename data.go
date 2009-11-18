@@ -15,9 +15,13 @@ type pivotMatrix struct {
 	pivotSign float64;
 }
 
+//TODO: this might not make sense with reference matrices
+
 //This returns a slice referencing the matrix data. Changes to the slice
 //effect changes to the matrix
 func (A *matrix) Elements() []float64	{ return A.elements[0 : A.rows*A.cols] }
+
+//TODO: modify for reference matrices
 
 //This returns an array of slices referencing the matrix data. Changes to
 //the slices effect changes to the matrix
@@ -40,7 +44,7 @@ func (A *matrix) Set(i int, j int, v float64) {
 }
 
 //returns a copy of the row (not a slice)
-func (A *matrix) GetRow(i int) []float64 {
+func (A *matrix) RowCopy(i int) []float64 {
 	row := make([]float64, A.cols);
 	for j := 0; j < A.cols; j++ {
 		row[j] = A.Get(i, j)
@@ -49,7 +53,7 @@ func (A *matrix) GetRow(i int) []float64 {
 }
 
 //returns a copy of the column (not a slice)
-func (A *matrix) GetCol(j int) []float64 {
+func (A *matrix) ColCopy(j int) []float64 {
 	col := make([]float64, A.rows);
 	for i := 0; i < A.rows; i++ {
 		col[i] = A.Get(i, j)
@@ -58,7 +62,7 @@ func (A *matrix) GetCol(j int) []float64 {
 }
 
 //returns a copy of the diagonal (not a slice)
-func (A *matrix) GetDiagonal() []float64 {
+func (A *matrix) DiagonalCopy() []float64 {
 	span := A.rows;
 	if A.cols < span {
 		span = A.cols
@@ -108,6 +112,7 @@ func (A *matrix) FillDiagonal(buf []float64) {
 
 func (A *matrix) Copy() Matrix	{ return MakeMatrixFlat(A.elements, A.rows, A.cols) }
 
+//TODO: modify for reference matrices
 func (A *matrix) copy() Matrix {
 	B := new(matrix);
 	B.elements = make([]float64, len(A.elements));
@@ -119,6 +124,7 @@ func (A *matrix) copy() Matrix {
 	return B;
 }
 
+//TODO: modify for reference matrices
 func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
 	A := new(matrix);
 	A.elements = make([]float64, len(elements));
@@ -130,6 +136,7 @@ func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
 	return A;
 }
 
+//TODO: modify for reference matries
 func MakeMatrixReference(elements []float64, rows int, cols int) Matrix {
 	A := new(matrix);
 	A.elements = elements;
@@ -138,6 +145,7 @@ func MakeMatrixReference(elements []float64, rows int, cols int) Matrix {
 	return A;
 }
 
+//TODO: modify for reference matries
 func MakeMatrix(data [][]float64) Matrix {
 	rows := len(data);
 	cols := len(data[0]);
