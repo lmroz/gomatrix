@@ -79,6 +79,9 @@ type Matrix interface {
 
 	Rows() int;
 	Cols() int;
+	
+	// number of elements in the matrix
+	NumElements() int;
 
 	Get(i int, j int) float64;
 	Set(i int, j int, v float64);
@@ -102,6 +105,7 @@ type Matrix interface {
 	
 	//get a copy of this matrix
 	Copy() Matrix;
+	
 }
 
 func (A *matrix) getMatrix(i int, j int, rows int, cols int) *matrix {
@@ -182,15 +186,17 @@ func Stack(A Matrix, B Matrix) Matrix {
 	return stack(A, B)
 }
 
-//TODO: modify for reference matrices
 func zeros(rows int, cols int) *matrix {
 	A := new(matrix);
 	A.elements = make([]float64, rows*cols);
 	A.rows = rows;
 	A.cols = cols;
+	A.step = cols;
 	return A;
 }
 func Zeros(rows int, cols int) Matrix	{ return zeros(rows, cols) }
+
+func NewMatrix (rows int, cols int) Matrix { return zeros(rows, cols) }
 
 //TODO: modify for reference matrices
 func numbers(rows int, cols int, num float64) *matrix {
@@ -211,7 +217,6 @@ func Ones(rows int, cols int) Matrix {
 	return numbers(rows, cols, 1)
 }
 
-//TODO: modify for reference matrices
 func eye(span int) *matrix {
 	A := zeros(span, span);
 	for i := 0; i < span; i++ {

@@ -2,17 +2,19 @@
 package matrix
 
 type matrix struct {
-	// flattened matrix data. elements[i*cols+j] is row i, col j
+	// flattened matrix data. elements[i*step+j] is row i, col j
 	elements	[]float64;
 	// the number of rows
 	rows	int;
 	// the number of columns
 	cols	int;
+	// actual offset between rows
+	step	int;
 }
 
 type pivotMatrix struct {
 	*matrix;
-	pivotSign float64;
+	pivotSign	float64;
 }
 
 //TODO: this might not make sense with reference matrices
@@ -21,14 +23,12 @@ type pivotMatrix struct {
 //effect changes to the matrix
 func (A *matrix) Elements() []float64	{ return A.elements[0 : A.rows*A.cols] }
 
-//TODO: modify for reference matrices
-
 //This returns an array of slices referencing the matrix data. Changes to
 //the slices effect changes to the matrix
 func (A *matrix) Arrays() [][]float64 {
 	a := make([][]float64, A.rows);
 	for i := 0; i < A.rows; i++ {
-		a[i] = A.elements[i*A.cols : (i+1)*A.cols]
+		a[i] = A.elements[i*A.step : i*A.step + A.cols]
 	}
 	return a;
 }
@@ -37,11 +37,11 @@ func (A *matrix) Rows() int	{ return A.rows }
 
 func (A *matrix) Cols() int	{ return A.cols }
 
-func (A *matrix) Get(i int, j int) float64	{ return A.elements[i*A.cols+j] }
+func (A *matrix) NumElements() int { return A.rows*A.cols }
 
-func (A *matrix) Set(i int, j int, v float64) {
-	A.elements[i*A.cols+j] = v;
-}
+func (A *matrix) Get(i int, j int) float64	{ return A.elements[i*A.step+j] }
+
+func (A *matrix) Set(i int, j int, v float64)	{ A.elements[i*A.step+j] = v }
 
 //returns a copy of the row (not a slice)
 func (A *matrix) RowCopy(i int) []float64 {
@@ -112,36 +112,31 @@ func (A *matrix) FillDiagonal(buf []float64) {
 
 func (A *matrix) Copy() Matrix	{ return MakeMatrixFlat(A.elements, A.rows, A.cols) }
 
-//TODO: modify for reference matrices
 func (A *matrix) copy() Matrix {
-	B := new(matrix);
-	B.elements = make([]float64, len(A.elements));
-	for i := 0; i < len(B.elements); i++ {
-		B.elements[i] = A.elements[i]
+	B := NewMatrix (A.rows, B.cols);
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; i++ {
+			B.Set (i,j A.Get(i,j));
+		}
 	}
-	B.rows = A.rows;
-	B.cols = A.cols;
 	return B;
 }
 
-//TODO: modify for reference matrices
 func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
-	A := new(matrix);
-	A.elements = make([]float64, len(elements));
+
+	A := NewMatrix (rows, cols);
 	for i := 0; i < len(A.elements); i++ {
 		A.elements[i] = elements[i]
 	}
-	A.rows = rows;
-	A.cols = cols;
 	return A;
 }
 
-//TODO: modify for reference matries
 func MakeMatrixReference(elements []float64, rows int, cols int) Matrix {
 	A := new(matrix);
 	A.elements = elements;
 	A.rows = rows;
 	A.cols = cols;
+	A.step = cols;
 	return A;
 }
 
@@ -157,3 +152,4 @@ func MakeMatrix(data [][]float64) Matrix {
 	}
 	return MakeMatrixFlat(elements, rows, cols);
 }
+
