@@ -15,8 +15,38 @@ type pivotMatrix struct {
 	pivotSign float64;
 }
 
-func (A *matrix) Nil() bool {
-	return A == nil
+type errorMatrix struct {
+	*matrix;
+	errorCode int;
+	errorString string;
+}
+
+func (A *matrix) ErrorCode() int {
+	if A == nil {
+		return ErrorNilMatrix
+	}
+	return 0
+}
+
+func (A *matrix) ErrorString() string {
+	if A == nil {
+		return "Matrix is nil"
+	}
+	return "no error"
+}
+
+func (A *errorMatrix) ErrorCode() int {
+	if A == nil {
+		return ErrorNilMatrix
+	}
+	return A.errorCode;
+}
+
+func (A *errorMatrix) ErrorString() string {
+	if A == nil {
+		return "Matrix is nil"
+	}
+	return A.errorString
 }
 
 //TODO: this might not make sense with reference matrices

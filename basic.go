@@ -42,7 +42,7 @@ func (A *matrix) Inverse() Matrix {
 	if A.Rows() != A.Cols() {
 		return nil
 	}
-	aug := augment(A, Eye(A.Rows()));
+	aug := Augment(A, Eye(A.Rows()));
 	for i := 0; i < aug.Rows(); i++ {
 		j := i;
 		for k := i; k < aug.Rows(); k++ {
