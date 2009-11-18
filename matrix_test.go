@@ -122,18 +122,19 @@ func TestParallelTimes(t *testing.T) {
 
 	var C Matrix;
 	var start, end int64;
-	start = time.Nanoseconds();
-	C = ParallelProduct(A, B, threads);
-	end = time.Nanoseconds();
-	if verbose {
-		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000)
-	}
 
 	start = time.Nanoseconds();
 	Ctrue := A.Times(B);
 	end = time.Nanoseconds();
 	if verbose {
 		fmt.Printf("%fs for synchronous\n", float(end-start)/1000000000)
+	}
+	
+	start = time.Nanoseconds();
+	C = ParallelProduct(A, B, threads);
+	end = time.Nanoseconds();
+	if verbose {
+		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000)
 	}
 
 	if !C.Equals(Ctrue) {

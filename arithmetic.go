@@ -119,6 +119,7 @@ func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 
 	in := make(chan int);
 	quit := make(chan bool);
+	finish := make(chan bool);
 
 	dotRowCol := func() {
 		for true {
@@ -134,6 +135,7 @@ func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 					C.Set(i, j, sums[j])
 				}
 			case <-quit:
+				finish <- true;
 				return
 			}
 		}
@@ -149,6 +151,10 @@ func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 
 	for i := 0; i < threads; i++ {
 		quit <- true
+	}
+
+	for i := 0; i < threads; i++ {
+		//<- finish
 	}
 
 	return C;
