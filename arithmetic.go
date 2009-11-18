@@ -37,13 +37,8 @@ func Sum(A Matrix, B Matrix) Matrix {
 		return nil
 	}
 
-	C := zeros(A.Rows(), A.Cols());
-
-	for i := 0; i < A.Rows(); i++ {
-		for j := 0; j < A.Cols(); j++ {
-			C.Set(i, j, A.Get(i, j)+B.Get(i, j))
-		}
-	}
+	C := A.Copy();
+	C.Add(B);
 	return C;
 }
 func (A *matrix) Plus(B Matrix) Matrix {
@@ -55,13 +50,8 @@ func Difference(A Matrix, B Matrix) Matrix {
 		return nil
 	}
 
-	C := zeros(A.Rows(), A.Cols());
-
-	for i := 0; i < A.Rows(); i++ {
-		for j := 0; j < A.Cols(); j++ {
-			C.Set(i, j, A.Get(i, j)-B.Get(i, j))
-		}
-	}
+	C := A.Copy();
+	C.Subtract(B);
 	return C;
 }
 func (A *matrix) Minus(B Matrix) Matrix {
