@@ -72,6 +72,9 @@ type Matrix interface {
 	Eigen() (Matrix, Matrix);
 	
 	/* data.go */
+	
+	//will be true if there is no underlying data - for errors
+	Nil() bool;
 
 	// get at the raw data - returns slices so it's a reference
 	Elements() []float64;
