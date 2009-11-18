@@ -3,9 +3,11 @@ include $(GOROOT)/src/Make.$(GOARCH)
 TARG=matrix
 GOFILES=\
 	matrix.go\
-	matrix_basic.go\
-	matrix_decomp.go\
-	matrix_eigen.go\
-	matrix_data.go\
+	arithmetic.go\
+	basic.go\
+	decomp.go\
+	eigen.go\
+	data.go\
+	util.go\
 
 include $(GOROOT)/src/Make.pkg

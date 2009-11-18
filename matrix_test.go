@@ -84,7 +84,6 @@ func TestEigen(t *testing.T) {
 	},
 		4, 4);
 
-	//B = B.Times(B.Transpose());
 	V, D = B.Eigen();
 
 	if !B.Approximates(V.Times(D).Times(V.Inverse()), ε) {
@@ -124,7 +123,7 @@ func TestParallelTimes(t *testing.T) {
 	var C Matrix;
 	var start, end int64;
 	start = time.Nanoseconds();
-	C = A.ParallelTimes(B, threads);
+	C = ParallelProduct(A, B, threads);
 	end = time.Nanoseconds();
 	if verbose {
 		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000)
