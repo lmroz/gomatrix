@@ -15,6 +15,10 @@ type pivotMatrix struct {
 	pivotSign float64;
 }
 
+func (A *matrix) Nil() bool {
+	return A == nil
+}
+
 //TODO: this might not make sense with reference matrices
 
 //This returns a slice referencing the matrix data. Changes to the slice
