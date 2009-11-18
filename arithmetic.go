@@ -168,12 +168,8 @@ func (A *matrix) ElementMult(B Matrix) Matrix {
 }
 
 func Scaled(A Matrix, f float64) Matrix {
-	B := zeros(A.Rows(), A.Cols());
-	for i := 0; i < A.Rows(); i++ {
-		for j := 0; j < A.Cols(); j++ {
-			B.Set(i, j, f*A.Get(i, j))
-		}
-	}
+	B := A.Copy();
+	B.Scale(f);
 	return B;
 }
 
