@@ -1,6 +1,7 @@
 //Copyright 2009 John Asmuth
 package matrix
 
+//import "fmt"
 import "math"
 
 func (A *matrix) Symmetric() bool {
@@ -9,7 +10,7 @@ func (A *matrix) Symmetric() bool {
 	}
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < i; j++ {
-			if A.elements[i*A.cols+j] != A.elements[j*A.cols+i] {
+			if A.Get(i, j) != A.Get(j, i) {
 				return false
 			}
 		}
@@ -18,23 +19,22 @@ func (A *matrix) Symmetric() bool {
 }
 
 func (m *matrix) swapRows(r1 int, r2 int) {
-	for i := 0; i < m.cols; i++ {
-		i1, i2 := r1*m.cols+i, r2*m.cols+i;
-		tmp := m.elements[i1];
-		m.elements[i1] = m.elements[i2];
-		m.elements[i2] = tmp;
+	for j := 0; j < m.cols; j++ {
+		tmp := m.Get(r1, j);
+		m.Set(r1, j, m.Get(r2, j));
+		m.Set(r2, j, tmp);
 	}
 }
 
 func (m *matrix) scaleRow(r int, f float64) {
-	for i := 0; i < m.cols; i++ {
-		m.elements[r*m.cols+i] *= f
+	for j := 0; j < m.cols; j++ {
+		m.Set(r, j, m.Get(r, j)*f);
 	}
 }
 
 func (m *matrix) scaleAddRow(rd int, rs int, f float64) {
-	for i := 0; i < m.cols; i++ {
-		m.elements[rd*m.cols+i] += m.elements[rs*m.cols+i] * f
+	for j := 0; j < m.cols; j++ {
+		m.Set(rd, j, m.Get(rd, j)+m.Get(rs, j)*f)
 	}
 }
 
@@ -70,7 +70,7 @@ func (A *matrix) Inverse() Matrix {
 
 func (A *matrix) Det() float64 {
 	_, U, P := A.LU();
-	return product(U.GetDiagonal()) * P.Det();
+	return product(U.DiagonalCopy()) * P.Det();
 }
 
 func (A *pivotMatrix) Det() float64 {
@@ -78,13 +78,13 @@ func (A *pivotMatrix) Det() float64 {
 }
 
 func (A *matrix) Trace() float64 {
-	return sum(A.GetDiagonal());
+	return sum(A.DiagonalCopy());
 }
 
 func (A *matrix) OneNorm() (ε float64) {
-	for i := 0; i < len(A.elements); i++ {
-		if A.elements[i] > ε {
-			ε = A.elements[i]
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			ε = max(ε, A.Get(i, j))
 		}
 	}
 	return;
@@ -96,8 +96,10 @@ func (A *matrix) TwoNorm() float64 {
 }
 
 func (A *matrix) InfinityNorm() (ε float64) {
-	for i := 0; i < len(A.elements); i++ {
-		ε += A.elements[i]
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			ε += A.Get(i, j)
+		}
 	}
 	return;
 }
@@ -115,9 +117,9 @@ func (A *matrix) Transpose() Matrix {
 func (A *matrix) TransposeInPlace() {
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
-			tmp := A.elements[i*A.cols+j];
-			A.elements[i*A.cols+j] = A.elements[j*A.cols+i];
-			A.elements[j*A.cols+i] = tmp;
+			tmp := A.Get(i, j);
+			A.Set(i, j, A.Get(j, i));
+			A.Set(j, i, tmp);
 		}
 	}
 }

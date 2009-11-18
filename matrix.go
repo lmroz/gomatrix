@@ -82,9 +82,9 @@ type Matrix interface {
 	Get(i int, j int) float64;
 	Set(i int, j int, v float64);
 
-	GetRow(i int) []float64;
-	GetCol(j int) []float64;
-	GetDiagonal() []float64;
+	RowCopy(i int) []float64;
+	ColCopy(j int) []float64;
+	DiagonalCopy() []float64;
 
 	//fill a pre-allocated buffer with row i
 	BufferRow(i int, buf []float64);
@@ -179,6 +179,7 @@ func Stack(A Matrix, B Matrix) Matrix {
 	return stack(A, B)
 }
 
+//TODO: modify for reference matrices
 func zeros(rows int, cols int) *matrix {
 	A := new(matrix);
 	A.elements = make([]float64, rows*cols);
@@ -188,6 +189,7 @@ func zeros(rows int, cols int) *matrix {
 }
 func Zeros(rows int, cols int) Matrix	{ return zeros(rows, cols) }
 
+//TODO: modify for reference matrices
 func numbers(rows int, cols int, num float64) *matrix {
 	A := new(matrix);
 	A.elements = make([]float64, rows*cols);
@@ -206,6 +208,7 @@ func Ones(rows int, cols int) Matrix {
 	return numbers(rows, cols, 1)
 }
 
+//TODO: modify for reference matrices
 func eye(span int) *matrix {
 	A := zeros(span, span);
 	for i := 0; i < span; i++ {
@@ -225,6 +228,7 @@ func diagonal(d []float64) *matrix {
 }
 func Diagonal(d []float64) Matrix	{ return diagonal(d) }
 
+//TODO: modify for reference matrices
 func PivotMatrix(pivots []int, pivotSign float64) Matrix {
 	n := len(pivots);
 	P := new(pivotMatrix);
