@@ -14,19 +14,51 @@ const verbose = false
 /* TEST: arithmetic.go */
 
 func TestEquals(t *testing.T) {
-
+	if !Ones(5, 3).Equals(Ones(5, 3)) {
+		t.Fail()
+	}
+	if Ones(3, 5).Equals(Ones(5, 3)) {
+		t.Fail()
+	}
+	if Zeros(3, 3).Equals(Ones(3, 3)) {
+		t.Fail()
+	}
 }
 
 func TestApproximates(t *testing.T) {
-
-}
+	A := Numbers(3, 3, 6);
+	B := Numbers(3, 3, .1);
+	C := Numbers(3, 3, .6);
+	D := A.ElementMult(B);
+	if !D.Approximates(C, .000001) {
+		t.Fail()
+	}
+}	
 
 func TestAdd(t *testing.T) {
-
+	A := Normals(3, 3);
+	B := Normals(3, 3);
+	C := Sum(A, B);
+	for i := 0; i < C.Rows(); i++ {
+		for j := 0; j < C.Cols(); j++ {
+			if A.Get(i, j)+B.Get(i, j)!=C.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
 }
 
 func TestSubtract(t *testing.T) {
-
+	A := Normals(3, 3);
+	B := Normals(3, 3);
+	C := Difference(A, B);
+	for i := 0; i < C.Rows(); i++ {
+		for j := 0; j < C.Cols(); j++ {
+			if A.Get(i, j)-B.Get(i, j)!=C.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
 }
 
 func TestProduct(t *testing.T) {
@@ -64,15 +96,9 @@ func TestParallelProduct(t *testing.T) {
 
 	threads := 2;
 
-	A := zeros(h, w);
-	B := zeros(w, h);
 	rand.Seed(time.Nanoseconds());
-	for i := 0; i < h; i++ {
-		for j := 0; j < w; j++ {
-			A.Set(i, j, rand.NormFloat64());
-			B.Set(j, i, rand.NormFloat64());
-		}
-	}
+	A := normals(h, w);
+	B := normals(w, h);
 
 	var C Matrix;
 	var start, end int64;
@@ -125,7 +151,18 @@ func TestElementMult(t *testing.T) {
 }
 
 func TestScale(t *testing.T) {
-
+	A := Normals(3, 3);
+	f := float64(5.3);
+	B := A.Copy();
+	B.Scale(f);
+	
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if A.Get(i, j)*f!=B.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
 }
 
 /* TEST: basic.go */
@@ -426,35 +463,202 @@ func TestEigen(t *testing.T) {
 /* TEST: matrix.go */
 
 func TestGetMatrix(t *testing.T) {
-
+	//TODO: wait for reference matrices
 }
 
 func TestGetColVector(t *testing.T) {
-
+	//TODO: wait for reference matrices
 }
 
 func TestGetRowVector(t *testing.T) {
-
+	//TODO: wait for reference matrices
 }
 
 func TestL(t *testing.T) {
-
+	A := normals(4, 4);
+	L := A.L();
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if j > i && L.Get(i, j) != 0 {
+				t.Fail()
+			}
+			else if j <= i && L.Get(i, j) != A.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
+	A = normals(4, 2);
+	L = A.L();
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if j > i && L.Get(i, j) != 0 {
+				t.Fail()
+			}
+			else if j <= i && L.Get(i, j) != A.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
+	A = normals(2, 4);
+	L = A.L();
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if j > i && L.Get(i, j) != 0 {
+				t.Fail()
+			}
+			else if j <= i && L.Get(i, j) != A.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
 }
 
 func TestU(t *testing.T) {
-
+	A := normals(4, 4);
+	U := A.U();
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if j < i && U.Get(i, j) != 0 {
+				t.Fail()
+			}
+			else if j >= i && U.Get(i, j) != A.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
+	A = normals(2, 4);
+	U = A.U();
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if j < i && U.Get(i, j) != 0 {
+				t.Fail()
+			}
+			else if j >= i && U.Get(i, j) != A.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
+	A = normals(4, 2);
+	U = A.U();
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if j < i && U.Get(i, j) != 0 {
+				t.Fail()
+			}
+			else if j >= i && U.Get(i, j) != A.Get(i, j) {
+				t.Fail()
+			}
+		}
+	}
 }
 
 func TestAugment(t *testing.T) {
-
+	var A, B, C Matrix;
+	A = normals(4, 4);
+	B = normals(4, 4);
+	C = Augment(A, B);
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if C.Get(i, j) != A.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
+	for i := 0; i < B.Rows(); i++ {
+		for j := 0; j < B.Cols(); j++ {
+			if C.Get(i, j+A.Cols()) != B.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
+	
+	A = normals(2, 2);
+	B = normals(4, 4);
+	C = Augment(A, B);
+	if C != nil {
+		//augment(A,B) is definitely returning nil, but this comparison doesn't work
+		t.Fail()
+	}
+	
+	A = normals(4, 4);
+	B = normals(4, 2);
+	C = Augment(A, B);
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if C.Get(i, j) != A.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
+	for i := 0; i < B.Rows(); i++ {
+		for j := 0; j < B.Cols(); j++ {
+			if C.Get(i, j+A.Cols()) != B.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
 }
 
 func TestStack(t *testing.T) {
 
+	var A, B, C Matrix;
+	A = normals(4, 4);
+	B = normals(4, 4);
+	C = Stack(A, B);
+
+	
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if C.Get(i, j) != A.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
+	for i := 0; i < B.Rows(); i++ {
+		for j := 0; j < B.Cols(); j++ {
+			if C.Get(i+A.Rows(), j) != B.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
+	
+	
+	A = normals(4, 4);
+	B = normals(4, 2);
+	C = Stack(A, B);
+	if C != nil {
+		t.Fail()
+	}
+	
+	A = normals(2, 4);
+	B = normals(4, 4);
+	C = Stack(A, B);
+	
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if C.Get(i, j) != A.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
+	for i := 0; i < B.Rows(); i++ {
+		for j := 0; j < B.Cols(); j++ {
+			if C.Get(i+A.Rows(), j) != B.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
 }
 
 func TestZeros(t *testing.T) {
-
+	A := zeros(4, 5);
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if A.Get(i, j) != 0 {
+				t.Fail()
+			}
+		}	
+	}
 }
 
 
@@ -476,10 +680,34 @@ func TestNumbers(t *testing.T) {
 
 func TestOnes(t *testing.T) {
 
+	A := Ones(4, 5);
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if A.Get(i, j) != 1 {
+				t.Fail()
+			}
+		}	
+	}
 }
 
 func TestEye(t *testing.T) {
 
+	A := eye(4);
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if (i != j && A.Get(i, j) != 0) || (i == j && A.Get(i, j) != 1) {
+				t.Fail()
+			}
+		}	
+	}
+}
+
+func TestNormals(t *testing.T) {
+	//test that it's filled with random data?
+	A := Normals(3, 4);
+	if A.Rows() != 3 || A.Cols() != 4 {
+		t.Fail()
+	}
 }
 
 /* TEST: util.go */

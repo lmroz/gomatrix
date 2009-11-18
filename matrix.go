@@ -3,6 +3,7 @@ package matrix
 
 import (
 	"fmt";
+	"rand";
 )
 
 type Matrix interface {
@@ -113,29 +114,31 @@ func (A *matrix) getMatrix(i int, j int, rows int, cols int) *matrix {
 	return B;
 }
 
+//TODO: modify for reference matrices
 func (A *matrix) GetMatrix(i int, j int, rows int, cols int) Matrix {
 	return A.getMatrix(i, j, rows, cols)
 }
+
 func (A *matrix) GetColVector(j int) Matrix	{ return A.GetMatrix(0, j, A.rows, j+1) }
 
 func (A *matrix) GetRowVector(i int) Matrix	{ return A.GetMatrix(i, 0, i+1, A.cols) }
 
 
 func (A *matrix) L() Matrix {
-	B := zeros(A.rows, A.cols);
+	B := A.Copy();
 	for i := 0; i < A.rows; i++ {
-		for j := 0; j <= i; j++ {
-			B.Set(i, j, A.Get(i, j))
+		for j := i+1; j < A.cols; j++ {
+			B.Set(i, j, 0)
 		}
 	}
 	return B;
 }
 
 func (A *matrix) U() Matrix {
-	B := zeros(A.rows, A.cols);
+	B := A.Copy();
 	for i := 0; i < A.rows; i++ {
-		for j := i; j < A.cols; j++ {
-			B.Set(i, j, A.Get(i, j))
+		for j := 0; j < i && j<A.cols; j++ {
+			B.Set(i, j, 0)
 		}
 	}
 	return B;
@@ -169,8 +172,8 @@ func stack(A Matrix, B Matrix) *matrix {
 		for i := 0; i < A.Rows(); i++ {
 			C.Set(i, j, A.Get(i, j))
 		}
-		for i := 0; i < B.Rows(); i++ {
-			C.Set(i, j+A.Rows(), B.Get(i, j))
+		for i := 0; i < B.Cols(); i++ {
+			C.Set(i+A.Rows(), j, B.Get(i, j))
 		}
 	}
 	return C;
@@ -217,6 +220,21 @@ func eye(span int) *matrix {
 	return A;
 }
 func Eye(span int) Matrix	{ return eye(span) }
+
+func normals(rows int, cols int) *matrix {
+	A := zeros(rows, cols);
+	
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			A.Set(i, j, rand.NormFloat64());	
+		}
+	}
+	
+	return A
+}
+func Normals(rows int, cols int) Matrix {
+	return normals(rows, cols)
+}
 
 func diagonal(d []float64) *matrix {
 	n := len(d);
