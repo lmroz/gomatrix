@@ -112,7 +112,7 @@ func (A *matrix) Transpose() Matrix {
 	return B;
 }
 
-func (A *matrix) TransposeInPlace() Matrix {
+func (A *matrix) TransposeInPlace() {
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
 			tmp := A.elements[i*A.cols+j];
@@ -120,7 +120,6 @@ func (A *matrix) TransposeInPlace() Matrix {
 			A.elements[j*A.cols+i] = tmp;
 		}
 	}
-	return A;
 }
 
 func solveLower(A Matrix, b Matrix) Matrix {

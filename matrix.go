@@ -9,6 +9,7 @@ type Matrix interface {
 	/* matrix.go */
 
 	//get a sub matrix whose upper left corner is at i, j and has rows rows and cols cols
+	//TODO: make these return reference matrices
 	GetMatrix(i int, j int, rows int, cols int) Matrix;
 	GetColVector(i int) Matrix;
 	GetRowVector(j int) Matrix;
@@ -48,7 +49,7 @@ type Matrix interface {
 	Solve(b Matrix) Matrix;
 
 	Transpose() Matrix;
-	TransposeInPlace() Matrix;
+	TransposeInPlace();
 	Inverse() Matrix;
 	Det() float64;
 	Trace() float64;
