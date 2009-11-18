@@ -154,7 +154,7 @@ func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 	}
 
 	for i := 0; i < threads; i++ {
-		//<- finish
+		<- finish
 	}
 
 	return C;
