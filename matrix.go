@@ -6,6 +6,12 @@ import (
 	"rand";
 )
 
+const (
+	_ = iota;
+	ErrorNilMatrix;
+	ErrorBadInput;
+)
+
 type Matrix interface {
 	/* matrix.go */
 
@@ -72,6 +78,9 @@ type Matrix interface {
 	Eigen() (Matrix, Matrix);
 	
 	/* data.go */
+	
+	ErrorCode() int;
+	ErrorString() string;
 
 	// get at the raw data - returns slices so it's a reference
 	Elements() []float64;
@@ -149,11 +158,8 @@ func (A *matrix) U() Matrix {
 }
 
 func Augment(A Matrix, B Matrix) Matrix {
-	return augment(A, B)
-}
-func augment(A Matrix, B Matrix) *matrix {
 	if A.Rows() != B.Rows() {
-		return nil
+		return Error(ErrorBadInput, "Augment(A,B): A and B don't have the same number of rows");
 	}
 	C := zeros(A.Rows(), A.Cols()+B.Cols());
 	for i := 0; i < C.Rows(); i++ {
@@ -167,9 +173,9 @@ func augment(A Matrix, B Matrix) *matrix {
 	return C;
 }
 
-func stack(A Matrix, B Matrix) *matrix {
+func Stack(A Matrix, B Matrix) Matrix {
 	if A.Cols() != B.Cols() {
-		return nil
+		return Error(ErrorBadInput, "Stack(A,B): A and B don't have the same number of columns");
 	}
 	C := zeros(A.Rows()+B.Rows(), A.Cols());
 	for j := 0; j < A.Cols(); j++ {
@@ -181,9 +187,6 @@ func stack(A Matrix, B Matrix) *matrix {
 		}
 	}
 	return C;
-}
-func Stack(A Matrix, B Matrix) Matrix {
-	return stack(A, B)
 }
 
 func zeros(rows int, cols int) *matrix {
@@ -264,6 +267,13 @@ func PivotMatrix(pivots []int, pivotSign float64) Matrix {
 	}
 	P.pivotSign = pivotSign;
 	return P
+}
+
+func Error(errorCode int, errorString string) Matrix {
+	E := new(errorMatrix);
+	E.errorCode = errorCode;
+	E.errorString = errorString;
+	return E
 }
 
 func (A *matrix) String() string {

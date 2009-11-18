@@ -575,8 +575,7 @@ func TestAugment(t *testing.T) {
 	A = normals(2, 2);
 	B = normals(4, 4);
 	C = Augment(A, B);
-	if C != nil {
-		//augment(A,B) is definitely returning nil, but this comparison doesn't work
+	if C.ErrorCode() != ErrorBadInput {
 		t.Fail()
 	}
 	
@@ -626,7 +625,7 @@ func TestStack(t *testing.T) {
 	A = normals(4, 4);
 	B = normals(4, 2);
 	C = Stack(A, B);
-	if C != nil {
+	if C.ErrorCode() != ErrorBadInput {
 		t.Fail()
 	}
 	
