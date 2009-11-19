@@ -19,22 +19,22 @@ type pivotMatrix struct {
 
 type errorMatrix struct {
 	*matrix;
-	errorCode int;
-	errorString string;
+	errorCode	int;
+	errorString	string;
 }
 
 func (A *matrix) ErrorCode() int {
 	if A == nil {
 		return ErrorNilMatrix
 	}
-	return 0
+	return 0;
 }
 
 func (A *matrix) ErrorString() string {
 	if A == nil {
 		return "Matrix is nil"
 	}
-	return "no error"
+	return "no error";
 }
 
 func (A *errorMatrix) ErrorCode() int {
@@ -48,7 +48,7 @@ func (A *errorMatrix) ErrorString() string {
 	if A == nil {
 		return "Matrix is nil"
 	}
-	return A.errorString
+	return A.errorString;
 }
 
 //TODO: this might not make sense with reference matrices
@@ -62,7 +62,7 @@ func (A *matrix) Elements() []float64	{ return A.elements[0 : A.rows*A.cols] }
 func (A *matrix) Arrays() [][]float64 {
 	a := make([][]float64, A.rows);
 	for i := 0; i < A.rows; i++ {
-		a[i] = A.elements[i*A.step : i*A.step + A.cols]
+		a[i] = A.elements[i*A.step : i*A.step+A.cols]
 	}
 	return a;
 }
@@ -71,11 +71,9 @@ func (A *matrix) Rows() int	{ return A.rows }
 
 func (A *matrix) Cols() int	{ return A.cols }
 
-func (A *matrix) NumElements() int { return A.rows*A.cols }
+func (A *matrix) NumElements() int	{ return A.rows * A.cols }
 
-func (A *matrix) Get(i int, j int) float64	{ 
-	return A.elements[i*A.step+j]; 
-}
+func (A *matrix) Get(i int, j int) float64	{ return A.elements[i*A.step+j] }
 
 func (A *matrix) Set(i int, j int, v float64)	{ A.elements[i*A.step+j] = v }
 
@@ -149,10 +147,10 @@ func (A *matrix) FillDiagonal(buf []float64) {
 func (A *matrix) Copy() Matrix	{ return MakeMatrixFlat(A.elements, A.rows, A.cols) }
 
 func (A *matrix) copy() Matrix {
-	B := NewMatrix (A.rows, A.cols);
+	B := NewMatrix(A.rows, A.cols);
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
-			B.Set (i,j, A.Get(i,j));
+			B.Set(i, j, A.Get(i, j))
 		}
 	}
 	return B;
@@ -160,10 +158,10 @@ func (A *matrix) copy() Matrix {
 
 func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
 
-	A := NewMatrix (rows, cols);
+	A := NewMatrix(rows, cols);
 	for i := 0; i < rows; i++ {
 		for j := 0; j < cols; j++ {
-			A.Set (i,j, elements [i*cols + j]);
+			A.Set(i, j, elements[i*cols+j])
 		}
 	}
 	return A;
@@ -189,4 +187,3 @@ func MakeMatrix(data [][]float64) Matrix {
 	}
 	return MakeMatrixFlat(elements, rows, cols);
 }
-

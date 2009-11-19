@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	_ = iota;
+	_	= iota;
 	ErrorNilMatrix;
 	ErrorBadInput;
+	ErrorIllegalIndex;
 )
 
 type Matrix interface {
@@ -28,7 +29,7 @@ type Matrix interface {
 
 	//make a printable string
 	String() string;
-	
+
 	/* arithmetic.go */
 
 	//arithmetic
@@ -76,9 +77,9 @@ type Matrix interface {
 	QR() (Matrix, Matrix);
 	//returns V,D such that V*D*inv(V) = A
 	Eigen() (Matrix, Matrix);
-	
+
 	/* data.go */
-	
+
 	ErrorCode() int;
 	ErrorString() string;
 
@@ -88,7 +89,7 @@ type Matrix interface {
 
 	Rows() int;
 	Cols() int;
-	
+
 	// number of elements in the matrix
 	NumElements() int;
 
@@ -111,25 +112,15 @@ type Matrix interface {
 	FillCol(j int, buf []float64);
 	//copy a buffer into the diagonal
 	FillDiagonal(buf []float64);
-	
+
 	//get a copy of this matrix
 	Copy() Matrix;
-	
 }
 
 //TODO: modify for reference matrices
 func (A *matrix) getMatrix(i int, j int, rows int, cols int) *matrix {
-	/*
-	B := zeros(rows, cols);
-	for y := 0; y < rows; y++ {
-		for x := 0; x < cols; x++ {
-			B.Set(y, x, A.Get(y+i, x+j))
-		}
-	}
-	return B;
-	*/
 	B := new(matrix);
-	B.elements = A.elements[i*A.step+j:(i+rows)*A.step];
+	B.elements = A.elements[i*A.step+j : (i+rows)*A.step];
 	B.rows = rows;
 	B.cols = cols;
 	B.step = A.step;
@@ -137,7 +128,10 @@ func (A *matrix) getMatrix(i int, j int, rows int, cols int) *matrix {
 }
 
 func (A *matrix) GetMatrix(i int, j int, rows int, cols int) Matrix {
-	return A.getMatrix(i, j, rows, cols)
+	if i < 0 || i+rows > A.rows || j < 0 || j+cols > A.cols {
+		return Error(ErrorIllegalIndex, "GetMatrix(i, j, rows, cols): span specified extends beyond original matrix")
+	}
+	return A.getMatrix(i, j, rows, cols);
 }
 
 func (A *matrix) GetColVector(j int) Matrix	{ return A.GetMatrix(0, j, A.rows, j+1) }
@@ -148,7 +142,7 @@ func (A *matrix) GetRowVector(i int) Matrix	{ return A.GetMatrix(i, 0, i+1, A.co
 func (A *matrix) L() Matrix {
 	B := A.Copy();
 	for i := 0; i < A.rows; i++ {
-		for j := i+1; j < A.cols; j++ {
+		for j := i + 1; j < A.cols; j++ {
 			B.Set(i, j, 0)
 		}
 	}
@@ -158,7 +152,7 @@ func (A *matrix) L() Matrix {
 func (A *matrix) U() Matrix {
 	B := A.Copy();
 	for i := 0; i < A.rows; i++ {
-		for j := 0; j < i && j<A.cols; j++ {
+		for j := 0; j < i && j < A.cols; j++ {
 			B.Set(i, j, 0)
 		}
 	}
@@ -167,7 +161,7 @@ func (A *matrix) U() Matrix {
 
 func Augment(A Matrix, B Matrix) Matrix {
 	if A.Rows() != B.Rows() {
-		return Error(ErrorBadInput, "Augment(A,B): A and B don't have the same number of rows");
+		return Error(ErrorBadInput, "Augment(A,B): A and B don't have the same number of rows")
 	}
 	C := zeros(A.Rows(), A.Cols()+B.Cols());
 	for i := 0; i < C.Rows(); i++ {
@@ -183,7 +177,7 @@ func Augment(A Matrix, B Matrix) Matrix {
 
 func Stack(A Matrix, B Matrix) Matrix {
 	if A.Cols() != B.Cols() {
-		return Error(ErrorBadInput, "Stack(A,B): A and B don't have the same number of columns");
+		return Error(ErrorBadInput, "Stack(A,B): A and B don't have the same number of columns")
 	}
 	C := zeros(A.Rows()+B.Rows(), A.Cols());
 	for j := 0; j < A.Cols(); j++ {
@@ -207,7 +201,7 @@ func zeros(rows int, cols int) *matrix {
 }
 func Zeros(rows int, cols int) Matrix	{ return zeros(rows, cols) }
 
-func NewMatrix (rows int, cols int) Matrix { return zeros(rows, cols) }
+func NewMatrix(rows int, cols int) Matrix	{ return zeros(rows, cols) }
 
 func numbers(rows int, cols int, num float64) *matrix {
 	A := new(matrix);
@@ -224,9 +218,7 @@ func Numbers(rows int, cols int, num float64) Matrix {
 	return numbers(rows, cols, num)
 }
 
-func Ones(rows int, cols int) Matrix {
-	return numbers(rows, cols, 1)
-}
+func Ones(rows int, cols int) Matrix	{ return numbers(rows, cols, 1) }
 
 func eye(span int) *matrix {
 	A := zeros(span, span);
@@ -239,18 +231,16 @@ func Eye(span int) Matrix	{ return eye(span) }
 
 func normals(rows int, cols int) *matrix {
 	A := zeros(rows, cols);
-	
+
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
-			A.Set(i, j, rand.NormFloat64());	
+			A.Set(i, j, rand.NormFloat64())
 		}
 	}
-	
-	return A
+
+	return A;
 }
-func Normals(rows int, cols int) Matrix {
-	return normals(rows, cols)
-}
+func Normals(rows int, cols int) Matrix	{ return normals(rows, cols) }
 
 func diagonal(d []float64) *matrix {
 	n := len(d);
@@ -270,18 +260,18 @@ func PivotMatrix(pivots []int, pivotSign float64) Matrix {
 	P.rows = n;
 	P.cols = n;
 	P.step = n;
-	for i:=0; i<n; i++ {
+	for i := 0; i < n; i++ {
 		P.Set(pivots[i], i, 1)
 	}
 	P.pivotSign = pivotSign;
-	return P
+	return P;
 }
 
 func Error(errorCode int, errorString string) Matrix {
 	E := new(errorMatrix);
 	E.errorCode = errorCode;
 	E.errorString = errorString;
-	return E
+	return E;
 }
 
 func (A *matrix) String() string {

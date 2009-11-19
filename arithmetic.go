@@ -6,7 +6,7 @@ func (A *matrix) Equals(B Matrix) bool {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return false
 	}
-	
+
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
 			if A.Get(i, j) != B.Get(i, j) {
@@ -21,10 +21,10 @@ func (A *matrix) Approximates(B Matrix, ε float64) bool {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return false
 	}
-	
+
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
-			if math.Fabs(A.Get(i, j) - B.Get(i, j)) > ε {
+			if math.Fabs(A.Get(i, j)-B.Get(i, j)) > ε {
 				return false
 			}
 		}
@@ -41,9 +41,7 @@ func Sum(A Matrix, B Matrix) Matrix {
 	C.Add(B);
 	return C;
 }
-func (A *matrix) Plus(B Matrix) Matrix {
-	return Sum(A, B)
-}
+func (A *matrix) Plus(B Matrix) Matrix	{ return Sum(A, B) }
 
 func Difference(A Matrix, B Matrix) Matrix {
 	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
@@ -54,9 +52,7 @@ func Difference(A Matrix, B Matrix) Matrix {
 	C.Subtract(B);
 	return C;
 }
-func (A *matrix) Minus(B Matrix) Matrix {
-	return Difference(A, B)
-}
+func (A *matrix) Minus(B Matrix) Matrix	{ return Difference(A, B) }
 
 func (A *matrix) Add(B Matrix) {
 	if A.cols != B.Cols() || A.rows != B.Rows() {
@@ -100,9 +96,7 @@ func Product(A Matrix, B Matrix) Matrix {
 
 	return C;
 }
-func (A *matrix) Times(B Matrix) Matrix {
-	return Product(A, B)
-}
+func (A *matrix) Times(B Matrix) Matrix	{ return Product(A, B) }
 
 func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 	if A.Cols() != B.Rows() {
@@ -113,7 +107,6 @@ func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 
 	in := make(chan int);
 	quit := make(chan bool);
-	finish := make(chan bool);
 
 	dotRowCol := func() {
 		for true {
@@ -129,8 +122,7 @@ func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 					C.Set(i, j, sums[j])
 				}
 			case <-quit:
-				finish <- true;
-				return
+				return;
 			}
 		}
 	};
@@ -145,10 +137,6 @@ func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 
 	for i := 0; i < threads; i++ {
 		quit <- true
-	}
-
-	for i := 0; i < threads; i++ {
-		<- finish
 	}
 
 	return C;

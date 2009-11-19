@@ -27,7 +27,7 @@ func (m *matrix) swapRows(r1 int, r2 int) {
 
 func (m *matrix) scaleRow(r int, f float64) {
 	for j := 0; j < m.cols; j++ {
-		m.Set(r, j, m.Get(r, j)*f);
+		m.Set(r, j, m.Get(r, j)*f)
 	}
 }
 
@@ -52,7 +52,7 @@ func (A *matrix) Inverse() Matrix {
 		if j != i {
 			aug.swapRows(i, j)
 		}
-		if aug.Get(i, i) == 0 {	
+		if aug.Get(i, i) == 0 {
 			return Error(ErrorBadInput, "A.Inverse(): A has no inverse")
 		}
 		aug.scaleRow(i, 1.0/aug.Get(i, i));
@@ -72,13 +72,9 @@ func (A *matrix) Det() float64 {
 	return product(U.DiagonalCopy()) * P.Det();
 }
 
-func (A *pivotMatrix) Det() float64 {
-	return A.pivotSign
-}
+func (A *pivotMatrix) Det() float64	{ return A.pivotSign }
 
-func (A *matrix) Trace() float64 {
-	return sum(A.DiagonalCopy());
-}
+func (A *matrix) Trace() float64	{ return sum(A.DiagonalCopy()) }
 
 func (A *matrix) OneNorm() (ε float64) {
 	for i := 0; i < A.rows; i++ {
