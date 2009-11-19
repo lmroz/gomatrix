@@ -7,6 +7,17 @@ const (
 	ErrorIllegalIndex;
 )
 
+
+type error struct {
+	errorCode	int;
+	errorString	string;
+}
+
+type Error interface {
+	String() string;
+}
+
+/*
 type errorMatrix struct {
 	*matrix;
 	errorCode	int;
@@ -26,3 +37,14 @@ func (A *errorMatrix) ErrorString() string {
 	}
 	return A.errorString;
 }
+*/
+
+func NewError(errorCode int, errorString string) Error {
+	E := new(error);
+	E.errorCode = errorCode;
+	E.errorString = errorString;
+	return E;
+}
+
+func (e *error) String() string	{ return e.errorString }
+
