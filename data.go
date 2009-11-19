@@ -147,10 +147,10 @@ func (A *matrix) FillDiagonal(buf []float64) {
 func (A *matrix) Copy() Matrix	{ return MakeMatrixFlat(A.elements, A.rows, A.cols) }
 
 func (A *matrix) copy() Matrix {
-	B := NewMatrix (A.rows, B.cols);
+	B := NewMatrix (A.rows, A.cols);
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; i++ {
-			B.Set (i,j A.Get(i,j));
+			B.Set (i,j, A.Get(i,j));
 		}
 	}
 	return B;
@@ -159,8 +159,10 @@ func (A *matrix) copy() Matrix {
 func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
 
 	A := NewMatrix (rows, cols);
-	for i := 0; i < len(A.elements); i++ {
-		A.elements[i] = elements[i]
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			A.Set (i,j, elements [i*cols + j]);
+		}
 	}
 	return A;
 }
