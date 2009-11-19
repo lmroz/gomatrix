@@ -34,7 +34,7 @@ func (A *matrix) Approximates(B Matrix, ε float64) bool {
 
 func Sum(A Matrix, B Matrix) Matrix {
 	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
-		return nil
+		return Error(ErrorBadInput, "Sum(A, B):A and B dimensions don't match")
 	}
 
 	C := A.Copy();
@@ -47,7 +47,7 @@ func (A *matrix) Plus(B Matrix) Matrix {
 
 func Difference(A Matrix, B Matrix) Matrix {
 	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
-		return nil
+		return Error(ErrorBadInput, "Difference(A, B):A and B dimensions don't match")
 	}
 
 	C := A.Copy();
@@ -84,7 +84,7 @@ func (A *matrix) Subtract(B Matrix) {
 
 func Product(A Matrix, B Matrix) Matrix {
 	if A.Cols() != B.Rows() {
-		return nil
+		return Error(ErrorBadInput, "Product(A, B):A.Cols() is different than B.Rows()")
 	}
 	C := zeros(A.Rows(), B.Cols());
 
@@ -106,7 +106,7 @@ func (A *matrix) Times(B Matrix) Matrix {
 
 func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 	if A.Cols() != B.Rows() {
-		return nil
+		return Error(ErrorBadInput, "ParallelProduct(A, B):A.Cols() is different than B.Rows()")
 	}
 
 	C := zeros(A.Rows(), B.Cols());
@@ -156,7 +156,7 @@ func ParallelProduct(A Matrix, B Matrix, threads int) Matrix {
 
 func (A *matrix) ElementMult(B Matrix) Matrix {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return nil
+		return Error(ErrorBadInput, "ElementMult(A, B):A and B have different dimensions")
 	}
 	C := zeros(A.rows, A.cols);
 	for i := 0; i < C.rows; i++ {
