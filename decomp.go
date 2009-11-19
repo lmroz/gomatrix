@@ -118,7 +118,7 @@ func (LU *matrix) LUInPlace() Matrix {
 func (A *matrix) QR() (Matrix, Matrix) {
 	m := A.rows;
 	n := A.cols;
-	QR := A.getMatrix(0, 0, m, n);
+	QR := A.copy();
 	Q := zeros(m, n);
 	R := zeros(m, n);
 	i, j, k := 0, 0, 0;

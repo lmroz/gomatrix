@@ -73,7 +73,9 @@ func (A *matrix) Cols() int	{ return A.cols }
 
 func (A *matrix) NumElements() int { return A.rows*A.cols }
 
-func (A *matrix) Get(i int, j int) float64	{ return A.elements[i*A.step+j] }
+func (A *matrix) Get(i int, j int) float64	{ 
+	return A.elements[i*A.step+j]; 
+}
 
 func (A *matrix) Set(i int, j int, v float64)	{ A.elements[i*A.step+j] = v }
 
@@ -149,7 +151,7 @@ func (A *matrix) Copy() Matrix	{ return MakeMatrixFlat(A.elements, A.rows, A.col
 func (A *matrix) copy() Matrix {
 	B := NewMatrix (A.rows, A.cols);
 	for i := 0; i < A.rows; i++ {
-		for j := 0; j < A.cols; i++ {
+		for j := 0; j < A.cols; j++ {
 			B.Set (i,j, A.Get(i,j));
 		}
 	}
@@ -176,7 +178,6 @@ func MakeMatrixReference(elements []float64, rows int, cols int) Matrix {
 	return A;
 }
 
-//TODO: modify for reference matries
 func MakeMatrix(data [][]float64) Matrix {
 	rows := len(data);
 	cols := len(data[0]);

@@ -117,7 +117,9 @@ type Matrix interface {
 	
 }
 
+//TODO: modify for reference matrices
 func (A *matrix) getMatrix(i int, j int, rows int, cols int) *matrix {
+	/*
 	B := zeros(rows, cols);
 	for y := 0; y < rows; y++ {
 		for x := 0; x < cols; x++ {
@@ -125,9 +127,15 @@ func (A *matrix) getMatrix(i int, j int, rows int, cols int) *matrix {
 		}
 	}
 	return B;
+	*/
+	B := new(matrix);
+	B.elements = A.elements[i*A.step+j:(i+rows)*A.step];
+	B.rows = rows;
+	B.cols = cols;
+	B.step = A.step;
+	return B;
 }
 
-//TODO: modify for reference matrices
 func (A *matrix) GetMatrix(i int, j int, rows int, cols int) Matrix {
 	return A.getMatrix(i, j, rows, cols)
 }
@@ -201,7 +209,6 @@ func Zeros(rows int, cols int) Matrix	{ return zeros(rows, cols) }
 
 func NewMatrix (rows int, cols int) Matrix { return zeros(rows, cols) }
 
-//TODO: modify for reference matrices
 func numbers(rows int, cols int, num float64) *matrix {
 	A := new(matrix);
 	A.elements = make([]float64, rows*cols);
@@ -210,6 +217,7 @@ func numbers(rows int, cols int, num float64) *matrix {
 	}
 	A.rows = rows;
 	A.cols = cols;
+	A.step = cols;
 	return A;
 }
 func Numbers(rows int, cols int, num float64) Matrix {
@@ -254,7 +262,6 @@ func diagonal(d []float64) *matrix {
 }
 func Diagonal(d []float64) Matrix	{ return diagonal(d) }
 
-//TODO: modify for reference matrices
 func PivotMatrix(pivots []int, pivotSign float64) Matrix {
 	n := len(pivots);
 	P := new(pivotMatrix);

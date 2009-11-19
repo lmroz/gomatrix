@@ -91,7 +91,7 @@ func TestProduct(t *testing.T) {
 }
 
 func TestParallelProduct(t *testing.T) {
-	w := 10000;
+	w := 100;
 	h := 4;
 
 	threads := 2;
