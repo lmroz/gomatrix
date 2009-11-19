@@ -6,13 +6,6 @@ import (
 	"rand";
 )
 
-const (
-	_	= iota;
-	ErrorNilMatrix;
-	ErrorBadInput;
-	ErrorIllegalIndex;
-)
-
 type Matrix interface {
 	/* matrix.go */
 
@@ -62,8 +55,8 @@ type Matrix interface {
 	Det() float64;
 	Trace() float64;
 
+	Norm(p float64) float64;
 	OneNorm() float64;
-	TwoNorm() float64;
 	InfinityNorm() float64;
 
 	/* decomp.go */
@@ -251,21 +244,6 @@ func diagonal(d []float64) *matrix {
 	return A;
 }
 func Diagonal(d []float64) Matrix	{ return diagonal(d) }
-
-func PivotMatrix(pivots []int, pivotSign float64) Matrix {
-	n := len(pivots);
-	P := new(pivotMatrix);
-	P.matrix = new(matrix);
-	P.elements = make([]float64, n*n);
-	P.rows = n;
-	P.cols = n;
-	P.step = n;
-	for i := 0; i < n; i++ {
-		P.Set(pivots[i], i, 1)
-	}
-	P.pivotSign = pivotSign;
-	return P;
-}
 
 func Error(errorCode int, errorString string) Matrix {
 	E := new(errorMatrix);
