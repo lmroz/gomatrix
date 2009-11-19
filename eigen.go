@@ -4,9 +4,9 @@ import "math"
 
 //returns V,D st V*D*inv(V) = A and D is diagonal
 //code translated/ripped off from Jama
-func (A *matrix) Eigen() (Matrix, Matrix) {
+func (A *denseMatrix) Eigen() (*denseMatrix, *denseMatrix) {
 	n := A.cols;
-	V := A.Copy().Arrays();
+	V := A.copy().Arrays();
 	d := make([]float64, n);
 	e := make([]float64, n);
 	if A.Symmetric() {
@@ -18,7 +18,7 @@ func (A *matrix) Eigen() (Matrix, Matrix) {
 		return MakeMatrix(V), makeD(d, e);
 	}
 	//else
-	H := A.GetMatrix(0, 0, n, n).Copy().Arrays();
+	H := A.GetMatrix(0, 0, n, n).copy().Arrays();
 	ort := make([]float64, n);
 
 	// Reduce to Hessenberg form.
@@ -30,9 +30,9 @@ func (A *matrix) Eigen() (Matrix, Matrix) {
 	return MakeMatrix(V), makeD(d, e);
 }
 
-func makeD(d []float64, e []float64) Matrix {
+func makeD(d []float64, e []float64) *denseMatrix {
 	n := len(d);
-	X := zeros(n, n);
+	X := Zeros(n, n);
 	D := X.Arrays();
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
@@ -857,3 +857,4 @@ func cdiv(xr float64, xi float64, yr float64, yi float64) (cdivr float64, cdivi 
 	}
 	return;
 }
+
