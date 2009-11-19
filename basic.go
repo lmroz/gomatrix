@@ -72,11 +72,18 @@ func (A *matrix) Det() float64 {
 	return product(U.DiagonalCopy()) * P.Det();
 }
 
-func (A *pivotMatrix) Det() float64	{ return A.pivotSign }
-
 func (A *matrix) Trace() float64	{ return sum(A.DiagonalCopy()) }
 
 func (A *matrix) OneNorm() (ε float64) {
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			ε += A.Get(i, j)
+		}
+	}
+	return;
+}
+
+func (A *matrix) InfinityNorm() (ε float64) {
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
 			ε = max(ε, A.Get(i, j))
@@ -85,18 +92,16 @@ func (A *matrix) OneNorm() (ε float64) {
 	return;
 }
 
-func (A *matrix) TwoNorm() float64 {
-	//requires computing of eigenvalues
-	return 0
-}
-
-func (A *matrix) InfinityNorm() (ε float64) {
+func (A *matrix) Norm(p float64) float64 {
+	sum := float64(0);
+	
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
-			ε += A.Get(i, j)
+			sum += math.Pow(A.Get(i, j), p);
 		}
 	}
-	return;
+	
+	return math.Pow(sum, 1/p)
 }
 
 func (A *matrix) Transpose() Matrix {

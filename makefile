@@ -8,6 +8,8 @@ GOFILES=\
 	decomp.go\
 	eigen.go\
 	data.go\
+	pivot.go\
+	error.go\
 	util.go\
 
 include $(GOROOT)/src/Make.pkg
