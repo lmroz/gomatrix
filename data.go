@@ -2,67 +2,51 @@
 package matrix
 
 type matrix struct {
+	rows	int;
+	cols	int;
+}
+
+type denseMatrix struct {
+	matrix;
 	// flattened matrix data. elements[i*step+j] is row i, col j
 	elements	[]float64;
-	// the number of rows
-	rows	int;
-	// the number of columns
-	cols	int;
 	// actual offset between rows
 	step	int;
 }
 
 type pivotMatrix struct {
-	*matrix;
+	*denseMatrix;
 	pivotSign	float64;
 }
 
-type errorMatrix struct {
-	*matrix;
-	errorCode int;
-	errorString string;
+type sparseMatrix struct {
+	matrix;
+	elements	map[int]float64;
+	// offset to start of matrix s.t. idx = i*cols + j + offset
+	offset	int;
 }
 
-func (A *matrix) ErrorCode() int {
-	if A == nil {
-		return ErrorNilMatrix
-	}
-	return 0
+type error struct {
+	errorCode	int;
+	errorString	string;
 }
 
-func (A *matrix) ErrorString() string {
-	if A == nil {
-		return "Matrix is nil"
-	}
-	return "no error"
-}
-
-func (A *errorMatrix) ErrorCode() int {
-	if A == nil {
-		return ErrorNilMatrix
-	}
-	return A.errorCode;
-}
-
-func (A *errorMatrix) ErrorString() string {
-	if A == nil {
-		return "Matrix is nil"
-	}
-	return A.errorString
+type Error interface {
+	String() string;
 }
 
 //TODO: this might not make sense with reference matrices
 
 //This returns a slice referencing the matrix data. Changes to the slice
 //effect changes to the matrix
-func (A *matrix) Elements() []float64	{ return A.elements[0 : A.rows*A.cols] }
+func (A *denseMatrix) Elements() []float64	{ return A.elements[0 : A.rows*A.cols] }
 
 //This returns an array of slices referencing the matrix data. Changes to
 //the slices effect changes to the matrix
-func (A *matrix) Arrays() [][]float64 {
+func (A *denseMatrix) Arrays() [][]float64 {
 	a := make([][]float64, A.rows);
 	for i := 0; i < A.rows; i++ {
-		a[i] = A.elements[i*A.step : i*A.step + A.cols]
+		a[i] = A.elements[i*A.step : i*A.step+A.cols]
 	}
 	return a;
 }
@@ -71,16 +55,36 @@ func (A *matrix) Rows() int	{ return A.rows }
 
 func (A *matrix) Cols() int	{ return A.cols }
 
-func (A *matrix) NumElements() int { return A.rows*A.cols }
+func (A *matrix) NumElements() int	{ return A.rows * A.cols }
 
-func (A *matrix) Get(i int, j int) float64	{ 
-	return A.elements[i*A.step+j]; 
+func (A *matrix) GetSize() (int, int)	{ return A.rows, A.cols }
+
+func (A *denseMatrix) Get(i int, j int) float64 {
+	return A.elements[i*A.step+j]
 }
 
-func (A *matrix) Set(i int, j int, v float64)	{ A.elements[i*A.step+j] = v }
+func (A *sparseMatrix) Get(i int, j int) float64 {
+
+	x, ok := A.elements[i*A.cols+j];
+
+	if !ok {
+		return 0
+	}
+
+	return x;
+}
+
+func (A *denseMatrix) Set(i int, j int, v float64) {
+	A.elements[i*A.step+j] = v
+}
+
+// v == 0 results in removal of key from underlying map
+func (A *sparseMatrix) Set(i int, j int, v float64) {
+	A.elements[i*A.cols+j] = v, v == 0
+}
 
 //returns a copy of the row (not a slice)
-func (A *matrix) RowCopy(i int) []float64 {
+func (A *denseMatrix) RowCopy(i int) []float64 {
 	row := make([]float64, A.cols);
 	for j := 0; j < A.cols; j++ {
 		row[j] = A.Get(i, j)
@@ -89,7 +93,7 @@ func (A *matrix) RowCopy(i int) []float64 {
 }
 
 //returns a copy of the column (not a slice)
-func (A *matrix) ColCopy(j int) []float64 {
+func (A *denseMatrix) ColCopy(j int) []float64 {
 	col := make([]float64, A.rows);
 	for i := 0; i < A.rows; i++ {
 		col[i] = A.Get(i, j)
@@ -98,7 +102,7 @@ func (A *matrix) ColCopy(j int) []float64 {
 }
 
 //returns a copy of the diagonal (not a slice)
-func (A *matrix) DiagonalCopy() []float64 {
+func (A *denseMatrix) DiagonalCopy() []float64 {
 	span := A.rows;
 	if A.cols < span {
 		span = A.cols
@@ -110,67 +114,67 @@ func (A *matrix) DiagonalCopy() []float64 {
 	return diag;
 }
 
-func (A *matrix) BufferRow(i int, buf []float64) {
+func (A *denseMatrix) BufferRow(i int, buf []float64) {
 	for j := 0; j < A.cols; j++ {
 		buf[j] = A.Get(i, j)
 	}
 }
 
-func (A *matrix) BufferCol(j int, buf []float64) {
+func (A *denseMatrix) BufferCol(j int, buf []float64) {
 	for i := 0; i < A.rows; i++ {
 		buf[i] = A.Get(i, j)
 	}
 }
 
-func (A *matrix) BufferDiagonal(buf []float64) {
+func (A *denseMatrix) BufferDiagonal(buf []float64) {
 	for i := 0; i < A.rows && i < A.cols; i++ {
 		buf[i] = A.Get(i, i)
 	}
 }
 
-func (A *matrix) FillRow(i int, buf []float64) {
+func (A *denseMatrix) FillRow(i int, buf []float64) {
 	for j := 0; j < A.cols; j++ {
 		A.Set(i, j, buf[j])
 	}
 }
 
-func (A *matrix) FillCol(j int, buf []float64) {
+func (A *denseMatrix) FillCol(j int, buf []float64) {
 	for i := 0; i < A.rows; i++ {
 		A.Set(i, j, buf[j])
 	}
 }
 
-func (A *matrix) FillDiagonal(buf []float64) {
+func (A *denseMatrix) FillDiagonal(buf []float64) {
 	for i := 0; i < A.rows && i < A.cols; i++ {
 		A.Set(i, i, buf[i])
 	}
 }
 
-func (A *matrix) Copy() Matrix	{ return MakeMatrixFlat(A.elements, A.rows, A.cols) }
-
-func (A *matrix) copy() Matrix {
-	B := NewMatrix (A.rows, A.cols);
+func (A *denseMatrix) copy() *denseMatrix {
+	B := NewMatrix(A.rows, A.cols);
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
-			B.Set (i,j, A.Get(i,j));
+			B.Set(i, j, A.Get(i, j))
 		}
 	}
 	return B;
 }
 
-func MakeMatrixFlat(elements []float64, rows int, cols int) Matrix {
+func (A *denseMatrix) Copy() Matrix	{ return A.copy() }
 
-	A := NewMatrix (rows, cols);
+func MakeMatrixFlat(elements []float64, rows int, cols int) *denseMatrix {
+
+	A := NewMatrix(rows, cols);
 	for i := 0; i < rows; i++ {
 		for j := 0; j < cols; j++ {
-			A.Set (i,j, elements [i*cols + j]);
+			A.Set(i, j, elements[i*cols+j])
 		}
 	}
 	return A;
 }
 
 func MakeMatrixReference(elements []float64, rows int, cols int) Matrix {
-	A := new(matrix);
+	A := new(denseMatrix);
 	A.elements = elements;
 	A.rows = rows;
 	A.cols = cols;
@@ -178,7 +182,7 @@ func MakeMatrixReference(elements []float64, rows int, cols int) Matrix {
 	return A;
 }
 
-func MakeMatrix(data [][]float64) Matrix {
+func MakeMatrix(data [][]float64) *denseMatrix {
 	rows := len(data);
 	cols := len(data[0]);
 	elements := make([]float64, rows*cols);

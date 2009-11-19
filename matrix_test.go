@@ -29,19 +29,22 @@ func TestApproximates(t *testing.T) {
 	A := Numbers(3, 3, 6);
 	B := Numbers(3, 3, .1);
 	C := Numbers(3, 3, .6);
-	D := A.ElementMult(B);
-	if !D.Approximates(C, .000001) {
+	D, err := A.ElementMult(B);
+	if err != nil && !D.Approximates(C, .000001) {
 		t.Fail()
 	}
-}	
+}
 
 func TestAdd(t *testing.T) {
 	A := Normals(3, 3);
 	B := Normals(3, 3);
-	C := Sum(A, B);
+	C, err := Sum(A, B);
+	if err != nil {
+		t.Fail()
+	}
 	for i := 0; i < C.Rows(); i++ {
 		for j := 0; j < C.Cols(); j++ {
-			if A.Get(i, j)+B.Get(i, j)!=C.Get(i, j) {
+			if A.Get(i, j)+B.Get(i, j) != C.Get(i, j) {
 				t.Fail()
 			}
 		}
@@ -51,10 +54,13 @@ func TestAdd(t *testing.T) {
 func TestSubtract(t *testing.T) {
 	A := Normals(3, 3);
 	B := Normals(3, 3);
-	C := Difference(A, B);
+	C, err := Difference(A, B);
+	if err != nil {
+		t.Fail()
+	}
 	for i := 0; i < C.Rows(); i++ {
 		for j := 0; j < C.Cols(); j++ {
-			if A.Get(i, j)-B.Get(i, j)!=C.Get(i, j) {
+			if A.Get(i, j)-B.Get(i, j) != C.Get(i, j) {
 				t.Fail()
 			}
 		}
@@ -75,7 +81,11 @@ func TestProduct(t *testing.T) {
 	},
 		4, 4);
 
-	C := Product(A, B);
+	C, err := Product(A, B);
+
+	if err != nil {
+		t.Fail()
+	}
 
 	Ctrue := MakeMatrixFlat([]float64{48, 14, -56, -46,
 		66, -21, -10, -108,
@@ -97,21 +107,27 @@ func TestParallelProduct(t *testing.T) {
 	threads := 2;
 
 	rand.Seed(time.Nanoseconds());
-	A := normals(h, w);
-	B := normals(w, h);
+	A := Normals(h, w);
+	B := Normals(w, h);
 
-	var C Matrix;
+	var C *denseMatrix;
 	var start, end int64;
 
 	start = time.Nanoseconds();
-	Ctrue := Product(A, B);
+	Ctrue, err := Product(A, B);
+	if err != nil {
+		t.Fail()
+	}
 	end = time.Nanoseconds();
 	if verbose {
 		fmt.Printf("%fs for synchronous\n", float(end-start)/1000000000)
 	}
-	
+
 	start = time.Nanoseconds();
-	C = ParallelProduct(A, B, threads);
+	C, err = ParallelProduct(A, B, threads);
+	if err != nil {
+		t.Fail()
+	}
 	end = time.Nanoseconds();
 	if verbose {
 		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000)
@@ -136,7 +152,11 @@ func TestElementMult(t *testing.T) {
 		1000, 1000, 1000, 1000,
 	},
 		4, 4);
-	C := A.ElementMult(T);
+	C, err := A.ElementMult(T);
+
+	if err != nil {
+		t.Fail()
+	}
 
 	Ctrue := MakeMatrixFlat([]float64{0.6, -0.2, -0.4, 0.4,
 		30, -30, -60, 10,
@@ -155,10 +175,10 @@ func TestScale(t *testing.T) {
 	f := float64(5.3);
 	B := A.Copy();
 	B.Scale(f);
-	
+
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
-			if A.Get(i, j)*f!=B.Get(i, j) {
+			if A.Get(i, j)*f != B.Get(i, j) {
 				t.Fail()
 			}
 		}
@@ -191,17 +211,11 @@ func TestSymmetric(t *testing.T) {
 	}
 }
 
-func TestSwapRows(t *testing.T) {
+func TestSwapRows(t *testing.T)	{}
 
-}
+func TestScaleRow(t *testing.T)	{}
 
-func TestScaleRow(t *testing.T) {
-
-}
-
-func TestScaleAddRow(t *testing.T) {
-
-}
+func TestScaleAddRow(t *testing.T)	{}
 
 func TestInverse(t *testing.T) {
 	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
@@ -210,39 +224,37 @@ func TestInverse(t *testing.T) {
 		-6, 0, -10, 7,
 	},
 		4, 4);
-	Ainv := A.Inverse();
+	Ainv, err := A.Inverse();
 
-	if !Eye(A.Rows()).Approximates(A.Times(Ainv), ε) {
+	if err != nil {
+		t.Fail()
+	}
+
+	AAinv, err := Product(A, Ainv);
+
+	if err != nil {
+		t.Fail()
+	}
+
+	if !Eye(A.Rows()).Approximates(AAinv, ε) {
 		if verbose {
-			fmt.Printf("A\n%v\n\nAinv\n%v\n\nA*Ainv\n%v\n", A, Ainv, A.Times(Ainv))
+			fmt.Printf("A\n%v\n\nAinv\n%v\n\nA*Ainv\n%v\n", A, Ainv, AAinv)
 		}
 		t.Fail();
 	}
 }
 
-func TestDet(t *testing.T) {
+func TestDet(t *testing.T)	{}
 
-}
+func TestTrace(t *testing.T)	{}
 
-func TestTrace(t *testing.T) {
+func TestOneNorm(t *testing.T)	{}
 
-}
+func TestTwoNorm(t *testing.T)	{}
 
-func TestOneNorm(t *testing.T) {
+func TestInfinityNorm(t *testing.T)	{}
 
-}
-
-func TestTwoNorm(t *testing.T) {
-
-}
-
-func TestInfinityNorm(t *testing.T) {
-
-}
-
-func TestTranspose(t *testing.T) {
-
-}
+func TestTranspose(t *testing.T)	{}
 
 func TestSolve(t *testing.T) {
 	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
@@ -252,7 +264,11 @@ func TestSolve(t *testing.T) {
 	},
 		4, 4);
 	b := MakeMatrixFlat([]float64{1, 1, 1, 1}, 4, 1);
-	x := A.Solve(b);
+	x, err := A.Solve(b);
+
+	if err != nil {
+		t.Fail()
+	}
 
 	xtrue := MakeMatrixFlat([]float64{-0.906250, -3.393750, 1.275000, 1.187500}, 4, 1);
 
@@ -263,87 +279,47 @@ func TestSolve(t *testing.T) {
 
 /* TEST: data.go */
 
-func TestElements(t *testing.T) {
+func TestElements(t *testing.T)	{}
 
-}
+func TestArrays(t *testing.T)	{}
 
-func TestArrays(t *testing.T) {
+func TestRows(t *testing.T)	{}
 
-}
+func TestCols(t *testing.T)	{}
 
-func TestRows(t *testing.T) {
+func TestGet(t *testing.T)	{}
 
-}
+func TestSet(t *testing.T)	{}
 
-func TestCols(t *testing.T) {
+func TestRowCopy(t *testing.T)	{}
 
-}
+func TestColCopy(t *testing.T)	{}
 
-func TestGet(t *testing.T) {
+func TestDiagonalCopy(t *testing.T)	{}
 
-}
+func TestBufferRow(t *testing.T)	{}
 
-func TestSet(t *testing.T) {
+func TestBufferCol(t *testing.T)	{}
 
-}
+func TestBufferDiagonal(t *testing.T)	{}
 
-func TestRowCopy(t *testing.T) {
+func TestFillRow(t *testing.T)	{}
 
-}
+func TestFillCol(t *testing.T)	{}
 
-func TestColCopy(t *testing.T) {
+func TestFillDiagonal(t *testing.T)	{}
 
-}
+func TestCopy(t *testing.T)	{}
 
-func TestDiagonalCopy(t *testing.T) {
+func TestMakeMatrixFlat(t *testing.T)	{}
 
-}
+func TestMakeMatrixReference(t *testing.T)	{}
 
-func TestBufferRow(t *testing.T) {
-
-}
-
-func TestBufferCol(t *testing.T) {
-
-}
-
-func TestBufferDiagonal(t *testing.T) {
-
-}
-
-func TestFillRow(t *testing.T) {
-
-}
-
-func TestFillCol(t *testing.T) {
-
-}
-
-func TestFillDiagonal(t *testing.T) {
-
-}
-
-func TestCopy(t *testing.T) {
-
-}
-
-func TestMakeMatrixFlat(t *testing.T) {
-
-}
-
-func TestMakeMatrixReference(t *testing.T) {
-
-}
-
-func TestMakeMatrix(t *testing.T) {
-
-}
+func TestMakeMatrix(t *testing.T)	{}
 
 /* TEST: decomp.go */
 
-func TestCholesky(t *testing.T) {
-
-}
+func TestCholesky(t *testing.T)	{}
 
 func TestLU(t *testing.T) {
 
@@ -355,13 +331,17 @@ func TestLU(t *testing.T) {
 		4, 4);
 	L, U, P := A.LU();
 
-	PLU := P.Times(L.Times(U));
+	LU, err := Product(L, U);
+	PLU, err := Product(P, LU);
+
+	if err != nil {
+		t.Fail()
+	}
 
 	if !A.Equals(PLU) {
 		t.Fail()
 	}
 
-	
 	A = MakeMatrixFlat([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
@@ -378,7 +358,12 @@ func TestLU(t *testing.T) {
 		L.Set(i, i, 1)
 	}
 
-	if !P.Times(L).Times(U).Equals(Ptrue.Times(Ltrue).Times(Utrue)) {
+	PL, _ := Product(P, L);
+	PLU2, _ := Product(PL, U);
+	PLtrue, _ := Product(Ptrue, Ltrue);
+	PLUtrue, _ := Product(PLtrue, Utrue);
+
+	if !PLU2.Equals(PLUtrue) {
 		t.Fail()
 	}
 
@@ -407,7 +392,7 @@ func TestQR(t *testing.T) {
 	},
 		4, 4);
 
-	QR := Q.Times(R);
+	QR, _ := Product(Q, R);
 
 	if !Q.Approximates(Qtrue, ε) ||
 		!R.Approximates(Rtrue, ε) ||
@@ -426,7 +411,8 @@ func TestEigen(t *testing.T) {
 		2, 2);
 	V, D := A.Eigen();
 
-	Aguess := V.Times(D).Times(V.Inverse());
+	Vinv, _ := V.Inverse();
+	Aguess := V.Times(D).Times(Vinv);
 
 	if !A.Approximates(Aguess, ε) {
 		t.Fail()
@@ -442,7 +428,9 @@ func TestEigen(t *testing.T) {
 
 	V, D = B.Eigen();
 
-	if !B.Approximates(V.Times(D).Times(V.Inverse()), ε) {
+	Vinv, _ = V.Inverse();
+
+	if !B.Approximates(V.Times(D).Times(Vinv), ε) {
 		if verbose {
 			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
 		}
@@ -451,8 +439,9 @@ func TestEigen(t *testing.T) {
 
 	B = B.Times(B.Transpose());
 	V, D = B.Eigen();
+	Vinv, _ = V.Inverse();
 
-	if !B.Approximates(V.Times(D).Times(V.Inverse()), ε) {
+	if !B.Approximates(V.Times(D).Times(Vinv), ε) {
 		if verbose {
 			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
 		}
@@ -475,38 +464,35 @@ func TestGetRowVector(t *testing.T) {
 }
 
 func TestL(t *testing.T) {
-	A := normals(4, 4);
+	A := Normals(4, 4);
 	L := A.L();
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if j > i && L.Get(i, j) != 0 {
 				t.Fail()
-			}
-			else if j <= i && L.Get(i, j) != A.Get(i, j) {
+			} else if j <= i && L.Get(i, j) != A.Get(i, j) {
 				t.Fail()
 			}
 		}
 	}
-	A = normals(4, 2);
+	A = Normals(4, 2);
 	L = A.L();
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if j > i && L.Get(i, j) != 0 {
 				t.Fail()
-			}
-			else if j <= i && L.Get(i, j) != A.Get(i, j) {
+			} else if j <= i && L.Get(i, j) != A.Get(i, j) {
 				t.Fail()
 			}
 		}
 	}
-	A = normals(2, 4);
+	A = Normals(2, 4);
 	L = A.L();
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if j > i && L.Get(i, j) != 0 {
 				t.Fail()
-			}
-			else if j <= i && L.Get(i, j) != A.Get(i, j) {
+			} else if j <= i && L.Get(i, j) != A.Get(i, j) {
 				t.Fail()
 			}
 		}
@@ -514,38 +500,35 @@ func TestL(t *testing.T) {
 }
 
 func TestU(t *testing.T) {
-	A := normals(4, 4);
+	A := Normals(4, 4);
 	U := A.U();
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if j < i && U.Get(i, j) != 0 {
 				t.Fail()
-			}
-			else if j >= i && U.Get(i, j) != A.Get(i, j) {
+			} else if j >= i && U.Get(i, j) != A.Get(i, j) {
 				t.Fail()
 			}
 		}
 	}
-	A = normals(2, 4);
+	A = Normals(2, 4);
 	U = A.U();
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if j < i && U.Get(i, j) != 0 {
 				t.Fail()
-			}
-			else if j >= i && U.Get(i, j) != A.Get(i, j) {
+			} else if j >= i && U.Get(i, j) != A.Get(i, j) {
 				t.Fail()
 			}
 		}
 	}
-	A = normals(4, 2);
+	A = Normals(4, 2);
 	U = A.U();
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if j < i && U.Get(i, j) != 0 {
 				t.Fail()
-			}
-			else if j >= i && U.Get(i, j) != A.Get(i, j) {
+			} else if j >= i && U.Get(i, j) != A.Get(i, j) {
 				t.Fail()
 			}
 		}
@@ -554,45 +537,45 @@ func TestU(t *testing.T) {
 
 func TestAugment(t *testing.T) {
 	var A, B, C Matrix;
-	A = normals(4, 4);
-	B = normals(4, 4);
-	C = Augment(A, B);
+	A = Normals(4, 4);
+	B = Normals(4, 4);
+	C, _ = Augment(A, B);
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
 	for i := 0; i < B.Rows(); i++ {
 		for j := 0; j < B.Cols(); j++ {
 			if C.Get(i, j+A.Cols()) != B.Get(i, j) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
-	
-	A = normals(2, 2);
-	B = normals(4, 4);
-	C = Augment(A, B);
-	if C.ErrorCode() != ErrorBadInput {
+
+	A = Normals(2, 2);
+	B = Normals(4, 4);
+	C, err := Augment(A, B);
+	if err != nil {
 		t.Fail()
 	}
-	
-	A = normals(4, 4);
-	B = normals(4, 2);
-	C = Augment(A, B);
+
+	A = Normals(4, 4);
+	B = Normals(4, 2);
+	C, _ = Augment(A, B);
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
 	for i := 0; i < B.Rows(); i++ {
 		for j := 0; j < B.Cols(); j++ {
 			if C.Get(i, j+A.Cols()) != B.Get(i, j) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
@@ -601,65 +584,62 @@ func TestAugment(t *testing.T) {
 func TestStack(t *testing.T) {
 
 	var A, B, C Matrix;
-	A = normals(4, 4);
-	B = normals(4, 4);
-	C = Stack(A, B);
+	A = Normals(4, 4);
+	B = Normals(4, 4);
+	C, _ = Stack(A, B);
 
-	
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
 	for i := 0; i < B.Rows(); i++ {
 		for j := 0; j < B.Cols(); j++ {
 			if C.Get(i+A.Rows(), j) != B.Get(i, j) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
-	
-	
-	A = normals(4, 4);
-	B = normals(4, 2);
-	C = Stack(A, B);
-	if C.ErrorCode() != ErrorBadInput {
+
+	A = Normals(4, 4);
+	B = Normals(4, 2);
+	C, err := Stack(A, B);
+	if err != nil {
 		t.Fail()
 	}
-	
-	A = normals(2, 4);
-	B = normals(4, 4);
-	C = Stack(A, B);
-	
+
+	A = Normals(2, 4);
+	B = Normals(4, 4);
+	C, err = Stack(A, B);
+
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
 	for i := 0; i < B.Rows(); i++ {
 		for j := 0; j < B.Cols(); j++ {
 			if C.Get(i+A.Rows(), j) != B.Get(i, j) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
 }
 
 func TestZeros(t *testing.T) {
-	A := zeros(4, 5);
+	A := Zeros(4, 5);
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if A.Get(i, j) != 0 {
 				t.Fail()
 			}
-		}	
+		}
 	}
 }
-
 
 
 func TestNumbers(t *testing.T) {
@@ -685,19 +665,19 @@ func TestOnes(t *testing.T) {
 			if A.Get(i, j) != 1 {
 				t.Fail()
 			}
-		}	
+		}
 	}
 }
 
 func TestEye(t *testing.T) {
 
-	A := eye(4);
+	A := Eye(4);
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if (i != j && A.Get(i, j) != 0) || (i == j && A.Get(i, j) != 1) {
 				t.Fail()
 			}
-		}	
+		}
 	}
 }
 
@@ -711,31 +691,18 @@ func TestNormals(t *testing.T) {
 
 /* TEST: util.go */
 
-func Test_min(t *testing.T) {
+func Test_min(t *testing.T)	{}
 
-}
+func Test_max(t *testing.T)	{}
 
-func Test_max(t *testing.T) {
+func Test_sum(t *testing.T)	{}
 
-}
-
-func Test_sum(t *testing.T) {
-
-}
-
-func Test_product(t *testing.T) {
-
-}
+func Test_product(t *testing.T)	{}
 
 
-func TestDiagonal(t *testing.T) {
+func TestDiagonal(t *testing.T)	{}
 
-}
+func TestPivotMatrix(t *testing.T)	{}
 
-func TestPivotMatrix(t *testing.T) {
+func TestString(t *testing.T)	{}
 
-}
-
-func TestString(t *testing.T) {
-
-}
