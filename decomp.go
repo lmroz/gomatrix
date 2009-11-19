@@ -6,10 +6,10 @@ import (
 	"math";
 )
 
-func (A *matrix) Cholesky() Matrix {
-	n := A.rows;
-	L := zeros(n, n);
-	isspd := A.cols == n;
+func (A *denseMatrix) Cholesky() (*denseMatrix, Error) {
+	n := A.Rows();
+	L := Zeros(n, n);
+	isspd := A.Cols() == n;
 
 	for j := 0; j < n; j++ {
 		Lrowj := L.RowCopy(j);
@@ -35,18 +35,18 @@ func (A *matrix) Cholesky() Matrix {
 	}
 
 	if isspd {
-		return Error(ErrorBadInput, "A.Cholesky(): A is not semi-positive definite")
+		return nil, NewError(ErrorBadInput, "A.Cholesky(): A is not semi-positive definite")
 	}
 
-	return L;
+	return L, nil;
 }
 
 
 //returns L,U,P such that PLU=A. I realize that it's supposed to be LUP.
-func (A *matrix) LU() (Matrix, Matrix, Matrix) {
-	m := A.rows;
-	n := A.cols;
-	LU := A.Copy();
+func (A *denseMatrix) LU() (*denseMatrix, *denseMatrix, *pivotMatrix) {
+	m := A.Rows();
+	n := A.Cols();
+	LU := A.copy();
 
 	P := LU.LUInPlace();
 
@@ -59,10 +59,9 @@ func (A *matrix) LU() (Matrix, Matrix, Matrix) {
 	return L, U, P;
 }
 
-
-func (LU *matrix) LUInPlace() Matrix {
-	m := LU.rows;
-	n := LU.cols;
+func (LU *denseMatrix) LUInPlace() *pivotMatrix {
+	m := LU.Rows();
+	n := LU.Cols();
 	LUcolj := make([]float64, m);
 	LUrowi := make([]float64, n);
 	piv := make([]int, m);
@@ -95,7 +94,7 @@ func (LU *matrix) LUInPlace() Matrix {
 			}
 		}
 		if p != j {
-			LU.swapRows(p, j);
+			LU.SwapRows(p, j);
 			k := piv[p];
 			piv[p] = piv[j];
 			piv[j] = k;
@@ -115,12 +114,12 @@ func (LU *matrix) LUInPlace() Matrix {
 }
 
 
-func (A *matrix) QR() (Matrix, Matrix) {
-	m := A.rows;
-	n := A.cols;
-	QR := A.copy();
-	Q := zeros(m, n);
-	R := zeros(m, n);
+func (A *denseMatrix) QR() (*denseMatrix, *denseMatrix) {
+	m := A.Rows();
+	n := A.Cols();
+	QR := A.Copy();
+	Q := Zeros(m, n);
+	R := Zeros(m, n);
 	i, j, k := 0, 0, 0;
 	norm := float64(0.0);
 	s := float64(0.0);
@@ -183,3 +182,4 @@ func (A *matrix) QR() (Matrix, Matrix) {
 
 	return Q, R;
 }
+

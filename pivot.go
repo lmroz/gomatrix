@@ -1,22 +1,24 @@
 package matrix
 
 type pivotMatrix struct {
-	*matrix;
+	*denseMatrix;
 	//pivots		[]int;
 	pivotSign	float64;
 }
 
 //for pivots we can speed this up a bit
 func (A *pivotMatrix) Inverse() Matrix {
-	return A.Transpose();
+//	return A.Transpose();
+	//TODO
+	return nil;
 }
 
 func (A *pivotMatrix) Det() float64	{ return A.pivotSign }
 
-func PivotMatrix(pivots []int, pivotSign float64) Matrix {
+func PivotMatrix(pivots []int, pivotSign float64) *pivotMatrix {
 	n := len(pivots);
 	P := new(pivotMatrix);
-	P.matrix = new(matrix);
+	P.denseMatrix = new(denseMatrix);
 	P.elements = make([]float64, n*n);
 	P.rows = n;
 	P.cols = n;
