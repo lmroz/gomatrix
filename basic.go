@@ -1,7 +1,6 @@
 //Copyright 2009 John Asmuth
 package matrix
 
-//import "fmt"
 import "math"
 
 func (A *matrix) Symmetric() bool {
@@ -40,7 +39,7 @@ func (m *matrix) scaleAddRow(rd int, rs int, f float64) {
 
 func (A *matrix) Inverse() Matrix {
 	if A.Rows() != A.Cols() {
-		return nil
+		return Error(ErrorBadInput, "A.Inverse(): A is not square")
 	}
 	aug := Augment(A, Eye(A.Rows()));
 	for i := 0; i < aug.Rows(); i++ {
@@ -53,9 +52,8 @@ func (A *matrix) Inverse() Matrix {
 		if j != i {
 			aug.swapRows(i, j)
 		}
-		if aug.Get(i, i) == 0 {
-			//no inverse
-			return nil
+		if aug.Get(i, i) == 0 {	
+			return Error(ErrorBadInput, "A.Inverse(): A has no inverse")
 		}
 		aug.scaleRow(i, 1.0/aug.Get(i, i));
 		for k := 0; k < aug.Rows(); k++ {
@@ -65,7 +63,8 @@ func (A *matrix) Inverse() Matrix {
 			aug.scaleAddRow(k, i, -aug.Get(k, i));
 		}
 	}
-	return aug.GetMatrix(0, A.Cols(), A.Rows(), A.Cols());
+	inv := aug.GetMatrix(0, A.Cols(), A.Rows(), A.Cols());
+	return inv;
 }
 
 func (A *matrix) Det() float64 {
@@ -152,7 +151,8 @@ func solveUpper(A Matrix, b Matrix) Matrix {
 func (A *matrix) Solve(b Matrix) Matrix {
 	Acopy := A.Copy();
 	P := Acopy.LUInPlace();
-	pb := P.Inverse().Times(b);
+	Pinv := P.Inverse();
+	pb := Pinv.Times(b);
 	y := solveLower(Acopy, pb);
 	x := solveUpper(Acopy, y);
 	return x;

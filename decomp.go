@@ -33,6 +33,10 @@ func (A *matrix) Cholesky() Matrix {
 			L.Set(j, k, 0)
 		}
 	}
+	
+	if isspd {
+		return Error(ErrorBadInput, "A.Cholesky(): A is not semi-positive definite")
+	}
 
 	return L;
 }

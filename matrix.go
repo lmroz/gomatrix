@@ -262,6 +262,7 @@ func PivotMatrix(pivots []int, pivotSign float64) Matrix {
 	P.elements = make([]float64, n*n);
 	P.rows = n;
 	P.cols = n;
+	P.step = n;
 	for i:=0; i<n; i++ {
 		P.Set(pivots[i], i, 1)
 	}
