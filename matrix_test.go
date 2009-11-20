@@ -569,7 +569,7 @@ func TestAugment(t *testing.T) {
 	A = Normals(2, 2);
 	B = Normals(4, 4);
 	C, err := Augment(A, B);
-	if err != nil {
+	if err == nil {
 		t.Fail()
 	}
 
@@ -617,7 +617,7 @@ func TestStack(t *testing.T) {
 	A = Normals(4, 4);
 	B = Normals(4, 2);
 	C, err := Stack(A, B);
-	if err != nil {
+	if err == nil {
 		t.Fail()
 	}
 
