@@ -8,9 +8,7 @@ type pivotMatrix struct {
 
 //for pivots we can speed this up a bit
 func (A *pivotMatrix) Inverse() Matrix {
-//	return A.Transpose();
-	//TODO
-	return nil;
+	return A.Transpose();
 }
 
 func (A *pivotMatrix) Det() float64	{ return A.pivotSign }
