@@ -319,7 +319,18 @@ func TestMakeMatrix(t *testing.T)	{}
 
 /* TEST: decomp.go */
 
-func TestCholesky(t *testing.T)	{}
+func TestCholesky(t *testing.T)	{
+	A := MakeMatrixFlat([]float64{1, 0.2, 0,
+		0.2, 1, 0.5,
+		0, 0.5, 1}, 3, 3);
+	B, err := A.Cholesky();
+	if err != nil {
+		t.Fail()
+	}
+	if !A.Approximates(B.Times(B.Transpose()), ε) {
+		t.Fail()
+	}
+}
 
 func TestLU(t *testing.T) {
 
