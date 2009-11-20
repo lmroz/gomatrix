@@ -3,7 +3,7 @@ package matrix
 
 import "math"
 
-func (A *denseMatrix) Symmetric() bool {
+func (A *DenseMatrix) Symmetric() bool {
 	if A.rows != A.cols {
 		return false
 	}
@@ -17,7 +17,7 @@ func (A *denseMatrix) Symmetric() bool {
 	return true;
 }
 
-func (m *denseMatrix) SwapRows(r1 int, r2 int) {
+func (m *DenseMatrix) SwapRows(r1 int, r2 int) {
 	for j := 0; j < m.cols; j++ {
 		tmp := m.Get(r1, j);
 		m.Set(r1, j, m.Get(r2, j));
@@ -25,23 +25,23 @@ func (m *denseMatrix) SwapRows(r1 int, r2 int) {
 	}
 }
 
-func (m *denseMatrix) ScaleRow(r int, f float64) {
+func (m *DenseMatrix) ScaleRow(r int, f float64) {
 	for j := 0; j < m.cols; j++ {
 		m.Set(r, j, m.Get(r, j)*f)
 	}
 }
 
-func (m *denseMatrix) ScaleAddRow(rd int, rs int, f float64) {
+func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 	for j := 0; j < m.cols; j++ {
 		m.Set(rd, j, m.Get(rd, j)+m.Get(rs, j)*f)
 	}
 }
 
-func (A *denseMatrix) Inverse() (*denseMatrix, Error) {
+func (A *DenseMatrix) Inverse() (*DenseMatrix, Error) {
 	if A.Rows() != A.Cols() {
 		return nil, NewError(ErrorBadInput, "A.Inverse(): A is not square")
 	}
-	aug, err := Augment(A, Eye(A.Rows()));
+	aug, err := A.Augment(Eye(A.Rows()));
 	if err != nil {
 		return nil, err
 	}
@@ -70,14 +70,15 @@ func (A *denseMatrix) Inverse() (*denseMatrix, Error) {
 	return inv, nil;
 }
 
-func (A *denseMatrix) Det() float64 {
-	_, U, P := A.LU();
-	return product(U.DiagonalCopy()) * P.Det();
+func (A *DenseMatrix) Det() float64 {
+	B := A.Copy();
+	P := B.LUInPlace();
+	return product(B.DiagonalCopy()) * P.Det();
 }
 
-func (A *denseMatrix) Trace() float64	{ return sum(A.DiagonalCopy()) }
+func (A *DenseMatrix) Trace() float64	{ return sum(A.DiagonalCopy()) }
 
-func (A *denseMatrix) OneNorm() (ε float64) {
+func (A *DenseMatrix) OneNorm() (ε float64) {
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
 			ε = max(ε, A.Get(i, j))
@@ -86,12 +87,12 @@ func (A *denseMatrix) OneNorm() (ε float64) {
 	return;
 }
 
-func (A *denseMatrix) TwoNorm() float64 {
+func (A *DenseMatrix) TwoNorm() float64 {
 	//requires computing of eigenvalues
 	return 0
 }
 
-func (A *denseMatrix) InfinityNorm() (ε float64) {
+func (A *DenseMatrix) InfinityNorm() (ε float64) {
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
 			ε += A.Get(i, j)
@@ -100,7 +101,7 @@ func (A *denseMatrix) InfinityNorm() (ε float64) {
 	return;
 }
 
-func (A *denseMatrix) Transpose() *denseMatrix {
+func (A *DenseMatrix) Transpose() *DenseMatrix {
 	B := Zeros(A.Cols(), A.Rows());
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
@@ -110,7 +111,7 @@ func (A *denseMatrix) Transpose() *denseMatrix {
 	return B;
 }
 
-func (A *denseMatrix) TransposeInPlace() {
+func (A *DenseMatrix) TransposeInPlace() {
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
 			tmp := A.Get(i, j);
@@ -120,7 +121,7 @@ func (A *denseMatrix) TransposeInPlace() {
 	}
 }
 
-func solveLower(A Matrix, b Matrix) *denseMatrix {
+func solveLower(A *DenseMatrix, b Matrix) *DenseMatrix {
 	x := make([]float64, A.Cols());
 	for i := 0; i < A.Rows(); i++ {
 		x[i] = b.Get(i, 0);
@@ -130,10 +131,10 @@ func solveLower(A Matrix, b Matrix) *denseMatrix {
 		//the diagonal defined to be ones
 		//x[i] /= A.Get(i, i);
 	}
-	return MakeMatrixFlat(x, A.Cols(), 1);
+	return MakeDenseMatrix(x, A.Cols(), 1);
 }
 
-func solveUpper(A Matrix, b Matrix) *denseMatrix {
+func solveUpper(A *DenseMatrix, b Matrix) *DenseMatrix {
 	x := make([]float64, A.Cols());
 	for i := A.Rows() - 1; i >= 0; i-- {
 		x[i] = b.Get(i, 0);
@@ -142,11 +143,11 @@ func solveUpper(A Matrix, b Matrix) *denseMatrix {
 		}
 		x[i] /= A.Get(i, i);
 	}
-	return MakeMatrixFlat(x, A.Cols(), 1);
+	return MakeDenseMatrix(x, A.Cols(), 1);
 }
 
-func (A *denseMatrix) Solve(b Matrix) (*denseMatrix, Error) {
-	Acopy := A.copy();
+func (A *DenseMatrix) Solve(b Matrix) (*DenseMatrix, Error) {
+	Acopy := A.Copy();
 	P := Acopy.LUInPlace();
 	Pinv := P.Inverse();
 	pb, err := Product(Pinv, b);

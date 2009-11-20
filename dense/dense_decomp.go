@@ -6,7 +6,7 @@ import (
 	"math";
 )
 
-func (A *denseMatrix) Cholesky() (*denseMatrix, Error) {
+func (A *DenseMatrix) Cholesky() (*DenseMatrix, Error) {
 	n := A.Rows();
 	L := Zeros(n, n);
 	isspd := A.Cols() == n;
@@ -42,26 +42,25 @@ func (A *denseMatrix) Cholesky() (*denseMatrix, Error) {
 }
 
 
-//returns L,U,P such that PLU=A. I realize that it's supposed to be LUP.
-func (A *denseMatrix) LU() (*denseMatrix, *denseMatrix, *pivotMatrix) {
+func (A *DenseMatrix) LU() (*DenseMatrix, *DenseMatrix, *PivotMatrix) {
 	m := A.Rows();
 	n := A.Cols();
-	LU := A.copy();
+	C := A.Copy();
 
-	P := LU.LUInPlace();
+	P := C.LUInPlace();
 
-	L := LU.L();
+	L := C.L();
 	for i := 0; i < m && i < n; i++ {
 		L.Set(i, i, 1)
 	}
-	U := LU.U();
+	U := C.U();
 
 	return L, U, P;
 }
 
-func (LU *denseMatrix) LUInPlace() *pivotMatrix {
-	m := LU.Rows();
-	n := LU.Cols();
+func (A *DenseMatrix) LUInPlace() *PivotMatrix {
+	m := A.Rows();
+	n := A.Cols();
 	LUcolj := make([]float64, m);
 	LUrowi := make([]float64, n);
 	piv := make([]int, m);
@@ -71,9 +70,9 @@ func (LU *denseMatrix) LUInPlace() *pivotMatrix {
 	pivsign := float64(1.0);
 
 	for j := 0; j < n; j++ {
-		LU.BufferCol(j, LUcolj);
+		A.BufferCol(j, LUcolj);
 		for i := 0; i < m; i++ {
-			LU.BufferRow(i, LUrowi);
+			A.BufferRow(i, LUrowi);
 			kmax := i;
 			if j < i {
 				kmax = j
@@ -84,7 +83,7 @@ func (LU *denseMatrix) LUInPlace() *pivotMatrix {
 			}
 			LUcolj[i] -= s;
 			LUrowi[j] = LUcolj[i];
-			LU.Set(i, j, LUrowi[j]);
+			A.Set(i, j, LUrowi[j]);
 		}
 
 		p := j;
@@ -94,27 +93,27 @@ func (LU *denseMatrix) LUInPlace() *pivotMatrix {
 			}
 		}
 		if p != j {
-			LU.SwapRows(p, j);
+			A.SwapRows(p, j);
 			k := piv[p];
 			piv[p] = piv[j];
 			piv[j] = k;
 			pivsign = -pivsign;
 		}
 
-		if j < m && LU.Get(j, j) != 0 {
+		if j < m && A.Get(j, j) != 0 {
 			for i := j + 1; i < m; i++ {
-				LU.Set(i, j, LU.Get(i, j)/LU.Get(j, j))
+				A.Set(i, j, A.Get(i, j)/A.Get(j, j))
 			}
 		}
 	}
 
-	P := PivotMatrix(piv, pivsign);
+	P := MakePivotMatrix(piv, pivsign);
 
 	return P;
 }
 
 
-func (A *denseMatrix) QR() (*denseMatrix, *denseMatrix) {
+func (A *DenseMatrix) QR() (*DenseMatrix, *DenseMatrix) {
 	m := A.Rows();
 	n := A.Cols();
 	QR := A.Copy();

@@ -15,29 +15,8 @@ type error struct {
 
 type Error interface {
 	String() string;
+	ErrorCode() int;
 }
-
-/*
-type errorMatrix struct {
-	*matrix;
-	errorCode	int;
-	errorString	string;
-}
-
-func (A *errorMatrix) ErrorCode() int {
-	if A == nil {
-		return ErrorNilMatrix
-	}
-	return A.errorCode;
-}
-
-func (A *errorMatrix) ErrorString() string {
-	if A == nil {
-		return "Matrix is nil"
-	}
-	return A.errorString;
-}
-*/
 
 func NewError(errorCode int, errorString string) Error {
 	E := new(error);
@@ -46,5 +25,16 @@ func NewError(errorCode int, errorString string) Error {
 	return E;
 }
 
-func (e *error) String() string	{ return e.errorString }
+func (e *error) String() string	{
+	if e == nil {
+		return "no error"
+	}
+	return e.errorString
+}
+func (e *error) ErrorCode() int	{
+	if e == nil {
+		return 0
+	}
+	return e.errorCode
+}
 

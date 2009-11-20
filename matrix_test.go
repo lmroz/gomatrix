@@ -68,13 +68,13 @@ func TestSubtract(t *testing.T) {
 }
 
 func TestProduct(t *testing.T) {
-	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
 	},
 		4, 4);
-	B := MakeMatrixFlat([]float64{1, 7, -4, 4,
+	B := MakeDenseMatrix([]float64{1, 7, -4, 4,
 		3, -2, -6, 1,
 		-12, 8, 1, 20,
 		0, 0, -10, 3,
@@ -87,7 +87,7 @@ func TestProduct(t *testing.T) {
 		t.Fail()
 	}
 
-	Ctrue := MakeMatrixFlat([]float64{48, 14, -56, -46,
+	Ctrue := MakeDenseMatrix([]float64{48, 14, -56, -46,
 		66, -21, -10, -108,
 		-240, 68, 101, 356,
 		114, -122, -56, -203,
@@ -110,7 +110,7 @@ func TestParallelProduct(t *testing.T) {
 	A := Normals(h, w);
 	B := Normals(w, h);
 
-	var C *denseMatrix;
+	var C *DenseMatrix;
 	var start, end int64;
 
 	start = time.Nanoseconds();
@@ -140,13 +140,13 @@ func TestParallelProduct(t *testing.T) {
 
 func TestElementMult(t *testing.T) {
 
-	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
 	},
 		4, 4);
-	T := MakeMatrixFlat([]float64{0.1, 0.1, 0.1, 0.1,
+	T := MakeDenseMatrix([]float64{0.1, 0.1, 0.1, 0.1,
 		10, 10, 10, 10,
 		100, 100, 100, 100,
 		1000, 1000, 1000, 1000,
@@ -158,7 +158,7 @@ func TestElementMult(t *testing.T) {
 		t.Fail()
 	}
 
-	Ctrue := MakeMatrixFlat([]float64{0.6, -0.2, -0.4, 0.4,
+	Ctrue := MakeDenseMatrix([]float64{0.6, -0.2, -0.4, 0.4,
 		30, -30, -60, 10,
 		-1200, 800, 2100, -800,
 		-6000, 0, -10000, 7000,
@@ -185,11 +185,15 @@ func TestScale(t *testing.T) {
 	}
 }
 
+func TestScaleMatrix(t *testing.T) {
+
+}
+
 /* TEST: basic.go */
 
 
 func TestSymmetric(t *testing.T) {
-	A := MakeMatrixFlat([]float64{
+	A := MakeDenseMatrix([]float64{
 		6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
@@ -199,7 +203,7 @@ func TestSymmetric(t *testing.T) {
 	if A.Symmetric() {
 		t.Fail()
 	}
-	B := MakeMatrixFlat([]float64{
+	B := MakeDenseMatrix([]float64{
 		6, 3, -12, -6,
 		3, -3, 8, 0,
 		-12, 8, 21, -10,
@@ -218,7 +222,7 @@ func TestScaleRow(t *testing.T)	{}
 func TestScaleAddRow(t *testing.T)	{}
 
 func TestInverse(t *testing.T) {
-	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
@@ -257,20 +261,20 @@ func TestInfinityNorm(t *testing.T)	{}
 func TestTranspose(t *testing.T)	{}
 
 func TestSolve(t *testing.T) {
-	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
 	},
 		4, 4);
-	b := MakeMatrixFlat([]float64{1, 1, 1, 1}, 4, 1);
+	b := MakeDenseMatrix([]float64{1, 1, 1, 1}, 4, 1);
 	x, err := A.Solve(b);
 
 	if err != nil {
 		t.Fail()
 	}
 
-	xtrue := MakeMatrixFlat([]float64{-0.906250, -3.393750, 1.275000, 1.187500}, 4, 1);
+	xtrue := MakeDenseMatrix([]float64{-0.906250, -3.393750, 1.275000, 1.187500}, 4, 1);
 
 	if !x.Equals(xtrue) {
 		t.Fail()
@@ -311,7 +315,7 @@ func TestFillDiagonal(t *testing.T)	{}
 
 func TestCopy(t *testing.T)	{}
 
-func TestMakeMatrixFlat(t *testing.T)	{}
+func TestMakeDenseMatrix(t *testing.T)	{}
 
 func TestMakeMatrixReference(t *testing.T)	{}
 
@@ -320,7 +324,7 @@ func TestMakeMatrix(t *testing.T)	{}
 /* TEST: decomp.go */
 
 func TestCholesky(t *testing.T)	{
-	A := MakeMatrixFlat([]float64{1, 0.2, 0,
+	A := MakeDenseMatrix([]float64{1, 0.2, 0,
 		0.2, 1, 0.5,
 		0, 0.5, 1}, 3, 3);
 	B, err := A.Cholesky();
@@ -334,7 +338,7 @@ func TestCholesky(t *testing.T)	{
 
 func TestLU(t *testing.T) {
 
-	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
@@ -353,7 +357,7 @@ func TestLU(t *testing.T) {
 		t.Fail()
 	}
 
-	A = MakeMatrixFlat([]float64{6, -2, -4, 4,
+	A = MakeDenseMatrix([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
@@ -381,7 +385,7 @@ func TestLU(t *testing.T) {
 }
 
 func TestQR(t *testing.T) {
-	A := MakeMatrixFlat([]float64{6, -2, -4, 4,
+	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
 		-6, 0, -10, 7,
@@ -389,14 +393,14 @@ func TestQR(t *testing.T) {
 		4, 4);
 	Q, R := A.QR();
 
-	Qtrue := MakeMatrixFlat([]float64{-0.4, 0.278610, 0.543792, -0.683130,
+	Qtrue := MakeDenseMatrix([]float64{-0.4, 0.278610, 0.543792, -0.683130,
 		-0.2, -0.358213, -0.699161, -0.585540,
 		0.8, 0.437816, -0.126237, -0.390360,
 		0.4, -0.776129, 0.446686, -0.195180,
 	},
 		4, 4);
 
-	Rtrue := MakeMatrixFlat([]float64{-15, 7.8, 15.6, -5.4,
+	Rtrue := MakeDenseMatrix([]float64{-15, 7.8, 15.6, -5.4,
 		0, 4.019950, 17.990272, -8.179206,
 		0, 0, -5.098049, 5.612709,
 		0, 0, 0, -1.561440,
@@ -415,7 +419,7 @@ func TestQR(t *testing.T) {
 /* TEST: eigen.go */
 
 func TestEigen(t *testing.T) {
-	A := MakeMatrixFlat([]float64{
+	A := MakeDenseMatrix([]float64{
 		2, 1,
 		1, 2,
 	},
@@ -429,7 +433,7 @@ func TestEigen(t *testing.T) {
 		t.Fail()
 	}
 
-	B := MakeMatrixFlat([]float64{
+	B := MakeDenseMatrix([]float64{
 		6, -2, -4, 4,
 		3, -3, -6, 1,
 		-12, 8, 21, -8,
@@ -547,10 +551,10 @@ func TestU(t *testing.T) {
 }
 
 func TestAugment(t *testing.T) {
-	var A, B, C Matrix;
+	var A, B, C *DenseMatrix;
 	A = Normals(4, 4);
 	B = Normals(4, 4);
-	C, _ = Augment(A, B);
+	C, _ = A.Augment(B);
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
@@ -568,14 +572,14 @@ func TestAugment(t *testing.T) {
 
 	A = Normals(2, 2);
 	B = Normals(4, 4);
-	C, err := Augment(A, B);
+	C, err := A.Augment(B);
 	if err == nil {
 		t.Fail()
 	}
 
 	A = Normals(4, 4);
 	B = Normals(4, 2);
-	C, _ = Augment(A, B);
+	C, _ = A.Augment(B);
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
@@ -594,10 +598,10 @@ func TestAugment(t *testing.T) {
 
 func TestStack(t *testing.T) {
 
-	var A, B, C Matrix;
+	var A, B, C *DenseMatrix;
 	A = Normals(4, 4);
 	B = Normals(4, 4);
-	C, _ = Stack(A, B);
+	C, _ = A.Stack(B);
 
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
@@ -616,14 +620,14 @@ func TestStack(t *testing.T) {
 
 	A = Normals(4, 4);
 	B = Normals(4, 2);
-	C, err := Stack(A, B);
+	C, err := A.Stack(B);
 	if err == nil {
 		t.Fail()
 	}
 
 	A = Normals(2, 4);
 	B = Normals(4, 4);
-	C, err = Stack(A, B);
+	C, err = A.Stack(B);
 
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
@@ -658,7 +662,7 @@ func TestNumbers(t *testing.T) {
 	A := Numbers(3, 3, n);
 	//	fmt.Printf("%v\n\n\n",A.String());
 
-	Atrue := MakeMatrixFlat([]float64{n, n, n,
+	Atrue := MakeDenseMatrix([]float64{n, n, n,
 		n, n, n,
 		n, n, n,
 	},
