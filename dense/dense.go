@@ -212,7 +212,7 @@ func MakeDenseMatrixStacked(data [][]float64) *DenseMatrix {
 }
 
 func (A *DenseMatrix) SparseMatrix() *SparseMatrix {
-	B := MakeSparseMatrix(A.rows, A.cols);
+	B := ZerosSparse(A.rows, A.cols);
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			v := A.Get(i, j);

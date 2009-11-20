@@ -1,4 +1,4 @@
-//Copyright John Asmuth 2009
+
 package matrix
 
 
@@ -20,17 +20,17 @@ func (A *SparseMatrix) Get(i int, j int) float64 {
 	return x;
 }
 
-func MakeSparseMatrix(rows int, cols int) *SparseMatrix {
+// v == 0 results in removal of key from underlying map
+func (A *SparseMatrix) Set(i int, j int, v float64) {
+	A.elements[i*A.cols+j] = v, v == 0
+}
+
+func ZerosSparse(rows int, cols int) *SparseMatrix {
 	A := new(SparseMatrix);
 	A.rows = rows;
 	A.cols = cols;
 	A.offset = 0;//? not sure how offset fits in. for referencing, presumably, but wouldn't you need an offset for each dimension?
 	return A;
-}
-
-// v == 0 results in removal of key from underlying map
-func (A *SparseMatrix) Set(i int, j int, v float64) {
-	A.elements[i*A.cols+j] = v, v == 0
 }
 
 func (A *SparseMatrix) DenseMatrix() *DenseMatrix {
