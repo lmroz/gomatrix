@@ -4,9 +4,9 @@ import "math"
 
 //returns V,D st V*D*inv(V) = A and D is diagonal
 //code translated/ripped off from Jama
-func (A *denseMatrix) Eigen() (*denseMatrix, *denseMatrix) {
+func (A *DenseMatrix) Eigen() (*DenseMatrix, *DenseMatrix) {
 	n := A.cols;
-	V := A.copy().Arrays();
+	V := A.Copy().Arrays();
 	d := make([]float64, n);
 	e := make([]float64, n);
 	if A.Symmetric() {
@@ -15,10 +15,10 @@ func (A *denseMatrix) Eigen() (*denseMatrix, *denseMatrix) {
 
 		tql2(V[0:n], d[0:n], e[0:n]);
 
-		return MakeMatrix(V), makeD(d, e);
+		return MakeDenseMatrixStacked(V), makeD(d, e);
 	}
 	//else
-	H := A.GetMatrix(0, 0, n, n).copy().Arrays();
+	H := A.GetMatrix(0, 0, n, n).Copy().Arrays();
 	ort := make([]float64, n);
 
 	// Reduce to Hessenberg form.
@@ -27,10 +27,10 @@ func (A *denseMatrix) Eigen() (*denseMatrix, *denseMatrix) {
 	// Reduce Hessenberg to real Schur form.
 	hqr2(V[0:n], d[0:n], e[0:n], H[0:n], ort[0:n]);
 
-	return MakeMatrix(V), makeD(d, e);
+	return MakeDenseMatrixStacked(V), makeD(d, e);
 }
 
-func makeD(d []float64, e []float64) *denseMatrix {
+func makeD(d []float64, e []float64) *DenseMatrix {
 	n := len(d);
 	X := Zeros(n, n);
 	D := X.Arrays();
