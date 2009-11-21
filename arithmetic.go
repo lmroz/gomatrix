@@ -1,6 +1,9 @@
 package matrix
 
-import "math"
+import (
+	"math";
+	"reflect";
+	)
 
 func Sum(A Matrix, B Matrix) Matrix {
 	C := A.copyMatrix();
@@ -120,3 +123,25 @@ func ApproxEquals(A MatrixRO, B MatrixRO, ε float64) bool {
 	}
 	return true;
 }
+
+func MultipleProduct(values ...) (Matrix){
+	v := reflect.NewValue(values).(*reflect.StructValue);
+	if v.NumField() < 2 {
+		return nil;
+	}
+
+	inter := v.Field(0).Interface();
+	if C, ok := inter.(Matrix); ok {
+		for i:=1; i < v.NumField(); i++ {
+			inter := v.Field(i).Interface();
+			if A, ok := inter.(Matrix); ok {
+				C = Product(C,A);
+			}
+		}
+		return C;
+	}
+
+	return nil;
+}
+
+
