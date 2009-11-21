@@ -37,7 +37,7 @@ func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 	}
 }
 
-func (A *DenseMatrix) Inverse() (*DenseMatrix, Error) {
+func (A *DenseMatrix) Inverse() (*DenseMatrix, *error) {
 	if A.Rows() != A.Cols() {
 		return nil, NewError(ErrorBadInput, "A.Inverse(): A is not square")
 	}
@@ -146,14 +146,12 @@ func solveUpper(A *DenseMatrix, b Matrix) *DenseMatrix {
 	return MakeDenseMatrix(x, A.Cols(), 1);
 }
 
-func (A *DenseMatrix) Solve(b Matrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Solve(b Matrix) (*DenseMatrix, *error) {
 	Acopy := A.Copy();
 	P := Acopy.LUInPlace();
 	Pinv := P.Inverse();
-	pb, err := Product(Pinv, b);
-	if err != nil {
-		return nil, err
-	}
+	pb := Product(Pinv, b);
+	
 	y := solveLower(Acopy, pb);
 	x := solveUpper(Acopy, y);
 	return x, nil;

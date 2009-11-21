@@ -16,9 +16,10 @@ type error struct {
 type Error interface {
 	String() string;
 	ErrorCode() int;
+	OK() bool;
 }
 
-func NewError(errorCode int, errorString string) Error {
+func NewError(errorCode int, errorString string) *error {
 	E := new(error);
 	E.errorCode = errorCode;
 	E.errorString = errorString;
@@ -38,3 +39,9 @@ func (e *error) ErrorCode() int	{
 	return e.errorCode
 }
 
+func (e *error) OK() bool {
+	if e == nil {
+		return true;
+	}
+	return e.ErrorCode() == 0;
+}

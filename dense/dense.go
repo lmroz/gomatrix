@@ -2,6 +2,7 @@ package matrix
 
 import (
 	"rand";
+	"fmt";
 )
 
 type DenseMatrix struct {
@@ -10,6 +11,12 @@ type DenseMatrix struct {
 	elements	[]float64;
 	// actual offset between rows
 	step	int;
+}
+
+
+	
+func (P *DenseMatrix) isReadOnly() bool {
+	return false;
 }
 
 //This returns an array of slices referencing the matrix data. Changes to
@@ -90,7 +97,7 @@ func (A *DenseMatrix) copyMatrixReadOnly() MatrixRO {
 }
 
 
-func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Rows() != B.Rows() {
 		return nil, NewError(ErrorBadInput, "Augment(A,B): A and B don't have the same number of rows")
 	}
@@ -106,7 +113,7 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, Error) {
 	return C, nil;
 }
 
-func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Cols() != B.Cols() {
 		return nil, NewError(ErrorBadInput, "Stack(A,B): A and B don't have the same number of columns")
 	}
@@ -219,17 +226,23 @@ func MakeDenseMatrixStacked(data [][]float64) *DenseMatrix {
 	return MakeDenseMatrix(elements, rows, cols);
 }
 
-func (A *DenseMatrix) SparseMatrix() *SparseMatrix {
-	B := ZerosSparse(A.rows, A.cols);
+func (A *DenseMatrix) String() string {
+	s := "{";
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
-			v := A.Get(i, j);
-			if v != 0 {
-				B.Set(i, j, v);
+			s += fmt.Sprintf("%f", A.Get(i, j));
+			if i != A.Rows()-1 || j != A.Cols()-1 {
+				s += ","
+			}
+			if j != A.cols-1 {
+				s += " "
 			}
 		}
+		if i != A.Rows()-1 {
+			s += "\n"
+		}
 	}
-	return B;
+	s += "}";
+	return s;
 }
-
 
