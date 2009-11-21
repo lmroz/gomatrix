@@ -1,29 +1,68 @@
 package matrix
 
 type PivotMatrix struct {
-	DenseMatrix;
-	//pivots		[]int;
+	matrix;
+	pivots		[]int;
 	pivotSign	float64;
 }
 
 //for pivots we can speed this up a bit
-func (A *PivotMatrix) Inverse() Matrix {
+func (A *PivotMatrix) Inverse() *PivotMatrix {
 	return A.Transpose();
 }
 
-func (A *PivotMatrix) Det() float64	{ return A.pivotSign }
+func (P *PivotMatrix) Transpose() *PivotMatrix {
+	newPivots := make([]int, P.rows);
+	for i:=0; i<P.rows; i++ {
+		newPivots[P.pivots[i]] = i;
+	}
+	return MakePivotMatrix(newPivots, P.pivotSign);
+}
+
+func (P *PivotMatrix) Det() float64	{ return P.pivotSign }
+
+func (P *PivotMatrix) Rows() int {
+	return P.rows;
+}
+func (P *PivotMatrix) Cols() int {
+	return P.cols;
+}
+	// number of elements in the matrix
+func (P *PivotMatrix) NumElements() int {
+	return P.rows*P.cols;
+}
+
+
+func (P *PivotMatrix) Get(i int, j int) float64 {
+	if P.pivots[j] == i {
+		return 1;
+	}
+	return 0;
+}
+
+func (P *PivotMatrix) GetSize() (int, int) {
+	return P.rows, P.rows;
+}
+	
+func (P *PivotMatrix) Trace() (r float64) {
+	for i := 0; i < len(P.pivots); i++ {
+		if P.pivots[i] == i {
+			r += 1;
+		}
+	}
+	return;
+}
+	
+func (P *PivotMatrix) isReadOnly() bool {
+	return true
+}
 
 func MakePivotMatrix(pivots []int, pivotSign float64) *PivotMatrix {
 	n := len(pivots);
 	P := new(PivotMatrix);
-	P.elements = make([]float64, n*n);
 	P.rows = n;
 	P.cols = n;
-	P.step = n;
-	for i := 0; i < n; i++ {
-		P.Set(pivots[i], i, 1)
-	}
-	//P.pivots = pivots;
+	P.pivots = pivots;
 	P.pivotSign = pivotSign;
 	return P;
 }

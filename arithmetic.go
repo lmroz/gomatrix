@@ -1,8 +1,9 @@
 package matrix
 
 import (
+	"math";
 	"reflect";
-)
+	)
 
 func Sum(A Matrix, B Matrix) (Matrix, Error) {
 	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
@@ -24,7 +25,7 @@ func Difference(A Matrix, B Matrix) (Matrix, Error) {
 	return C, err;
 }
 
-func Product(A Matrix, B Matrix) (*DenseMatrix, Error) {
+func Product(A MatrixRO, B MatrixRO) (*DenseMatrix, Error) {
 	if A.Cols() != B.Rows() {
 		return nil, NewError(ErrorBadInput, "Product(A, B):A.Cols() is different than B.Rows()")
 	}
@@ -87,6 +88,40 @@ func ParallelProduct(A Matrix, B Matrix, threads int) (*DenseMatrix, Error) {
 	return C, nil;
 }
 
+func Scaled(A Matrix, f float64) Matrix {
+	B := A.copyMatrix();
+	B.Scale(f);
+	return B;
+}
+
+func Equals(A MatrixRO, B MatrixRO) bool {
+	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
+		return false;
+	}
+	for i:=0; i<A.Rows(); i++ {
+		for j:=0; j<A.Cols(); j++ {
+			if A.Get(i, j) != B.Get(i, j) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+func ApproxEquals(A MatrixRO, B MatrixRO, ε float64) bool {
+	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
+		return false;
+	}
+	for i:=0; i<A.Rows(); i++ {
+		for j:=0; j<A.Cols(); j++ {
+			if math.Fabs(A.Get(i, j)-B.Get(i, j)) > ε {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 func MultipleProduct(values ...) (Matrix){
 	v := reflect.NewValue(values).(*reflect.StructValue);
 	if v.NumField() < 2 {
@@ -107,8 +142,4 @@ func MultipleProduct(values ...) (Matrix){
 	return nil;
 }
 
-func Scaled(A Matrix, f float64) Matrix {
-	B := A.copyMatrix();
-	B.Scale(f);
-	return B;
-}
+

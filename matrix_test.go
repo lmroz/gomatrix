@@ -14,13 +14,13 @@ const verbose = false
 /* TEST: arithmetic.go */
 
 func TestEquals(t *testing.T) {
-	if !Ones(5, 3).Equals(Ones(5, 3)) {
+	if !Equals(Ones(5, 3), Ones(5, 3)) {
 		t.Fail()
 	}
-	if Ones(3, 5).Equals(Ones(5, 3)) {
+	if Equals(Ones(3, 5), Ones(5, 3)) {
 		t.Fail()
 	}
-	if Zeros(3, 3).Equals(Ones(3, 3)) {
+	if Equals(Zeros(3, 3), Ones(3, 3)) {
 		t.Fail()
 	}
 }
@@ -30,7 +30,7 @@ func TestApproximates(t *testing.T) {
 	B := Numbers(3, 3, .1);
 	C := Numbers(3, 3, .6);
 	D, err := A.ElementMult(B);
-	if err != nil && !D.Approximates(C, .000001) {
+	if err != nil && !ApproxEquals(D, C, .000001) {
 		t.Fail()
 	}
 }
@@ -94,7 +94,7 @@ func TestProduct(t *testing.T) {
 	},
 		4, 4);
 
-	if !C.Equals(Ctrue) {
+	if !Equals(C, Ctrue) {
 		t.Fail()
 	}
 
@@ -133,7 +133,7 @@ func TestParallelProduct(t *testing.T) {
 		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000)
 	}
 
-	if !C.Equals(Ctrue) {
+	if !Equals(C, Ctrue) {
 		t.Fail()
 	}
 }
@@ -165,7 +165,7 @@ func TestElementMult(t *testing.T) {
 	},
 		4, 4);
 
-	if !C.Approximates(Ctrue, ε) {
+	if !ApproxEquals(C, Ctrue, ε) {
 		t.Fail()
 	}
 }
@@ -240,7 +240,7 @@ func TestInverse(t *testing.T) {
 		t.Fail()
 	}
 
-	if !Eye(A.Rows()).Approximates(AAinv, ε) {
+	if !ApproxEquals(Eye(A.Rows()), AAinv, ε) {
 		if verbose {
 			fmt.Printf("A\n%v\n\nAinv\n%v\n\nA*Ainv\n%v\n", A, Ainv, AAinv)
 		}
@@ -303,7 +303,7 @@ func TestSolve(t *testing.T) {
 
 	xtrue := MakeDenseMatrix([]float64{-0.906250, -3.393750, 1.275000, 1.187500}, 4, 1);
 
-	if !x.Equals(xtrue) {
+	if !Equals(x, xtrue) {
 		t.Fail()
 	}
 }
@@ -358,7 +358,7 @@ func TestCholesky(t *testing.T)	{
 	if err != nil {
 		t.Fail()
 	}
-	if !A.Approximates(B.Times(B.Transpose()), ε) {
+	if !ApproxEquals(A, B.Times(B.Transpose()), ε) {
 		t.Fail()
 	}
 }
@@ -380,7 +380,7 @@ func TestLU(t *testing.T) {
 		t.Fail()
 	}
 
-	if !A.Equals(PLU) {
+	if !Equals(A, PLU) {
 		t.Fail()
 	}
 
@@ -405,7 +405,7 @@ func TestLU(t *testing.T) {
 	PLtrue, _ := Product(Ptrue, Ltrue);
 	PLUtrue, _ := Product(PLtrue, Utrue);
 
-	if !PLU2.Equals(PLUtrue) {
+	if !Equals(PLU2, PLUtrue) {
 		t.Fail()
 	}
 
@@ -436,9 +436,9 @@ func TestQR(t *testing.T) {
 
 	QR, _ := Product(Q, R);
 
-	if !Q.Approximates(Qtrue, ε) ||
-		!R.Approximates(Rtrue, ε) ||
-		!A.Approximates(QR, ε) {
+	if !ApproxEquals(Q, Qtrue, ε) ||
+		!ApproxEquals(R, Rtrue, ε) ||
+		!ApproxEquals(A, QR, ε) {
 		t.Fail()
 	}
 }
@@ -456,7 +456,7 @@ func TestEigen(t *testing.T) {
 	Vinv, _ := V.Inverse();
 	Aguess := V.Times(D).Times(Vinv);
 
-	if !A.Approximates(Aguess, ε) {
+	if !ApproxEquals(A, Aguess, ε) {
 		t.Fail()
 	}
 
@@ -472,7 +472,7 @@ func TestEigen(t *testing.T) {
 
 	Vinv, _ = V.Inverse();
 
-	if !B.Approximates(V.Times(D).Times(Vinv), ε) {
+	if !ApproxEquals(B, V.Times(D).Times(Vinv), ε) {
 		if verbose {
 			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
 		}
@@ -483,7 +483,7 @@ func TestEigen(t *testing.T) {
 	V, D = B.Eigen();
 	Vinv, _ = V.Inverse();
 
-	if !B.Approximates(V.Times(D).Times(Vinv), ε) {
+	if !ApproxEquals(B, V.Times(D).Times(Vinv), ε) {
 		if verbose {
 			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
 		}
@@ -694,7 +694,7 @@ func TestNumbers(t *testing.T) {
 		n, n, n,
 	},
 		3, 3);
-	if !A.Equals(Atrue) {
+	if !Equals(A, Atrue) {
 		t.Fail()
 	}
 }
