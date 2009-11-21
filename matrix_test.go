@@ -248,7 +248,20 @@ func TestInverse(t *testing.T) {
 	}
 }
 
-func TestDet(t *testing.T)	{}
+func TestDet(t *testing.T)	{
+	A := MakeDenseMatrix([]float64{ 4, -2, 5,
+					-1, -7, 10,
+					0, 1, -3
+	},
+		3, 3);
+	
+	if A.Det() != 45 {
+		if verbose {
+			fmt.Printf("A\n%v\n\nA.Det()\n%v\n\n", A, A.Det())
+		}
+		t.Fail();
+	}
+}
 
 func TestTrace(t *testing.T)	{}
 
