@@ -5,8 +5,8 @@ import (
 	"reflect";
 	)
 
-func Sum(A Matrix, B Matrix) Matrix {
-	C := A.copyMatrix();
+func Sum(A MatrixRO, B MatrixRO) Matrix {
+	C := MakeDenseCopy(A);
 	err := C.Add(B);
 	if err.OK() {
 		return C;
@@ -15,11 +15,7 @@ func Sum(A Matrix, B Matrix) Matrix {
 }
 
 func Difference(A Matrix, B Matrix) Matrix {
-	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
-		return nil
-	}
-
-	C := A.copyMatrix();
+	C := MakeDenseCopy(A);
 	err := C.Subtract(B);
 	if err.OK() {
 		return C;
@@ -90,8 +86,8 @@ func ParallelProduct(A Matrix, B Matrix, threads int) *DenseMatrix {
 	return C;
 }
 
-func Scaled(A Matrix, f float64) Matrix {
-	B := A.copyMatrix();
+func Scaled(A MatrixRO, f float64) Matrix {
+	B := MakeDenseCopy(A);
 	B.Scale(f);
 	return B;
 }

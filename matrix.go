@@ -37,10 +37,6 @@ type Matrix interface {
 	//just here to do a v-table lookup for Copy(Matrix). will be moved to MatrixRO
 	copyMatrix() Matrix;
 
-	//arithmetic
-	Add(B Matrix) *error;
-	Subtract(B Matrix) *error;
-	Scale(f float64);
 
 	//	SwapRows(i1 int, i2 int);
 	//	ScaleRow(i int, f float64);
