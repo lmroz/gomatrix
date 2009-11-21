@@ -1,37 +1,5 @@
 package matrix
 
-import "math"
-
-func (A *DenseMatrix) Equals(B Matrix) bool {
-	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return false
-	}
-
-	for i := 0; i < A.rows; i++ {
-		for j := 0; j < A.cols; j++ {
-			if A.Get(i, j) != B.Get(i, j) {
-				return false
-			}
-		}
-	}
-	return true;
-}
-
-func (A *DenseMatrix) Approximates(B Matrix, ε float64) bool {
-	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return false
-	}
-
-	for i := 0; i < A.rows; i++ {
-		for j := 0; j < A.cols; j++ {
-			if math.Fabs(A.Get(i, j)-B.Get(i, j)) > ε {
-				return false
-			}
-		}
-	}
-	return true;
-}
-
 func (A *DenseMatrix) Plus(B *DenseMatrix) *DenseMatrix {
 	res, _ := Sum(A, B);
 	return res.(*DenseMatrix);
