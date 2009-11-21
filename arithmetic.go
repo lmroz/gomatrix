@@ -1,5 +1,9 @@
 package matrix
 
+import (
+	"reflect";
+)
+
 func Sum(A Matrix, B Matrix) (Matrix, Error) {
 	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
 		return nil, NewError(ErrorBadInput, "Sum(A, B):A and B dimensions don't match")
@@ -81,6 +85,26 @@ func ParallelProduct(A Matrix, B Matrix, threads int) (*DenseMatrix, Error) {
 	}
 
 	return C, nil;
+}
+
+func MultipleProduct(values ...) (Matrix){
+	v := reflect.NewValue(values).(*reflect.StructValue);
+	if v.NumField() < 2 {
+		return nil;
+	}
+
+	inter := v.Field(0).Interface();
+	if C, ok := inter.(Matrix); ok {
+		for i:=1; i < v.NumField(); i++ {
+			inter := v.Field(i).Interface();
+			if A, ok := inter.(Matrix); ok {
+				C, _ = Product(C,A);
+			}
+		}
+		return C;
+	}
+
+	return nil;
 }
 
 func Scaled(A Matrix, f float64) Matrix {
