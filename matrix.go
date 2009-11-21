@@ -24,6 +24,9 @@ type MatrixRO interface {
 	
 	//copyMatrix() Matrix;//a bug has been accepted to address the inability to do this
 	isReadOnly() bool;
+	
+	//make a printable string
+	String() string;
 }
 
 type Matrix interface {
@@ -42,8 +45,6 @@ type Matrix interface {
 	//	GetColVector(i int) Matrix;
 	//	GetRowVector(j int) Matrix;
 
-	//make a printable string
-	String() string;
 
 	/* arithmetic.go */
 
@@ -98,4 +99,5 @@ type Matrix interface {
 func Copy(A Matrix) Matrix {
 	return A.copyMatrix()
 }
+
 
