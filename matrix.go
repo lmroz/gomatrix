@@ -5,6 +5,8 @@ package matrix
 // that absolutely need to be here should be here.  The interface should
 // represent the set of functions on which all other matrix functions are based.
 
+//The MatrixRO interface defines matrix operations that do not change the
+//underlying data, such as information requests or the creation of transforms
 type MatrixRO interface {
 	//returns true if the underlying object is nil
 	Nil() bool;
@@ -13,10 +15,9 @@ type MatrixRO interface {
 	Cols() int;
 	// number of elements in the matrix
 	NumElements() int;
+	GetSize() (int, int);
 
 	Get(i int, j int) float64;
-
-	GetSize() (int, int);
 	
 	Det() float64;
 	Trace() float64;

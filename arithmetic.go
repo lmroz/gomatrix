@@ -1,5 +1,7 @@
 package matrix
 
+import "math"
+
 func Sum(A Matrix, B Matrix) (Matrix, Error) {
 	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
 		return nil, NewError(ErrorBadInput, "Sum(A, B):A and B dimensions don't match")
@@ -87,4 +89,32 @@ func Scaled(A Matrix, f float64) Matrix {
 	B := A.copyMatrix();
 	B.Scale(f);
 	return B;
+}
+
+func Equals(A MatrixRO, B MatrixRO) bool {
+	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
+		return false;
+	}
+	for i:=0; i<A.Rows(); i++ {
+		for j:=0; j<A.Cols(); j++ {
+			if A.Get(i, j) != B.Get(i, j) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+func ApproxEquals(A MatrixRO, B MatrixRO, ε float64) bool {
+	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
+		return false;
+	}
+	for i:=0; i<A.Rows(); i++ {
+		for j:=0; j<A.Cols(); j++ {
+			if math.Fabs(A.Get(i, j)-B.Get(i, j)) > ε {
+				return false;
+			}
+		}
+	}
+	return true;
 }

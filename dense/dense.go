@@ -187,6 +187,15 @@ func Diagonal(d []float64) *DenseMatrix {
 	return A;
 }
 
+func MakeDenseCopy(A MatrixRO) *DenseMatrix {
+	B := Zeros(A.Rows(), A.Cols());
+	for i := 0; i < B.rows; i++ {
+		for j := 0; j < B.cols; j++ {
+			B.Set(i, j, A.Get(i, j))
+		}
+	}
+	return B
+}
 
 func MakeDenseMatrix(elements []float64, rows int, cols int) *DenseMatrix {
 
