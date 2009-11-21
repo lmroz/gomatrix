@@ -20,7 +20,7 @@ func Difference(A Matrix, B Matrix) (Matrix, Error) {
 	return C, err;
 }
 
-func Product(A Matrix, B Matrix) (*DenseMatrix, Error) {
+func Product(A MatrixRO, B MatrixRO) (*DenseMatrix, Error) {
 	if A.Cols() != B.Rows() {
 		return nil, NewError(ErrorBadInput, "Product(A, B):A.Cols() is different than B.Rows()")
 	}

@@ -86,7 +86,7 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 func (A *DenseMatrix) copyMatrix() Matrix {
 	return A.Copy();
 }
-func (A *DenseMatrix) copyMatrixReadOnly() MatrixReadOnly {
+func (A *DenseMatrix) copyMatrixReadOnly() MatrixRO {
 	return A.Copy();
 }
 

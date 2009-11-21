@@ -5,7 +5,7 @@ package matrix
 // that absolutely need to be here should be here.  The interface should
 // represent the set of functions on which all other matrix functions are based.
 
-type MatrixReadOnly interface {
+type MatrixRO interface {
 	//returns true if the underlying object is nil
 	Nil() bool;
 
@@ -18,16 +18,19 @@ type MatrixReadOnly interface {
 
 	GetSize() (int, int);
 	
-	copyMatrixReadOnly() MatrixReadOnly;
+	Det() float64;
+	Trace() float64;
+	
+	//copyMatrix() Matrix;//a bug has been accepted to address the inability to do this
 	isReadOnly() bool;
 }
 
 type Matrix interface {
-	MatrixReadOnly;
+	MatrixRO;
 
 
 	
-	//just here to do a v-table lookup for Copy(Matrix)
+	//just here to do a v-table lookup for Copy(Matrix). will be moved to MatrixRO
 	copyMatrix() Matrix;
 
 	/* matrix.go */
@@ -70,8 +73,6 @@ type Matrix interface {
 	//	Transpose() Matrix;
 	//	TransposeInPlace();
 	//	Inverse() Matrix;
-	Det() float64;
-	Trace() float64;
 
 	//	OneNorm() float64;
 	//	TwoNorm() float64;
