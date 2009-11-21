@@ -6,7 +6,7 @@ import (
 	"math";
 )
 
-func (A *DenseMatrix) Cholesky() (*DenseMatrix, Error) {
+func (A *DenseMatrix) Cholesky() (*DenseMatrix, *error) {
 	n := A.Rows();
 	L := Zeros(n, n);
 	isspd := A.Cols() == n;

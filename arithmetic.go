@@ -2,29 +2,31 @@ package matrix
 
 import "math"
 
-func Sum(A Matrix, B Matrix) (Matrix, Error) {
-	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
-		return nil, NewError(ErrorBadInput, "Sum(A, B):A and B dimensions don't match")
-	}
-
+func Sum(A Matrix, B Matrix) Matrix {
 	C := A.copyMatrix();
-	C.Add(B);
-	return C, nil;
+	err := C.Add(B);
+	if err.OK() {
+		return C;
+	}
+	return nil;
 }
 
-func Difference(A Matrix, B Matrix) (Matrix, Error) {
+func Difference(A Matrix, B Matrix) Matrix {
 	if A.Cols() != B.Cols() || A.Rows() != B.Rows() {
-		return nil, NewError(ErrorBadInput, "Difference(A, B):A and B dimensions don't match")
+		return nil
 	}
 
 	C := A.copyMatrix();
 	err := C.Subtract(B);
-	return C, err;
+	if err.OK() {
+		return C;
+	}
+	return nil;
 }
 
-func Product(A MatrixRO, B MatrixRO) (*DenseMatrix, Error) {
+func Product(A MatrixRO, B MatrixRO) *DenseMatrix {
 	if A.Cols() != B.Rows() {
-		return nil, NewError(ErrorBadInput, "Product(A, B):A.Cols() is different than B.Rows()")
+		return nil
 	}
 	C := Zeros(A.Rows(), B.Cols());
 
@@ -38,12 +40,12 @@ func Product(A MatrixRO, B MatrixRO) (*DenseMatrix, Error) {
 		}
 	}
 
-	return C, nil;
+	return C;
 }
 
-func ParallelProduct(A Matrix, B Matrix, threads int) (*DenseMatrix, Error) {
+func ParallelProduct(A Matrix, B Matrix, threads int) *DenseMatrix {
 	if A.Cols() != B.Rows() {
-		return nil, NewError(ErrorBadInput, "ParallelProduct(A, B):A.Cols() is different than B.Rows()")
+		return nil
 	}
 
 	C := Zeros(A.Rows(), B.Cols());
@@ -82,7 +84,7 @@ func ParallelProduct(A Matrix, B Matrix, threads int) (*DenseMatrix, Error) {
 		quit <- true
 	}
 
-	return C, nil;
+	return C;
 }
 
 func Scaled(A Matrix, f float64) Matrix {

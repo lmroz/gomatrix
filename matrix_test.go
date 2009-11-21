@@ -30,7 +30,7 @@ func TestApproximates(t *testing.T) {
 	B := Numbers(3, 3, .1);
 	C := Numbers(3, 3, .6);
 	D, err := A.ElementMult(B);
-	if err != nil && !ApproxEquals(D, C, .000001) {
+	if !err.OK() && !ApproxEquals(D, C, .000001) {
 		t.Fail()
 	}
 }
@@ -38,8 +38,8 @@ func TestApproximates(t *testing.T) {
 func TestAdd(t *testing.T) {
 	A := Normals(3, 3);
 	B := Normals(3, 3);
-	C, err := Sum(A, B);
-	if err != nil {
+	C := Sum(A, B);
+	if C.Nil() {
 		t.Fail()
 	}
 	for i := 0; i < C.Rows(); i++ {
@@ -54,8 +54,8 @@ func TestAdd(t *testing.T) {
 func TestSubtract(t *testing.T) {
 	A := Normals(3, 3);
 	B := Normals(3, 3);
-	C, err := Difference(A, B);
-	if err != nil {
+	C := Difference(A, B);
+	if C.Nil() {
 		t.Fail()
 	}
 	for i := 0; i < C.Rows(); i++ {
@@ -81,9 +81,9 @@ func TestProduct(t *testing.T) {
 	},
 		4, 4);
 
-	C, err := Product(A, B);
+	C, err := A.Times(B);
 
-	if err != nil {
+	if !err.OK() {
 		t.Fail()
 	}
 
@@ -114,8 +114,8 @@ func TestParallelProduct(t *testing.T) {
 	var start, end int64;
 
 	start = time.Nanoseconds();
-	Ctrue, err := Product(A, B);
-	if err != nil {
+	Ctrue, err := A.Times(B);
+	if !err.OK() {
 		t.Fail()
 	}
 	end = time.Nanoseconds();
@@ -124,8 +124,8 @@ func TestParallelProduct(t *testing.T) {
 	}
 
 	start = time.Nanoseconds();
-	C, err = ParallelProduct(A, B, threads);
-	if err != nil {
+	C = ParallelProduct(A, B, threads);
+	if !err.OK() {
 		t.Fail()
 	}
 	end = time.Nanoseconds();
@@ -154,7 +154,7 @@ func TestElementMult(t *testing.T) {
 		4, 4);
 	C, err := A.ElementMult(T);
 
-	if err != nil {
+	if !err.OK() {
 		t.Fail()
 	}
 
@@ -230,13 +230,13 @@ func TestInverse(t *testing.T) {
 		4, 4);
 	Ainv, err := A.Inverse();
 
-	if err != nil {
+	if !err.OK() {
 		t.Fail()
 	}
 
-	AAinv, err := Product(A, Ainv);
+	AAinv, err := A.Times(Ainv);
 
-	if err != nil {
+	if !err.OK() {
 		t.Fail()
 	}
 
@@ -283,7 +283,7 @@ func TestSolve(t *testing.T) {
 	b := MakeDenseMatrix([]float64{1, 1, 1, 1}, 4, 1);
 	x, err := A.Solve(b);
 
-	if err != nil {
+	if !err.OK() {
 		t.Fail()
 	}
 
@@ -341,10 +341,10 @@ func TestCholesky(t *testing.T)	{
 		0.2, 1, 0.5,
 		0, 0.5, 1}, 3, 3);
 	B, err := A.Cholesky();
-	if err != nil {
+	if !err.OK() {
 		t.Fail()
 	}
-	if !ApproxEquals(A, B.Times(B.Transpose()), ε) {
+	if !ApproxEquals(A, Product(B, B.Transpose()), ε) {
 		t.Fail()
 	}
 }
@@ -358,15 +358,22 @@ func TestLU(t *testing.T) {
 	},
 		4, 4);
 	L, U, P := A.LU();
+	
 
-	LU, err := Product(L, U);
-	PLU, err := Product(P, LU);
+	LU, err := L.Times(U);
+	PLU, err := P.Times(LU);
 
-	if err != nil {
+	if !err.OK() {
+		if verbose {
+			fmt.Printf("TestLU: %v\n", err);
+		}
 		t.Fail()
 	}
 
 	if !Equals(A, PLU) {
+		if verbose {
+			fmt.Printf("TestLU:\n%v\n!=\n%v\n", A, PLU);
+		}
 		t.Fail()
 	}
 
@@ -386,10 +393,10 @@ func TestLU(t *testing.T) {
 		L.Set(i, i, 1)
 	}
 
-	PL, _ := Product(P, L);
-	PLU2, _ := Product(PL, U);
-	PLtrue, _ := Product(Ptrue, Ltrue);
-	PLUtrue, _ := Product(PLtrue, Utrue);
+	PL := Product(P, L);
+	PLU2 := Product(PL, U);
+	PLtrue := Product(Ptrue, Ltrue);
+	PLUtrue := Product(PLtrue, Utrue);
 
 	if !Equals(PLU2, PLUtrue) {
 		t.Fail()
@@ -420,7 +427,7 @@ func TestQR(t *testing.T) {
 	},
 		4, 4);
 
-	QR, _ := Product(Q, R);
+	QR := Product(Q, R);
 
 	if !ApproxEquals(Q, Qtrue, ε) ||
 		!ApproxEquals(R, Rtrue, ε) ||
@@ -440,7 +447,7 @@ func TestEigen(t *testing.T) {
 	V, D := A.Eigen();
 
 	Vinv, _ := V.Inverse();
-	Aguess := V.Times(D).Times(Vinv);
+	Aguess := Product(Product(V, D), Vinv);
 
 	if !ApproxEquals(A, Aguess, ε) {
 		t.Fail()
@@ -458,18 +465,18 @@ func TestEigen(t *testing.T) {
 
 	Vinv, _ = V.Inverse();
 
-	if !ApproxEquals(B, V.Times(D).Times(Vinv), ε) {
+	if !ApproxEquals(B, Product(Product(V, D), Vinv), ε) {
 		if verbose {
 			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
 		}
 		t.Fail();
 	}
 
-	B = B.Times(B.Transpose());
+	B, _ = B.Times(B.Transpose());
 	V, D = B.Eigen();
 	Vinv, _ = V.Inverse();
 
-	if !ApproxEquals(B, V.Times(D).Times(Vinv), ε) {
+	if !ApproxEquals(B, Product(Product(V, D), Vinv), ε) {
 		if verbose {
 			fmt.Printf("B =\n%v\nV=\n%v\nD=\n%v\n", B, V, D)
 		}
