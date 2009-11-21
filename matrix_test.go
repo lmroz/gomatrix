@@ -263,7 +263,21 @@ func TestDet(t *testing.T)	{
 	}
 }
 
-func TestTrace(t *testing.T)	{}
+func TestTrace(t *testing.T)	{
+	A := MakeDenseMatrix([]float64{ 4, -2, 5,
+					-1, -7, 10,
+					0, 1, -3
+	},
+		3, 3);
+
+	
+	if A.Trace() != 4 - 7 - 3 {
+		if verbose {
+			fmt.Printf("A\n%v\n\nA.Trace()\n%v\n\n", A, A.Trace())
+		}
+		t.Fail();
+	}
+}
 
 func TestOneNorm(t *testing.T)	{}
 
@@ -740,4 +754,17 @@ func TestDiagonal(t *testing.T)	{}
 func TestPivotMatrix(t *testing.T)	{}
 
 func TestString(t *testing.T)	{}
+
+func TestMultipleProduct(t *testing.T) {
+	A:= Ones(3,1);
+	B:= Ones(1,3);
+	C:=MultipleProduct(A,B,A);
+	D:=Product(A,B);
+	E:=Product(D,A);
+
+	if !Equals(E, C) {
+		t.Fail();
+	}
+}
+
 
