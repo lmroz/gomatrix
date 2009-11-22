@@ -5,6 +5,7 @@ const (
 	ErrorNilMatrix;
 	ErrorBadInput;
 	ErrorIllegalIndex;
+	Exception;
 )
 
 

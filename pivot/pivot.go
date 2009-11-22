@@ -27,7 +27,7 @@ func (P *PivotMatrix) Get(i int, j int) float64 {
 	}
 	return 0;
 }
-	
+
 func (P *PivotMatrix) Times(A MatrixRO) (*DenseMatrix, *error) {
 	if P.Cols() != A.Rows() {
 		return nil, NewError(ErrorBadInput, "P.Times(A): P.Cols() != A.Rows()");
