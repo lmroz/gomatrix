@@ -186,7 +186,18 @@ func TestScale(t *testing.T) {
 }
 
 func TestScaleMatrix(t *testing.T) {
-
+	A := Normals(4, 4);
+	B := Normals(4, 4);
+	C := A.Copy();
+	C.ScaleMatrix(B);
+	
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			if A.Get(i, j) * B.Get(i, j) != C.Get(i, j) {
+				t.Fail();
+			}
+		}
+	}
 }
 
 /* TEST: basic.go */
@@ -765,6 +776,108 @@ func TestMultipleProduct(t *testing.T) {
 	if !Equals(E, C) {
 		t.Fail();
 	}
+}
+
+func TestSpeed(t *testing.T) {
+	if !verbose {
+		//no failing this test - it just provides a benchmark
+		return;
+	}
+	
+	var start, end int64;
+	var count int;
+	
+	var A, B *DenseMatrix;
+	
+	A = Normals(4, 8);
+	B = Normals(8, 4);
+	
+	count = 100000;
+	start = time.Nanoseconds();
+	for i:=0; i<count; i++ {
+		A.Times(B);
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 4x8 x 8x4 matrix multiplications in %fs\n", count, float(end-start)/1000000000);
+	
+	
+	A = Normals(4, 4);
+	B = Normals(4, 4);
+	
+	count = 100000;
+	start = time.Nanoseconds();
+	for i:=0; i<count; i++ {
+		A.ElementMult(B);
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 4x4 matrix element multiplications in %fs\n", count, float(end-start)/1000000000);
+	
+	A = Normals(4, 4);
+	B = Normals(4, 4);
+	
+	count = 100000;
+	start = time.Nanoseconds();
+	for i:=0; i<count; i++ {
+		A.Plus(B);
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 4x4 matrix additions in %fs\n", count, float(end-start)/1000000000);
+	
+	A = Normals(6, 6);
+	
+	count = 100000;
+	start = time.Nanoseconds();
+	for i:=0; i<count; i++ {
+		A.Inverse();
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 6x6 matrix inversions in %fs\n", count, float(end-start)/1000000000);
+	
+	A = Normals(6, 6);
+	
+	count = 100000;
+	start = time.Nanoseconds();
+	for i:=0; i<count; i++ {
+		A.Det();
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 6x6 matrix determinants in %fs\n", count, float(end-start)/1000000000);
+	
+	
+	A = Normals(6, 6);
+	B, _ = A.Times(A.Transpose());
+	
+	count = 100000;
+	start = time.Nanoseconds();
+	for i:=0; i<count; i++ {
+		B.Cholesky();
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 6x6 cholesky decompositions in %fs\n", count, float(end-start)/1000000000);
+	
+	
+	A = Normals(6, 6);
+	
+	count = 100000;
+	start = time.Nanoseconds();
+	for i:=0; i<count; i++ {
+		A.QR();
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 6x6 QR decompositions in %fs\n", count, float(end-start)/1000000000);
+	
+	
+	A = Normals(6, 6);
+	
+	count = 100000;
+	start = time.Nanoseconds();
+	for i:=0; i<count; i++ {
+		A.Eigen();
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 6x6 Eigenvector decompositions in %fs\n", count, float(end-start)/1000000000);
+	
+	
 }
 
 
