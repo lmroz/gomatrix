@@ -1,40 +1,38 @@
 package matrix
 
-func (A *SparseMatrix) Plus(B MatrixRO) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Plus(B *SparseMatrix) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.Add(B);
 	return C, err;
 }
 
-func (A *SparseMatrix) Minus(B MatrixRO) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Minus(B *SparseMatrix) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.Subtract(B);
 	return C, err;
 }
 
-func (A *SparseMatrix) Add(B MatrixRO) *error {
+func (A *SparseMatrix) Add(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		//error
-		return nil;
+		return NewError(ErrorBadInput, "A.Add(B): A and B dimensions don't match");
 	}
 	
-	for index, value := range A.elements {
+	for index, value := range B.elements {
 		i, j := A.getRowColIndex(index);
-		A.Set(i, j, value + B.Get(i, j))
-	}
+		A.Set(i, j, A.Get(i, j) + value)
+	} 
 	
 	return nil;
 }
 
-func (A *SparseMatrix) Subtract(B MatrixRO) *error {
+func (A *SparseMatrix) Subtract(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		//error
-		return nil;
+		return NewError(ErrorBadInput, "A.Subtract(B): A and B dimensions don't match");
 	}
 	
-	for index, value := range A.elements {
+	for index, value := range B.elements {
 		i, j := A.getRowColIndex(index);
-		A.Set(i, j, value - B.Get(i, j))
+		A.Set(i, j, A.Get(i, j) - value)
 	}
 	
 	return nil;
@@ -42,8 +40,7 @@ func (A *SparseMatrix) Subtract(B MatrixRO) *error {
 
 func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 	if A.cols != B.Rows() {
-		//error
-		return nil, nil
+		return nil, NewError(ErrorBadInput, "A.Times(B): A.Cols() != B.Rows()");
 	}
 	
 	C := ZerosSparse(A.rows, B.Cols());
@@ -73,8 +70,7 @@ func (A *SparseMatrix) Scale(f float64) *error {
 
 func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		//error
-		return nil;
+		return NewError(ErrorBadInput, "A.ScaleMatrix(B): A and B dimensions don't match");
 	}
 	
 	for index, value := range A.elements {

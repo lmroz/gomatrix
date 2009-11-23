@@ -1,7 +1,10 @@
 
 package matrix
 
-import "fmt"
+import (
+	"fmt";
+	"rand";
+)
 
 type SparseMatrix struct {
 	matrix;
@@ -146,6 +149,22 @@ func ZerosSparse(rows int, cols int) *SparseMatrix {
 	A.offset = 0;
 	A.step = cols;
 	A.elements = map[int] float64 {};
+	return A;
+}
+
+func NormalsSparse(rows int, cols int, n int) *SparseMatrix {
+	A := ZerosSparse(rows, cols);
+	for k:=0; k<n; k++ {
+		i := rand.Intn(rows);
+		j := rand.Intn(cols);
+		A.Set(i, j, rand.NormFloat64());
+	}
+	return A;
+}
+
+func MakeSparseMatrix(elements map[int]float64, rows int, cols int) *SparseMatrix {
+	A := ZerosSparse(rows, cols);
+	A.elements = elements;
 	return A;
 }
 
