@@ -4,7 +4,6 @@ TARG=matrix
 GOFILES=\
 	matrix.go\
 	arithmetic.go\
-	data.go\
 	error.go\
 	util.go\
 	dense/dense.go\
