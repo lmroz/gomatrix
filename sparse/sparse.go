@@ -25,6 +25,14 @@ func (A *SparseMatrix) Set(i int, j int, v float64) {
 	A.elements[i*A.cols+j] = v, v == 0
 }
 
+func (A *SparseMatrix) Copy() *SparseMatrix {
+	B := ZerosSparse(A.rows, A.cols);
+	for index, value := range A.elements {
+		B.elements[index] = value;
+	}
+	return B;
+}
+
 func ZerosSparse(rows int, cols int) *SparseMatrix {
 	A := new(SparseMatrix);
 	A.rows = rows;
