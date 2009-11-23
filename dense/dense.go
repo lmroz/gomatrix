@@ -129,6 +129,19 @@ func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
 	return C, nil;
 }
 
+func (A *DenseMatrix) SparseMatrix() *SparseMatrix {
+	B := ZerosSparse(A.rows, A.cols);
+	for i:=0; i<A.rows; i++ {
+		for j:=0; j<A.cols; j++ {
+			v := A.Get(i, j);
+			if v != 0 {
+				B.Set(i, j, v);
+			}
+		}
+	}
+	return B;
+}
+
 func Zeros(rows int, cols int) *DenseMatrix {
 	A := new(DenseMatrix);
 	A.elements = make([]float64, rows*cols);

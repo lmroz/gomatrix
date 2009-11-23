@@ -35,6 +35,10 @@ func ZerosSparse(rows int, cols int) *SparseMatrix {
 
 func (A *SparseMatrix) DenseMatrix() *DenseMatrix {
 	B := Zeros(A.rows, A.cols);
-	//TODO: don't off the top of my head know how to iterate a map
+	for index, value := range A.elements {
+		i := index / A.cols;
+		j := index % A.cols;
+		B.Set(i, j, value);
+	}
 	return B;
 }
