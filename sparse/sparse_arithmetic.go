@@ -19,8 +19,7 @@ func (A *SparseMatrix) Add(B MatrixRO) *error {
 	}
 	
 	for index, value := range A.elements {
-		i := index / A.cols;
-		j := index % A.cols;
+		i, j := A.getRowColIndex(index);
 		A.Set(i, j, value + B.Get(i, j))
 	}
 	
@@ -34,8 +33,7 @@ func (A *SparseMatrix) Subtract(B MatrixRO) *error {
 	}
 	
 	for index, value := range A.elements {
-		i := index / A.cols;
-		j := index % A.cols;
+		i, j := A.getRowColIndex(index);
 		A.Set(i, j, value - B.Get(i, j))
 	}
 	
@@ -51,8 +49,7 @@ func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 	C := ZerosSparse(A.rows, B.Cols());
 	
 	for index, value := range A.elements {
-		i := index / A.cols;
-		k := index % A.cols;
+		i, k := A.getRowColIndex(index);
 		//not sure if there is a more efficient way to do this without using
 		//a different data structure
 		for j := 0; j < B.Cols(); j++ {
@@ -81,8 +78,7 @@ func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 	}
 	
 	for index, value := range A.elements {
-		i := index / A.cols;
-		j := index % A.cols;
+		i, j := A.getRowColIndex(index);
 		A.Set(i, j, value * B.Get(i, j))
 	}
 	

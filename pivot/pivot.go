@@ -1,5 +1,7 @@
 package matrix
 
+import "fmt"
+
 type PivotMatrix struct {
 	matrix;
 	pivots		[]int;
@@ -46,4 +48,24 @@ func MakePivotMatrix(pivots []int, pivotSign float64) *PivotMatrix {
 	P.pivots = pivots;
 	P.pivotSign = pivotSign;
 	return P;
+}
+
+func (A *PivotMatrix) String() string {
+	s := "{";
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			s += fmt.Sprintf("%f", A.Get(i, j));
+			if i != A.Rows()-1 || j != A.Cols()-1 {
+				s += ","
+			}
+			if j != A.cols-1 {
+				s += " "
+			}
+		}
+		if i != A.Rows()-1 {
+			s += "\n"
+		}
+	}
+	s += "}";
+	return s;
 }
