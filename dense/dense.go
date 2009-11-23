@@ -215,11 +215,14 @@ func MakeDenseCopy(A MatrixRO) *DenseMatrix {
 func MakeDenseMatrix(elements []float64, rows int, cols int) *DenseMatrix {
 
 	A := Zeros(rows, cols);
+	A.elements = elements;
+	/*
 	for i := 0; i < rows; i++ {
 		for j := 0; j < cols; j++ {
 			A.Set(i, j, elements[i*cols+j])
 		}
 	}
+	*/
 	return A;
 }
 

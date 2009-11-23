@@ -15,6 +15,7 @@ GOFILES=\
 	dense/dense_eigen.go\
 	sparse/sparse.go\
 	sparse/sparse_arithmetic.go\
+	sparse/sparse_basic.go\
 	pivot/pivot.go\
 	pivot/pivot_arithmetic.go\
 	pivot/pivot_basic.go\
