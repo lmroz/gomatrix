@@ -38,17 +38,13 @@ func (A *DenseMatrix) Set(i int, j int, v float64) {
 }
 
 
-func (A *DenseMatrix) getMatrix(i int, j int, rows int, cols int) *DenseMatrix {
+func (A *DenseMatrix) GetMatrix(i int, j int, rows int, cols int) *DenseMatrix {
 	B := new(DenseMatrix);
 	B.elements = A.elements[i*A.step+j : (i+rows)*A.step];
 	B.rows = rows;
 	B.cols = cols;
 	B.step = A.step;
 	return B;
-}
-
-func (A *DenseMatrix) GetMatrix(i int, j int, rows int, cols int) *DenseMatrix {
-	return A.getMatrix(i, j, rows, cols)
 }
 
 func (A *DenseMatrix) GetColVector(j int) *DenseMatrix {

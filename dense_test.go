@@ -108,8 +108,13 @@ func TestProduct(t *testing.T) {
 }
 
 func TestParallelProduct(t *testing.T) {
-	w := 100;
-	h := 4;
+	w := 100000;
+	h := 40;
+	
+	if !verbose {
+		w = 100;
+		h = 4;
+	}
 
 	threads := 2;
 
