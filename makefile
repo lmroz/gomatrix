@@ -15,5 +15,7 @@ GOFILES=\
 	dense/dense_eigen.go\
 	sparse/sparse.go\
 	pivot/pivot.go\
+	pivot/pivot_arithmetic.go\
+	pivot/pivot_basic.go\
 
 include $(GOROOT)/src/Make.pkg

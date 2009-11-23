@@ -14,7 +14,7 @@ func Sum(A MatrixRO, B MatrixRO) Matrix {
 	return nil;
 }
 
-func Difference(A Matrix, B Matrix) Matrix {
+func Difference(A MatrixRO, B MatrixRO) Matrix {
 	C := MakeDenseCopy(A);
 	err := C.Subtract(B);
 	if err.OK() {
@@ -42,7 +42,7 @@ func Product(A MatrixRO, B MatrixRO) *DenseMatrix {
 	return C;
 }
 
-func ParallelProduct(A Matrix, B Matrix, threads int) *DenseMatrix {
+func ParallelProduct(A MatrixRO, B MatrixRO, threads int) *DenseMatrix {
 	if A.Cols() != B.Rows() {
 		return nil
 	}
@@ -120,17 +120,19 @@ func ApproxEquals(A MatrixRO, B MatrixRO, ε float64) bool {
 	return true;
 }
 
-func MultipleProduct(values ...) (Matrix){
+func MultipleProduct(values ...) (Matrix) {
 	v := reflect.NewValue(values).(*reflect.StructValue);
 	if v.NumField() < 2 {
 		return nil;
 	}
 
 	inter := v.Field(0).Interface();
-	if C, ok := inter.(Matrix); ok {
+	B, ok := inter.(MatrixRO);
+	if ok {
+		C := MakeDenseCopy(B);
 		for i:=1; i < v.NumField(); i++ {
 			inter := v.Field(i).Interface();
-			if A, ok := inter.(Matrix); ok {
+			if A, ok := inter.(MatrixRO); ok {
 				C = Product(C,A);
 			}
 		}

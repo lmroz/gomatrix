@@ -97,7 +97,14 @@ func TestProduct(t *testing.T) {
 	if !Equals(C, Ctrue) {
 		t.Fail()
 	}
-
+	
+	P := MakePivotMatrix([]int{1, 3, 0, 2}, -1);
+	C, err = P.Times(A);
+	
+	Ctrue, err = P.DenseMatrix().Times(A);
+	if !Equals(C, Ctrue) {
+		t.Fail();
+	}
 }
 
 func TestParallelProduct(t *testing.T) {
@@ -318,46 +325,6 @@ func TestSolve(t *testing.T) {
 		t.Fail()
 	}
 }
-
-/* TEST: data.go */
-
-func TestElements(t *testing.T)	{}
-
-func TestArrays(t *testing.T)	{}
-
-func TestRows(t *testing.T)	{}
-
-func TestCols(t *testing.T)	{}
-
-func TestGet(t *testing.T)	{}
-
-func TestSet(t *testing.T)	{}
-
-func TestRowCopy(t *testing.T)	{}
-
-func TestColCopy(t *testing.T)	{}
-
-func TestDiagonalCopy(t *testing.T)	{}
-
-func TestBufferRow(t *testing.T)	{}
-
-func TestBufferCol(t *testing.T)	{}
-
-func TestBufferDiagonal(t *testing.T)	{}
-
-func TestFillRow(t *testing.T)	{}
-
-func TestFillCol(t *testing.T)	{}
-
-func TestFillDiagonal(t *testing.T)	{}
-
-func TestCopy(t *testing.T)	{}
-
-func TestMakeDenseMatrix(t *testing.T)	{}
-
-func TestMakeMatrixReference(t *testing.T)	{}
-
-func TestMakeMatrix(t *testing.T)	{}
 
 /* TEST: decomp.go */
 
