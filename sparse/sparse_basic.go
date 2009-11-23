@@ -52,6 +52,7 @@ func (A *SparseMatrix) Transpose() *SparseMatrix {
 	return B;
 }
 
+//TODO: this function - not sure of the best way to do this for sparse matrices
 func (A *SparseMatrix) Det() float64 {
 	return 0;
 }
