@@ -59,7 +59,7 @@ func (A *DenseMatrix) FillRow(i int, buf []float64) {
 
 func (A *DenseMatrix) FillCol(j int, buf []float64) {
 	for i := 0; i < A.rows; i++ {
-		A.Set(i, j, buf[j])
+		A.Set(i, j, buf[i])
 	}
 }
 

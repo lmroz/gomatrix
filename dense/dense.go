@@ -224,6 +224,9 @@ func MakeDenseMatrixStacked(data [][]float64) *DenseMatrix {
 }
 
 func (A *DenseMatrix) String() string {
+	if A == nil {
+		return "{nil}";
+	}
 	s := "{";
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {

@@ -24,5 +24,5 @@ include $(GOROOT)/src/Make.pkg
 examples: examples.6
 	6l -o examples examples.6
 	
-examples.6: examples.go _obj/matrix.a
+examples.6: examples.go install
 	6g examples.go
