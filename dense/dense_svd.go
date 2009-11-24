@@ -16,11 +16,11 @@ func (Arg *DenseMatrix) SVD() (*DenseMatrix, *DenseMatrix, *DenseMatrix, *error)
 	      if (m<n) {
 		  throw new IllegalArgumentException("Jama SVD only works for m >= n"); }
 	*/
-	
+
 	if m < n {
-		return nil, nil, nil, NewError(ErrorDimensionMismatch);
+		return nil, nil, nil, NewError(ErrorDimensionMismatch)
 	}
-	
+
 	nu := minInt(m, n);
 	s := make([]float64, minInt(m+1, n));
 
@@ -225,65 +225,65 @@ func (Arg *DenseMatrix) SVD() (*DenseMatrix, *DenseMatrix, *DenseMatrix, *error)
 	eps := math.Pow(2.0, -52.0);
 	tiny := math.Pow(2.0, -966.0);
 	for p > 0 {
-		var k,kase int;
+		var k, kase int;
 
-         // Here is where a test for too many iterations would go.
+		// Here is where a test for too many iterations would go.
 
-         // This section of the program inspects for
-         // negligible elements in the s and e arrays.  On
-         // completion the variables kase and k are set as follows.
+		// This section of the program inspects for
+		// negligible elements in the s and e arrays.  On
+		// completion the variables kase and k are set as follows.
 
-         // kase = 1     if s(p) and e[k-1] are negligible and k<p
-         // kase = 2     if s(k) is negligible and k<p
-         // kase = 3     if e[k-1] is negligible, k<p, and
-         //              s(k), ..., s(p) are not negligible (qr step).
-         // kase = 4     if e(p-1) is negligible (convergence).
+		// kase = 1     if s(p) and e[k-1] are negligible and k<p
+		// kase = 2     if s(k) is negligible and k<p
+		// kase = 3     if e[k-1] is negligible, k<p, and
+		//              s(k), ..., s(p) are not negligible (qr step).
+		// kase = 4     if e(p-1) is negligible (convergence).
 
-         for k = p-2; k >= -1; k-- {
-            if (k == -1) {
-               break;
-            }
-            if (math.Fabs(e[k]) <=
-                  tiny + eps*(math.Fabs(s[k]) + math.Fabs(s[k+1]))) {
-               e[k] = 0.0;
-               break;
-            }
-         }
-         if (k == p-2) {
-            kase = 4;
-         } else {
-            var ks int;
-            for ks = p-1; ks >= k; ks-- {
-               if (ks == k) {
-                  break;
-               }
-			   t := float64(0);
-			   if ks != p {
-				t = math.Fabs(e[ks])
-			   }
-			   if ks != k+1 {
-			   t += math.Fabs(e[ks-1])
-			   }
-               //double t = (ks != p ? Math.abs(e[ks]) : 0.) + 
-               //           (ks != k+1 ? Math.abs(e[ks-1]) : 0.);
-               if (math.Fabs(s[ks]) <= tiny + eps*t)  {
-                  s[ks] = 0.0;
-                  break;
-               }
-            }
-            if (ks == k) {
-               kase = 3;
-            } else if (ks == p-1) {
-               kase = 1;
-            } else {
-               kase = 2;
-               k = ks;
-            }
-         }
-         k++;
+		for k = p - 2; k >= -1; k-- {
+			if k == -1 {
+				break
+			}
+			if math.Fabs(e[k]) <=
+				tiny+eps*(math.Fabs(s[k])+math.Fabs(s[k+1])) {
+				e[k] = 0.0;
+				break;
+			}
+		}
+		if k == p-2 {
+			kase = 4
+		} else {
+			var ks int;
+			for ks = p - 1; ks >= k; ks-- {
+				if ks == k {
+					break
+				}
+				t := float64(0);
+				if ks != p {
+					t = math.Fabs(e[ks])
+				}
+				if ks != k+1 {
+					t += math.Fabs(e[ks-1])
+				}
+				//double t = (ks != p ? Math.abs(e[ks]) : 0.) +
+				//           (ks != k+1 ? Math.abs(e[ks-1]) : 0.);
+				if math.Fabs(s[ks]) <= tiny+eps*t {
+					s[ks] = 0.0;
+					break;
+				}
+			}
+			if ks == k {
+				kase = 3
+			} else if ks == p-1 {
+				kase = 1
+			} else {
+				kase = 2;
+				k = ks;
+			}
+		}
+		k++;
 
 		// Perform the task indicated by kase.
-	//fmt.Printf("kase = %d\n", kase);
+		//fmt.Printf("kase = %d\n", kase);
 		switch kase {
 
 		// Deflate negligible s(p).
@@ -458,11 +458,11 @@ func (Arg *DenseMatrix) SVD() (*DenseMatrix, *DenseMatrix, *DenseMatrix, *error)
 			break;
 		}
 	}
-		//fmt.Printf("testing\n%v\n%v\n%v\n%v\n%v\n", A, V, U, e, s);
-	
-	theU := MakeDenseMatrixStacked(U).GetMatrix(0, 0, m, minInt(m+1,n));
+	//fmt.Printf("testing\n%v\n%v\n%v\n%v\n%v\n", A, V, U, e, s);
+
+	theU := MakeDenseMatrixStacked(U).GetMatrix(0, 0, m, minInt(m+1, n));
 	Σ := Diagonal(s);
 	theV := MakeDenseMatrixStacked(V);
-	
+
 	return theU, Σ, theV, nil;
 }
