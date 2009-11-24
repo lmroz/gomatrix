@@ -53,10 +53,7 @@ func (A *DenseMatrix) Inverse() (*DenseMatrix, *error) {
 	if A.Rows() != A.Cols() {
 		return nil, NewError(ErrorBadInput, "A.Inverse(): A is not square")
 	}
-	aug, err := A.Augment(Eye(A.Rows()));
-	if err != nil {
-		return nil, err
-	}
+	aug, _ := A.Augment(Eye(A.Rows()));
 	for i := 0; i < aug.Rows(); i++ {
 		j := i;
 		for k := i; k < aug.Rows(); k++ {
@@ -125,7 +122,7 @@ func (A *DenseMatrix) Transpose() *DenseMatrix {
 
 func (A *DenseMatrix) TransposeInPlace() {
 	for i := 0; i < A.rows; i++ {
-		for j := 0; j < A.cols; j++ {
+		for j := 0; j < i; j++ {
 			tmp := A.Get(i, j);
 			A.Set(i, j, A.Get(j, i));
 			A.Set(j, i, tmp);

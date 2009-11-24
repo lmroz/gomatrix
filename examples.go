@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"fmt";
 	. "./_obj/matrix";
