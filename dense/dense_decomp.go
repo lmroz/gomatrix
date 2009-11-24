@@ -35,7 +35,7 @@ func (A *DenseMatrix) Cholesky() (*DenseMatrix, *error) {
 	}
 
 	if !isspd {
-		return L, NewError(ErrorBadInput, "A.Cholesky(): A is not semi-positive definite")
+		return L, NewError(ExceptionNotSPD);
 	}
 
 	return L, nil;

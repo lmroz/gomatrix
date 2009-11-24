@@ -88,7 +88,7 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 
 func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Rows() != B.Rows() {
-		return nil, NewError(ErrorBadInput, "Augment(A,B): A and B don't have the same number of rows")
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	C := Zeros(A.Rows(), A.Cols()+B.Cols());
 	for i := 0; i < C.Rows(); i++ {
@@ -104,7 +104,7 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 
 func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Cols() != B.Cols() {
-		return nil, NewError(ErrorBadInput, "Stack(A,B): A and B don't have the same number of columns")
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	C := Zeros(A.Rows()+B.Rows(), A.Cols());
 	for j := 0; j < A.Cols(); j++ {

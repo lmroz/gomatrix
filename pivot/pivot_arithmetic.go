@@ -2,7 +2,7 @@ package matrix
 
 func (P *PivotMatrix) Times(A MatrixRO) (*DenseMatrix, *error) {
 	if P.Cols() != A.Rows() {
-		return nil, NewError(ErrorBadInput, "P.Times(A): P.Cols() != A.Rows()");
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	B := Zeros(P.rows, A.Cols());
 	for i:=0; i<P.rows; i++ {
