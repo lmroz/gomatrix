@@ -10,6 +10,7 @@ import (
 
 const ε = 0.000001
 const verbose = false
+const speedTest = false
 
 /* TEST: arithmetic.go */
 
@@ -752,7 +753,7 @@ func TestMultipleProduct(t *testing.T) {
 }
 
 func TestSpeed(t *testing.T) {
-	if !verbose {
+	if !speedTest {
 		//no failing this test - it just provides a benchmark
 		return
 	}
@@ -845,5 +846,15 @@ func TestSpeed(t *testing.T) {
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 6x6 Eigenvector decompositions in %fs\n", count, float(end-start)/1000000000);
+
+	A = Normals(6, 6);
+
+	count = 100000;
+	start = time.Nanoseconds();
+	for i := 0; i < count; i++ {
+		A.SVD()
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 6x6 singular value decompositions in %fs\n", count, float(end-start)/1000000000);
 
 }
