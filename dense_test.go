@@ -238,12 +238,6 @@ func TestSymmetric(t *testing.T) {
 	}
 }
 
-func TestSwapRows(t *testing.T)	{}
-
-func TestScaleRow(t *testing.T)	{}
-
-func TestScaleAddRow(t *testing.T)	{}
-
 func TestInverse(t *testing.T) {
 	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
 		3, -3, -6, 1,
@@ -302,13 +296,17 @@ func TestTrace(t *testing.T)	{
 	}
 }
 
-func TestOneNorm(t *testing.T)	{}
-
-func TestTwoNorm(t *testing.T)	{}
-
-func TestInfinityNorm(t *testing.T)	{}
-
-func TestTranspose(t *testing.T)	{}
+func TestTranspose(t *testing.T)	{
+	A := Normals(4, 4);
+	B := A.Transpose();
+	for i:=0; i<A.rows; i++ {
+		for j:=0; j<A.cols; j++ {
+			if A.Get(i, j) != B.Get(j, i) {
+				t.Fail();
+			}
+		}
+	}
+}
 
 func TestSolve(t *testing.T) {
 	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
@@ -441,7 +439,7 @@ func TestEigen(t *testing.T) {
 		1, 2,
 	},
 		2, 2);
-	V, D := A.Eigen();
+	V, D, _ := A.Eigen();
 
 	Vinv, _ := V.Inverse();
 	Aguess := Product(Product(V, D), Vinv);
@@ -458,7 +456,7 @@ func TestEigen(t *testing.T) {
 	},
 		4, 4);
 
-	V, D = B.Eigen();
+	V, D, _ = B.Eigen();
 
 	Vinv, _ = V.Inverse();
 
@@ -470,7 +468,7 @@ func TestEigen(t *testing.T) {
 	}
 
 	B, _ = B.Times(B.Transpose());
-	V, D = B.Eigen();
+	V, D, _ = B.Eigen();
 	Vinv, _ = V.Inverse();
 
 	if !ApproxEquals(B, Product(Product(V, D), Vinv), ε) {
@@ -490,14 +488,6 @@ func TestGetMatrix(t *testing.T) {
 	if A.Get(1, 2) != 1 {
 		t.Fail();
 	}
-}
-
-func TestGetColVector(t *testing.T) {
-	//TODO: wait for reference matrices
-}
-
-func TestGetRowVector(t *testing.T) {
-	//TODO: wait for reference matrices
 }
 
 func TestL(t *testing.T) {
@@ -727,21 +717,6 @@ func TestNormals(t *testing.T) {
 }
 
 /* TEST: util.go */
-
-func Test_min(t *testing.T)	{}
-
-func Test_max(t *testing.T)	{}
-
-func Test_sum(t *testing.T)	{}
-
-func Test_product(t *testing.T)	{}
-
-
-func TestDiagonal(t *testing.T)	{}
-
-func TestPivotMatrix(t *testing.T)	{}
-
-func TestString(t *testing.T)	{}
 
 func TestMultipleProduct(t *testing.T) {
 	A:= Ones(3,1);

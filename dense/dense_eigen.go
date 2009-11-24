@@ -4,7 +4,10 @@ import "math"
 
 //returns V,D st V*D*inv(V) = A and D is diagonal
 //code translated/ripped off from Jama
-func (A *DenseMatrix) Eigen() (*DenseMatrix, *DenseMatrix) {
+func (A *DenseMatrix) Eigen() (*DenseMatrix, *DenseMatrix, *error) {
+	if A.cols != A.rows {
+		return nil, nil, NewError(ErrorDimensionMismatch);
+	}
 	n := A.cols;
 	V := A.Copy().Arrays();
 	d := make([]float64, n);
@@ -14,20 +17,18 @@ func (A *DenseMatrix) Eigen() (*DenseMatrix, *DenseMatrix) {
 		tred2(V[0:n], d[0:n], e[0:n]);	//pass slices so they're references
 
 		tql2(V[0:n], d[0:n], e[0:n]);
-
-		return MakeDenseMatrixStacked(V), makeD(d, e);
 	}
-	//else
-	H := A.GetMatrix(0, 0, n, n).Copy().Arrays();
-	ort := make([]float64, n);
+	else {
+		H := A.GetMatrix(0, 0, n, n).Copy().Arrays();
+		ort := make([]float64, n);
 
-	// Reduce to Hessenberg form.
-	orthes(V[0:n], d[0:n], e[0:n], H[0:n], ort[0:n]);
+		// Reduce to Hessenberg form.
+		orthes(V[0:n], d[0:n], e[0:n], H[0:n], ort[0:n]);
 
-	// Reduce Hessenberg to real Schur form.
-	hqr2(V[0:n], d[0:n], e[0:n], H[0:n], ort[0:n]);
-
-	return MakeDenseMatrixStacked(V), makeD(d, e);
+		// Reduce Hessenberg to real Schur form.
+		hqr2(V[0:n], d[0:n], e[0:n], H[0:n], ort[0:n]);
+	}
+	return MakeDenseMatrixStacked(V), makeD(d, e), nil;
 }
 
 func makeD(d []float64, e []float64) *DenseMatrix {

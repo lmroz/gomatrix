@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt";
-	. "./_obj/matrix";
+	. "matrix";
 )
 
 func main() {
@@ -30,7 +30,7 @@ func main() {
 	x, _ := A.Solve(b);
 	fmt.Printf("And find x st Ax=b:\n%v\n\n", x);
 	
-	V, D := A.Eigen();
+	V, D, _ := A.Eigen();
 	fmt.Printf("Perhaps you want its eigenvectors and eigenvalues V,D st VDV'=A:\n%v\n%v\n\n", V, D);
 	
 	B, _ := A.TimesDense(A.Transpose());

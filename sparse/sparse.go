@@ -27,15 +27,15 @@ func (A *SparseMatrix) Get(i int, j int) float64 {
 	return x;
 }
 
-func (A *SparseMatrix) getRowIndex(index int) int {
+func (A *SparseMatrix) GetRowIndex(index int) int {
 	return (index - A.offset) / A.cols;
 }
 
-func (A *SparseMatrix) getColIndex(index int) int {
+func (A *SparseMatrix) GetColIndex(index int) int {
 	return (index - A.offset) % A.cols;
 }
 
-func (A *SparseMatrix) getRowColIndex(index int) (i int, j int) {
+func (A *SparseMatrix) GetRowColIndex(index int) (i int, j int) {
 	i = (index - A.offset) / A.step;
 	j = (index - A.offset) % A.step;
 	return;
@@ -81,12 +81,12 @@ func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, *error) {
 	C := ZerosSparse(A.rows, A.cols+B.cols);
 	
 	for index, value := range A.elements {
-		i, j := A.getRowColIndex(index);
+		i, j := A.GetRowColIndex(index);
 		C.Set(i, j, value);	
 	}
 	
 	for index, value := range B.elements {
-		i, j := B.getRowColIndex(index);
+		i, j := B.GetRowColIndex(index);
 		C.Set(i, j+A.cols, value);	
 	}
 	
@@ -100,12 +100,12 @@ func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, *error) {
 	C := ZerosSparse(A.rows+B.rows, A.cols);
 	
 	for index, value := range A.elements {
-		i, j := A.getRowColIndex(index);
+		i, j := A.GetRowColIndex(index);
 		C.Set(i, j, value);	
 	}
 	
 	for index, value := range B.elements {
-		i, j := B.getRowColIndex(index);
+		i, j := B.GetRowColIndex(index);
 		C.Set(i+A.rows, j, value);	
 	}
 	
@@ -115,7 +115,7 @@ func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, *error) {
 func (A *SparseMatrix) L() *SparseMatrix {
 	B := ZerosSparse(A.rows, A.cols);
 	for index, value := range A.elements {
-		i, j := A.getRowColIndex(index);
+		i, j := A.GetRowColIndex(index);
 		if i >= j {
 			B.Set(i, j, value);
 		}
@@ -126,7 +126,7 @@ func (A *SparseMatrix) L() *SparseMatrix {
 func (A *SparseMatrix) U() *SparseMatrix {
 	B := ZerosSparse(A.rows, A.cols);
 	for index, value := range A.elements {
-		i, j := A.getRowColIndex(index);
+		i, j := A.GetRowColIndex(index);
 		if i <= j {
 			B.Set(i, j, value);
 		}
@@ -171,7 +171,7 @@ func MakeSparseMatrix(elements map[int]float64, rows int, cols int) *SparseMatri
 func (A *SparseMatrix) DenseMatrix() *DenseMatrix {
 	B := Zeros(A.rows, A.cols);
 	for index, value := range A.elements {
-		i, j := A.getRowColIndex(index);
+		i, j := A.GetRowColIndex(index);
 		B.Set(i, j, value);
 	}
 	return B;
