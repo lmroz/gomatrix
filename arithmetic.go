@@ -7,7 +7,7 @@ import (
 
 func Sum(A MatrixRO, B MatrixRO) Matrix {
 	C := MakeDenseCopy(A);
-	err := C.Add(B);
+	err := C.Add(MakeDenseCopy(B));
 	if err.OK() {
 		return C;
 	}
@@ -16,7 +16,7 @@ func Sum(A MatrixRO, B MatrixRO) Matrix {
 
 func Difference(A MatrixRO, B MatrixRO) Matrix {
 	C := MakeDenseCopy(A);
-	err := C.Subtract(B);
+	err := C.Subtract(MakeDenseCopy(B));
 	if err.OK() {
 		return C;
 	}
