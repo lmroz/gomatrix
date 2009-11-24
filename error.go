@@ -12,7 +12,7 @@ const (
 )
 
 type error struct {
-	errorCode	int;
+	errorCode int;
 }
 
 type Error interface {
@@ -27,34 +27,34 @@ func NewError(errorCode int) *error {
 	return E;
 }
 
-func (e *error) String() string	{
+func (e *error) String() string {
 	if e == nil {
 		return "No error"
 	}
 	switch e.errorCode {
 	case ErrorNilMatrix:
-		return "Matrix is nil";
+		return "Matrix is nil"
 	case ErrorDimensionMismatch:
-		return "Input dimensions do not match";
+		return "Input dimensions do not match"
 	case ErrorIllegalIndex:
-		return "Index out of bounds";
+		return "Index out of bounds"
 	case ExceptionSingular:
-		return "Matrix is singular";
+		return "Matrix is singular"
 	case ExceptionNotSPD:
-		return "Matrix is not positive semidefinite";
+		return "Matrix is not positive semidefinite"
 	}
 	return fmt.Sprintf("Error code %d", e.errorCode);
 }
-func (e *error) ErrorCode() int	{
+func (e *error) ErrorCode() int {
 	if e == nil {
 		return 0
 	}
-	return e.errorCode
+	return e.errorCode;
 }
 
 func (e *error) OK() bool {
 	if e == nil {
-		return true;
+		return true
 	}
 	return e.ErrorCode() == 0;
 }

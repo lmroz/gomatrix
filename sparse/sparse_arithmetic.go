@@ -24,65 +24,65 @@ func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
 
 func (A *SparseMatrix) Add(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch);
+		return NewError(ErrorDimensionMismatch)
 	}
-	
-	for i:=0; i<A.rows; i++ {
-		for j:=0; j<A.cols; j++ {
-			A.Set(i, j, A.Get(i, j) + B.Get(i, j))
+
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			A.Set(i, j, A.Get(i, j)+B.Get(i, j))
 		}
 	}
-	
+
 	return nil;
 }
 
 func (A *SparseMatrix) AddSparse(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch);
+		return NewError(ErrorDimensionMismatch)
 	}
-	
+
 	for index, value := range B.elements {
 		i, j := A.GetRowColIndex(index);
-		A.Set(i, j, A.Get(i, j) + value)
-	} 
-	
+		A.Set(i, j, A.Get(i, j)+value);
+	}
+
 	return nil;
 }
 
 func (A *SparseMatrix) Subtract(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch);
+		return NewError(ErrorDimensionMismatch)
 	}
-	
-	for i:=0; i<A.rows; i++ {
-		for j:=0; j<A.cols; j++ {
-			A.Set(i, j, A.Get(i, j) - B.Get(i, j))
+
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			A.Set(i, j, A.Get(i, j)-B.Get(i, j))
 		}
 	}
-	
+
 	return nil;
 }
 
 func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch);
+		return NewError(ErrorDimensionMismatch)
 	}
-	
+
 	for index, value := range B.elements {
 		i, j := A.GetRowColIndex(index);
-		A.Set(i, j, A.Get(i, j) - value)
+		A.Set(i, j, A.Get(i, j)-value);
 	}
-	
+
 	return nil;
 }
 
 func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 	if A.cols != B.Rows() {
-		return nil, NewError(ErrorDimensionMismatch);
+		return nil, NewError(ErrorDimensionMismatch)
 	}
-	
+
 	C := ZerosSparse(A.rows, B.Cols());
-	
+
 	for index, value := range A.elements {
 		i, k := A.GetRowColIndex(index);
 		//not sure if there is a more efficient way to do this without using
@@ -90,23 +90,23 @@ func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 		for j := 0; j < B.Cols(); j++ {
 			v := B.Get(k, j);
 			if v != 0 {
-				C.Set(i, j, C.Get(i, j) + value*v);
-			}			
+				C.Set(i, j, C.Get(i, j)+value*v)
+			}
 		}
 	}
-	
-	return C, nil
+
+	return C, nil;
 }
 
 func (A *SparseMatrix) TimesSparse(B *SparseMatrix) (*SparseMatrix, *error) {
-	return A.Times(B);//nothing clever yet
+	return A.Times(B)	//nothing clever yet
 }
 
 func (A *SparseMatrix) Scale(f float64) *error {
 	for index, value := range A.elements {
-		A.elements[index] = value*f;
+		A.elements[index] = value * f
 	}
-	
+
 	return nil;
 }
 
@@ -124,26 +124,26 @@ func (A *SparseMatrix) ElementMultSparse(B *SparseMatrix) (*SparseMatrix, *error
 
 func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch);
+		return NewError(ErrorDimensionMismatch)
 	}
-	
+
 	for index, value := range A.elements {
 		i, j := A.GetRowColIndex(index);
-		A.Set(i, j, value * B.Get(i, j))
+		A.Set(i, j, value*B.Get(i, j));
 	}
-	
+
 	return nil;
 }
 
 func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) *error {
 	if len(B.elements) > len(A.elements) {
 		if A.rows != B.Rows() || A.cols != B.Cols() {
-			return NewError(ErrorDimensionMismatch);
+			return NewError(ErrorDimensionMismatch)
 		}
-		
+
 		for index, value := range B.elements {
 			i, j := B.GetRowColIndex(index);
-			A.Set(i, j, value * A.Get(i, j))
+			A.Set(i, j, value*A.Get(i, j));
 		}
 	}
 	return A.ScaleMatrix(B);

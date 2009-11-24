@@ -3,13 +3,13 @@ package matrix
 import (
 	"math";
 	"reflect";
-	)
+)
 
 func Sum(A MatrixRO, B MatrixRO) Matrix {
 	C := MakeDenseCopy(A);
 	err := C.Add(MakeDenseCopy(B));
 	if err.OK() {
-		return C;
+		return C
 	}
 	return nil;
 }
@@ -18,7 +18,7 @@ func Difference(A MatrixRO, B MatrixRO) Matrix {
 	C := MakeDenseCopy(A);
 	err := C.Subtract(MakeDenseCopy(B));
 	if err.OK() {
-		return C;
+		return C
 	}
 	return nil;
 }
@@ -66,7 +66,7 @@ func ParallelProduct(A MatrixRO, B MatrixRO, threads int) *DenseMatrix {
 					C.Set(i, j, sums[j])
 				}
 			case <-quit:
-				return;
+				return
 			}
 		}
 	};
@@ -94,12 +94,12 @@ func Scaled(A MatrixRO, f float64) Matrix {
 
 func Equals(A MatrixRO, B MatrixRO) bool {
 	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
-		return false;
+		return false
 	}
-	for i:=0; i<A.Rows(); i++ {
-		for j:=0; j<A.Cols(); j++ {
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
 			if A.Get(i, j) != B.Get(i, j) {
-				return false;
+				return false
 			}
 		}
 	}
@@ -108,32 +108,32 @@ func Equals(A MatrixRO, B MatrixRO) bool {
 
 func ApproxEquals(A MatrixRO, B MatrixRO, ε float64) bool {
 	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
-		return false;
+		return false
 	}
-	for i:=0; i<A.Rows(); i++ {
-		for j:=0; j<A.Cols(); j++ {
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
 			if math.Fabs(A.Get(i, j)-B.Get(i, j)) > ε {
-				return false;
+				return false
 			}
 		}
 	}
 	return true;
 }
 
-func MultipleProduct(values ...) (Matrix) {
+func MultipleProduct(values ...) Matrix {
 	v := reflect.NewValue(values).(*reflect.StructValue);
 	if v.NumField() < 2 {
-		return nil;
+		return nil
 	}
 
 	inter := v.Field(0).Interface();
 	B, ok := inter.(MatrixRO);
 	if ok {
 		C := MakeDenseCopy(B);
-		for i:=1; i < v.NumField(); i++ {
+		for i := 1; i < v.NumField(); i++ {
 			inter := v.Field(i).Interface();
 			if A, ok := inter.(MatrixRO); ok {
-				C = Product(C,A);
+				C = Product(C, A)
 			}
 		}
 		return C;
@@ -141,5 +141,3 @@ func MultipleProduct(values ...) (Matrix) {
 
 	return nil;
 }
-
-

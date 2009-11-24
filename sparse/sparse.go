@@ -1,4 +1,3 @@
-
 package matrix
 
 import (
@@ -23,16 +22,16 @@ func (A *SparseMatrix) Get(i int, j int) float64 {
 	if !ok {
 		return 0
 	}
-	
+
 	return x;
 }
 
 func (A *SparseMatrix) GetRowIndex(index int) int {
-	return (index - A.offset) / A.cols;
+	return (index - A.offset) / A.cols
 }
 
 func (A *SparseMatrix) GetColIndex(index int) int {
-	return (index - A.offset) % A.cols;
+	return (index - A.offset) % A.cols
 }
 
 func (A *SparseMatrix) GetRowColIndex(index int) (i int, j int) {
@@ -50,7 +49,7 @@ func (A *SparseMatrix) Set(i int, j int, v float64) {
 func (A *SparseMatrix) Indices() (out chan int) {
 	//maybe thread the populating?
 	for index := range A.elements {
-		out <- index;
+		out <- index
 	}
 	return;
 }
@@ -60,7 +59,7 @@ func (A *SparseMatrix) GetMatrix(i int, j int, rows int, cols int) *SparseMatrix
 	B := new(SparseMatrix);
 	B.rows = rows;
 	B.cols = cols;
-	B.offset = (i + A.offset / A.step) * A.step + (j + A.offset % A.step);
+	B.offset = (i+A.offset/A.step)*A.step + (j + A.offset%A.step);
 	B.step = A.step;
 	B.elements = A.elements;
 	return B;
@@ -76,39 +75,39 @@ func (A *SparseMatrix) GetRowVector(i int) *SparseMatrix {
 
 func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, *error) {
 	if A.rows != B.rows {
-		return nil, NewError(ErrorDimensionMismatch);
+		return nil, NewError(ErrorDimensionMismatch)
 	}
 	C := ZerosSparse(A.rows, A.cols+B.cols);
-	
+
 	for index, value := range A.elements {
 		i, j := A.GetRowColIndex(index);
-		C.Set(i, j, value);	
+		C.Set(i, j, value);
 	}
-	
+
 	for index, value := range B.elements {
 		i, j := B.GetRowColIndex(index);
-		C.Set(i, j+A.cols, value);	
+		C.Set(i, j+A.cols, value);
 	}
-	
+
 	return C, nil;
 }
 
 func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, *error) {
 	if A.cols != B.cols {
-		return nil, NewError(ErrorDimensionMismatch);
+		return nil, NewError(ErrorDimensionMismatch)
 	}
 	C := ZerosSparse(A.rows+B.rows, A.cols);
-	
+
 	for index, value := range A.elements {
 		i, j := A.GetRowColIndex(index);
-		C.Set(i, j, value);	
+		C.Set(i, j, value);
 	}
-	
+
 	for index, value := range B.elements {
 		i, j := B.GetRowColIndex(index);
-		C.Set(i+A.rows, j, value);	
+		C.Set(i+A.rows, j, value);
 	}
-	
+
 	return C, nil;
 }
 
@@ -117,7 +116,7 @@ func (A *SparseMatrix) L() *SparseMatrix {
 	for index, value := range A.elements {
 		i, j := A.GetRowColIndex(index);
 		if i >= j {
-			B.Set(i, j, value);
+			B.Set(i, j, value)
 		}
 	}
 	return B;
@@ -128,7 +127,7 @@ func (A *SparseMatrix) U() *SparseMatrix {
 	for index, value := range A.elements {
 		i, j := A.GetRowColIndex(index);
 		if i <= j {
-			B.Set(i, j, value);
+			B.Set(i, j, value)
 		}
 	}
 	return B;
@@ -137,7 +136,7 @@ func (A *SparseMatrix) U() *SparseMatrix {
 func (A *SparseMatrix) Copy() *SparseMatrix {
 	B := ZerosSparse(A.rows, A.cols);
 	for index, value := range A.elements {
-		B.elements[index] = value;
+		B.elements[index] = value
 	}
 	return B;
 }
@@ -148,13 +147,13 @@ func ZerosSparse(rows int, cols int) *SparseMatrix {
 	A.cols = cols;
 	A.offset = 0;
 	A.step = cols;
-	A.elements = map[int] float64 {};
+	A.elements = map[int]float64{};
 	return A;
 }
 
 func NormalsSparse(rows int, cols int, n int) *SparseMatrix {
 	A := ZerosSparse(rows, cols);
-	for k:=0; k<n; k++ {
+	for k := 0; k < n; k++ {
 		i := rand.Intn(rows);
 		j := rand.Intn(cols);
 		A.Set(i, j, rand.NormFloat64());

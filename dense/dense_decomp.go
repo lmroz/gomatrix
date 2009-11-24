@@ -35,7 +35,7 @@ func (A *DenseMatrix) Cholesky() (*DenseMatrix, *error) {
 	}
 
 	if !isspd {
-		return L, NewError(ExceptionNotSPD);
+		return L, NewError(ExceptionNotSPD)
 	}
 
 	return L, nil;
@@ -181,4 +181,3 @@ func (A *DenseMatrix) QR() (*DenseMatrix, *DenseMatrix) {
 
 	return Q, R;
 }
-

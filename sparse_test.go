@@ -12,10 +12,10 @@ func TestAdd_Sparse(t *testing.T) {
 	C1, _ := A.Plus(B);
 	C2, _ := A.PlusSparse(B);
 	if !ApproxEquals(C1, Sum(A, B), ε) {
-		t.Fail();
+		t.Fail()
 	}
 	if !ApproxEquals(C2, Sum(A, B), ε) {
-		t.Fail();
+		t.Fail()
 	}
 }
 
@@ -25,10 +25,10 @@ func TestSubtract_Sparse(t *testing.T) {
 	C1, _ := A.Minus(B);
 	C2, _ := A.MinusSparse(B);
 	if !ApproxEquals(C1, Difference(A, B), ε) {
-		t.Fail();
+		t.Fail()
 	}
 	if !ApproxEquals(C2, Difference(A, B), ε) {
-		t.Fail();
+		t.Fail()
 	}
 }
 
@@ -38,10 +38,10 @@ func TestTimes_Sparse(t *testing.T) {
 	C1, _ := A.Times(B);
 	C2, _ := A.TimesSparse(B);
 	if !ApproxEquals(C1, Product(A, B), ε) {
-		t.Fail();
+		t.Fail()
 	}
 	if !ApproxEquals(C2, Product(A, B), ε) {
-		t.Fail();
+		t.Fail()
 	}
 }
 
@@ -61,21 +61,21 @@ func TestElementMult_Sparse(t *testing.T) {
 
 func TestGetMatrix_Sparse(t *testing.T) {
 	A := ZerosSparse(6, 6);
-	for i:=0; i<36; i++ {
+	for i := 0; i < 36; i++ {
 		x := rand.Intn(6);
 		y := rand.Intn(6);
 		A.Set(y, x, 1);
 	}
 	B := A.GetMatrix(1, 1, 4, 4);
-	
-	for i:=0; i<4; i++ {
-		for j:=0; j<4; j++ {
+
+	for i := 0; i < 4; i++ {
+		for j := 0; j < 4; j++ {
 			if B.Get(i, j) != A.Get(i+1, j+1) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
-	
+
 }
 
 func TestAugment_Sparse(t *testing.T) {
@@ -149,9 +149,9 @@ func TestStack_Sparse(t *testing.T) {
 	C, err := A.Stack(B);
 	if err == nil {
 		if verbose {
-			fmt.Printf("%v\n", err);
+			fmt.Printf("%v\n", err)
 		}
-		t.Fail()
+		t.Fail();
 	}
 
 	A = NormalsSparse(4, 4, 16);

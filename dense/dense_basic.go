@@ -18,8 +18,8 @@ func (A *DenseMatrix) Symmetric() bool {
 }
 
 func (m *DenseMatrix) SwapRows(r1 int, r2 int) {
-	index1 := r1*m.step;
-	index2 := r2*m.step;
+	index1 := r1 * m.step;
+	index2 := r2 * m.step;
 	for j := 0; j < m.cols; j++ {
 		tmp := m.elements[index1];
 		m.elements[index1] = m.elements[index2];
@@ -30,7 +30,7 @@ func (m *DenseMatrix) SwapRows(r1 int, r2 int) {
 }
 
 func (m *DenseMatrix) ScaleRow(r int, f float64) {
-	index := r*m.step;
+	index := r * m.step;
 	for j := 0; j < m.cols; j++ {
 		m.elements[index] *= f;
 		index++;
@@ -39,11 +39,11 @@ func (m *DenseMatrix) ScaleRow(r int, f float64) {
 }
 
 func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
-	indexd := rd*m.step;
-	indexs := rs*m.step;
+	indexd := rd * m.step;
+	indexs := rs * m.step;
 	for j := 0; j < m.cols; j++ {
 		//m.Set(rd, j, m.Get(rd, j)+m.Get(rs, j)*f)
-		m.elements[indexd] += f*m.elements[indexs];
+		m.elements[indexd] += f * m.elements[indexs];
 		indexd++;
 		indexs++;
 	}
@@ -51,7 +51,7 @@ func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 
 func (A *DenseMatrix) Inverse() (*DenseMatrix, *error) {
 	if A.Rows() != A.Cols() {
-		return nil, NewError(ErrorDimensionMismatch);
+		return nil, NewError(ErrorDimensionMismatch)
 	}
 	aug, _ := A.Augment(Eye(A.Rows()));
 	for i := 0; i < aug.Rows(); i++ {
@@ -160,17 +160,16 @@ func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, *error) {
 	P := Acopy.LUInPlace();
 	Pinv := P.Inverse();
 	pb, err := Pinv.Times(b);
-	
+
 	if !err.OK() {
-		return nil, err;
+		return nil, err
 	}
-	
+
 	y := solveLower(Acopy, pb);
 	x := solveUpper(Acopy, y);
 	return x, nil;
 }
 
 func (A *DenseMatrix) SolveDense(b *DenseMatrix) (*DenseMatrix, *error) {
-	return A.Solve(b);
+	return A.Solve(b)
 }
-

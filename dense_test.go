@@ -97,20 +97,20 @@ func TestProduct(t *testing.T) {
 	if !Equals(C, Ctrue) {
 		t.Fail()
 	}
-	
+
 	P := MakePivotMatrix([]int{1, 3, 0, 2}, -1);
 	C, err = P.Times(A);
-	
+
 	Ctrue, err = P.DenseMatrix().Times(A);
 	if !Equals(C, Ctrue) {
-		t.Fail();
+		t.Fail()
 	}
 }
 
 func TestParallelProduct(t *testing.T) {
 	w := 100000;
 	h := 40;
-	
+
 	if !verbose {
 		w = 100;
 		h = 4;
@@ -202,11 +202,11 @@ func TestScaleMatrix(t *testing.T) {
 	B := Normals(4, 4);
 	C := A.Copy();
 	C.ScaleMatrix(B);
-	
+
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
-			if A.Get(i, j) * B.Get(i, j) != C.Get(i, j) {
-				t.Fail();
+			if A.Get(i, j)*B.Get(i, j) != C.Get(i, j) {
+				t.Fail()
 			}
 		}
 	}
@@ -265,13 +265,13 @@ func TestInverse(t *testing.T) {
 	}
 }
 
-func TestDet(t *testing.T)	{
-	A := MakeDenseMatrix([]float64{ 4, -2, 5,
-					-1, -7, 10,
-					0, 1, -3
+func TestDet(t *testing.T) {
+	A := MakeDenseMatrix([]float64{4, -2, 5,
+		-1, -7, 10,
+		0, 1, -3,
 	},
 		3, 3);
-	
+
 	if A.Det() != 45 {
 		if verbose {
 			fmt.Printf("A\n%v\n\nA.Det()\n%v\n\n", A, A.Det())
@@ -280,15 +280,14 @@ func TestDet(t *testing.T)	{
 	}
 }
 
-func TestTrace(t *testing.T)	{
-	A := MakeDenseMatrix([]float64{ 4, -2, 5,
-					-1, -7, 10,
-					0, 1, -3
+func TestTrace(t *testing.T) {
+	A := MakeDenseMatrix([]float64{4, -2, 5,
+		-1, -7, 10,
+		0, 1, -3,
 	},
 		3, 3);
 
-	
-	if A.Trace() != 4 - 7 - 3 {
+	if A.Trace() != 4-7-3 {
 		if verbose {
 			fmt.Printf("A\n%v\n\nA.Trace()\n%v\n\n", A, A.Trace())
 		}
@@ -296,13 +295,13 @@ func TestTrace(t *testing.T)	{
 	}
 }
 
-func TestTranspose(t *testing.T)	{
+func TestTranspose(t *testing.T) {
 	A := Normals(4, 4);
 	B := A.Transpose();
-	for i:=0; i<A.rows; i++ {
-		for j:=0; j<A.cols; j++ {
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
 			if A.Get(i, j) != B.Get(j, i) {
-				t.Fail();
+				t.Fail()
 			}
 		}
 	}
@@ -331,10 +330,12 @@ func TestSolve(t *testing.T) {
 
 /* TEST: decomp.go */
 
-func TestCholesky(t *testing.T)	{
+func TestCholesky(t *testing.T) {
 	A := MakeDenseMatrix([]float64{1, 0.2, 0,
 		0.2, 1, 0.5,
-		0, 0.5, 1}, 3, 3);
+		0, 0.5, 1,
+	},
+		3, 3);
 	B, err := A.Cholesky();
 	if !err.OK() {
 		t.Fail()
@@ -353,23 +354,22 @@ func TestLU(t *testing.T) {
 	},
 		4, 4);
 	L, U, P := A.LU();
-	
 
 	LU, err := L.Times(U);
 	PLU, err := P.Times(LU);
 
 	if !err.OK() {
 		if verbose {
-			fmt.Printf("TestLU: %v\n", err);
+			fmt.Printf("TestLU: %v\n", err)
 		}
-		t.Fail()
+		t.Fail();
 	}
 
 	if !Equals(A, PLU) {
 		if verbose {
-			fmt.Printf("TestLU:\n%v\n!=\n%v\n", A, PLU);
+			fmt.Printf("TestLU:\n%v\n!=\n%v\n", A, PLU)
 		}
-		t.Fail()
+		t.Fail();
 	}
 
 	A = MakeDenseMatrix([]float64{6, -2, -4, 4,
@@ -486,7 +486,7 @@ func TestGetMatrix(t *testing.T) {
 	B := A.GetMatrix(1, 1, 2, 2);
 	B.Set(0, 1, 1);
 	if A.Get(1, 2) != 1 {
-		t.Fail();
+		t.Fail()
 	}
 }
 
@@ -719,117 +719,110 @@ func TestNormals(t *testing.T) {
 /* TEST: util.go */
 
 func TestMultipleProduct(t *testing.T) {
-	A:= Ones(3,1);
-	B:= Ones(1,3);
-	C:=MultipleProduct(A,B,A);
-	D:=Product(A,B);
-	E:=Product(D,A);
+	A := Ones(3, 1);
+	B := Ones(1, 3);
+	C := MultipleProduct(A, B, A);
+	D := Product(A, B);
+	E := Product(D, A);
 
 	if !Equals(E, C) {
-		t.Fail();
+		t.Fail()
 	}
 }
 
 func TestSpeed(t *testing.T) {
 	if !verbose {
 		//no failing this test - it just provides a benchmark
-		return;
+		return
 	}
-	
+
 	var start, end int64;
 	var count int;
-	
+
 	var A, B *DenseMatrix;
-	
+
 	A = Normals(4, 8);
 	B = Normals(8, 4);
-	
+
 	count = 100000;
 	start = time.Nanoseconds();
-	for i:=0; i<count; i++ {
-		A.Times(B);
+	for i := 0; i < count; i++ {
+		A.Times(B)
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 4x8 x 8x4 matrix multiplications in %fs\n", count, float(end-start)/1000000000);
-	
-	
+
 	A = Normals(4, 4);
 	B = Normals(4, 4);
-	
+
 	count = 100000;
 	start = time.Nanoseconds();
-	for i:=0; i<count; i++ {
-		A.ElementMult(B);
+	for i := 0; i < count; i++ {
+		A.ElementMult(B)
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 4x4 matrix element multiplications in %fs\n", count, float(end-start)/1000000000);
-	
+
 	A = Normals(4, 4);
 	B = Normals(4, 4);
-	
+
 	count = 100000;
 	start = time.Nanoseconds();
-	for i:=0; i<count; i++ {
-		A.Plus(B);
+	for i := 0; i < count; i++ {
+		A.Plus(B)
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 4x4 matrix additions in %fs\n", count, float(end-start)/1000000000);
-	
+
 	A = Normals(6, 6);
-	
+
 	count = 100000;
 	start = time.Nanoseconds();
-	for i:=0; i<count; i++ {
-		A.Inverse();
+	for i := 0; i < count; i++ {
+		A.Inverse()
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 6x6 matrix inversions in %fs\n", count, float(end-start)/1000000000);
-	
+
 	A = Normals(6, 6);
-	
+
 	count = 100000;
 	start = time.Nanoseconds();
-	for i:=0; i<count; i++ {
-		A.Det();
+	for i := 0; i < count; i++ {
+		A.Det()
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 6x6 matrix determinants in %fs\n", count, float(end-start)/1000000000);
-	
-	
+
 	A = Normals(6, 6);
 	B, _ = A.Times(A.Transpose());
-	
+
 	count = 100000;
 	start = time.Nanoseconds();
-	for i:=0; i<count; i++ {
-		B.Cholesky();
+	for i := 0; i < count; i++ {
+		B.Cholesky()
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 6x6 cholesky decompositions in %fs\n", count, float(end-start)/1000000000);
-	
-	
+
 	A = Normals(6, 6);
-	
+
 	count = 100000;
 	start = time.Nanoseconds();
-	for i:=0; i<count; i++ {
-		A.QR();
+	for i := 0; i < count; i++ {
+		A.QR()
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 6x6 QR decompositions in %fs\n", count, float(end-start)/1000000000);
-	
-	
+
 	A = Normals(6, 6);
-	
+
 	count = 100000;
 	start = time.Nanoseconds();
-	for i:=0; i<count; i++ {
-		A.Eigen();
+	for i := 0; i < count; i++ {
+		A.Eigen()
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 6x6 Eigenvector decompositions in %fs\n", count, float(end-start)/1000000000);
-	
-	
+
 }
-
-
