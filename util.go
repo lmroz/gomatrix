@@ -7,7 +7,21 @@ func max(x float64, y float64) float64 {
 	return y;
 }
 
+func maxInt(x int, y int) int {
+	if x > y {
+		return x
+	}
+	return y;
+}
+
 func min(x float64, y float64) float64 {
+	if x < y {
+		return x
+	}
+	return y;
+}
+
+func minInt(x int, y int) int {
 	if x < y {
 		return x
 	}

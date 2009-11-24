@@ -479,6 +479,27 @@ func TestEigen(t *testing.T) {
 	}
 }
 
+func TestSVD(t *testing.T) {
+	A := MakeDenseMatrix([]float64{
+		6, -2, -4, 4,
+		3, -3, -6, 1,
+		-12, 8, 21, -8,
+		-6, 0, -10, 7,
+	},
+		4, 4);
+	U, Σ, V, _ :=A.SVD();
+	Arecomp :=Product(Product(U, Σ), V.Transpose());
+	if !ApproxEquals(A, Arecomp, ε) {
+		t.Fail();
+	}
+	A = Normals(5, 3);
+	U, Σ, V, _ = A.SVD();
+	Arecomp = Product(Product(U, Σ), V.Transpose());
+	if !ApproxEquals(A, Arecomp, ε) {
+		t.Fail();
+	}
+}
+
 /* TEST: matrix.go */
 
 func TestGetMatrix(t *testing.T) {
