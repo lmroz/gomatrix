@@ -12,6 +12,7 @@ GOFILES=\
 	dense/dense_data.go\
 	dense/dense_decomp.go\
 	dense/dense_eigen.go\
+	dense/dense_svd.go\
 	sparse/sparse.go\
 	sparse/sparse_arithmetic.go\
 	sparse/sparse_basic.go\
