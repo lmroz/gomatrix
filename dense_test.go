@@ -484,7 +484,12 @@ func TestEigen(t *testing.T) {
 /* TEST: matrix.go */
 
 func TestGetMatrix(t *testing.T) {
-	//TODO: wait for reference matrices
+	A := Zeros(4, 4);
+	B := A.GetMatrix(1, 1, 2, 2);
+	B.Set(0, 1, 1);
+	if A.Get(1, 2) != 1 {
+		t.Fail();
+	}
 }
 
 func TestGetColVector(t *testing.T) {

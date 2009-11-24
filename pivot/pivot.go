@@ -15,11 +15,6 @@ func (P *PivotMatrix) Get(i int, j int) float64 {
 	return 0;
 }
 
-	
-func (P *PivotMatrix) isReadOnly() bool {
-	return true
-}
-
 func (P *PivotMatrix) DenseMatrix() *DenseMatrix {
 	A := Zeros(P.rows, P.cols);
 	for j:=0; j<P.rows; j++ {

@@ -85,13 +85,6 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 	}
 	return B;
 }
-func (A *DenseMatrix) copyMatrix() Matrix {
-	return A.Copy();
-}
-func (A *DenseMatrix) copyMatrixReadOnly() MatrixRO {
-	return A.Copy();
-}
-
 
 func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Rows() != B.Rows() {
@@ -213,16 +206,8 @@ func MakeDenseCopy(A MatrixRO) *DenseMatrix {
 }
 
 func MakeDenseMatrix(elements []float64, rows int, cols int) *DenseMatrix {
-
 	A := Zeros(rows, cols);
 	A.elements = elements;
-	/*
-	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			A.Set(i, j, elements[i*cols+j])
-		}
-	}
-	*/
 	return A;
 }
 
