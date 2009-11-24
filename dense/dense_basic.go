@@ -51,7 +51,7 @@ func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 
 func (A *DenseMatrix) Inverse() (*DenseMatrix, *error) {
 	if A.Rows() != A.Cols() {
-		return nil, NewError(ErrorBadInput, "A.Inverse(): A is not square")
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	aug, _ := A.Augment(Eye(A.Rows()));
 	for i := 0; i < aug.Rows(); i++ {
@@ -65,7 +65,7 @@ func (A *DenseMatrix) Inverse() (*DenseMatrix, *error) {
 			aug.SwapRows(i, j)
 		}
 		if aug.Get(i, i) == 0 {
-			return nil, NewError(ErrorBadInput, "A.Inverse(): A has no inverse")
+			return nil, NewError(ExceptionSingular)
 		}
 		aug.ScaleRow(i, 1.0/aug.Get(i, i));
 		for k := 0; k < aug.Rows(); k++ {

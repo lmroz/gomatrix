@@ -25,7 +25,7 @@ func (A *DenseMatrix) MinusDense(B *DenseMatrix) (*DenseMatrix, *error) {
 
 func (A *DenseMatrix) Add(B MatrixRO) *error {
 	if A.cols != B.Cols() || A.rows != B.Rows() {
-		return NewError(ErrorBadInput, "A.Subtract(B): A and B dimensions don't match");
+		return NewError(ErrorDimensionMismatch);
 	}
 
 	for i := 0; i < A.rows; i++ {
@@ -45,7 +45,7 @@ func (A *DenseMatrix) AddDense(B *DenseMatrix) *error {
 
 func (A *DenseMatrix) Subtract(B MatrixRO) *error {
 	if A.cols != B.Cols() || A.rows != B.Rows() {
-		return NewError(ErrorBadInput, "A.Subtract(B): A and B dimensions don't match");
+		return NewError(ErrorDimensionMismatch);
 	}
 
 	for i := 0; i < A.rows; i++ {
@@ -65,7 +65,7 @@ func (A *DenseMatrix) SubtractDense(B *DenseMatrix) *error {
 
 func (A *DenseMatrix) Times(B MatrixRO) (*DenseMatrix, *error) {
 	if A.cols != B.Rows() {
-		return nil, NewError(ErrorBadInput, "A.Times(B): A.Cols() != B.Rows()");
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	C := Zeros(A.rows, B.Cols());
 
@@ -84,7 +84,7 @@ func (A *DenseMatrix) Times(B MatrixRO) (*DenseMatrix, *error) {
 
 func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.cols != B.rows {
-		return nil, NewError(ErrorBadInput, "A.Times(B): A.Cols() != B.Rows()");
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	C := Zeros(A.rows, B.cols);
 
@@ -137,7 +137,7 @@ func (A *DenseMatrix) Scale(f float64) {
 
 func (A *DenseMatrix) ScaleMatrix(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorBadInput, "A.ScaleMatrix(B):A and B have different dimensions")
+		return NewError(ErrorDimensionMismatch);
 	}
 	for i := 0; i < A.rows; i++ {
 		indexA := i*A.step;
@@ -151,7 +151,7 @@ func (A *DenseMatrix) ScaleMatrix(B MatrixRO) *error {
 
 func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) *error {
 	if A.rows != B.rows || A.cols != B.cols {
-		return NewError(ErrorBadInput, "A.ScaleMatrix(B):A and B have different dimensions")
+		return NewError(ErrorDimensionMismatch);
 	}
 	for i := 0; i < A.rows; i++ {
 		indexA := i*A.step;

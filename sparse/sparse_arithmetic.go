@@ -24,7 +24,7 @@ func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
 
 func (A *SparseMatrix) Add(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorBadInput, "A.Add(B): A and B dimensions don't match");
+		return NewError(ErrorDimensionMismatch);
 	}
 	
 	for i:=0; i<A.rows; i++ {
@@ -38,7 +38,7 @@ func (A *SparseMatrix) Add(B MatrixRO) *error {
 
 func (A *SparseMatrix) AddSparse(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorBadInput, "A.Add(B): A and B dimensions don't match");
+		return NewError(ErrorDimensionMismatch);
 	}
 	
 	for index, value := range B.elements {
@@ -51,7 +51,7 @@ func (A *SparseMatrix) AddSparse(B *SparseMatrix) *error {
 
 func (A *SparseMatrix) Subtract(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorBadInput, "A.Add(B): A and B dimensions don't match");
+		return NewError(ErrorDimensionMismatch);
 	}
 	
 	for i:=0; i<A.rows; i++ {
@@ -65,7 +65,7 @@ func (A *SparseMatrix) Subtract(B MatrixRO) *error {
 
 func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorBadInput, "A.Subtract(B): A and B dimensions don't match");
+		return NewError(ErrorDimensionMismatch);
 	}
 	
 	for index, value := range B.elements {
@@ -78,7 +78,7 @@ func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) *error {
 
 func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 	if A.cols != B.Rows() {
-		return nil, NewError(ErrorBadInput, "A.Times(B): A.Cols() != B.Rows()");
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	
 	C := ZerosSparse(A.rows, B.Cols());
@@ -124,7 +124,7 @@ func (A *SparseMatrix) ElementMultSparse(B *SparseMatrix) (*SparseMatrix, *error
 
 func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorBadInput, "A.ScaleMatrix(B): A and B dimensions don't match");
+		return NewError(ErrorDimensionMismatch);
 	}
 	
 	for index, value := range A.elements {
@@ -138,7 +138,7 @@ func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) *error {
 	if len(B.elements) > len(A.elements) {
 		if A.rows != B.Rows() || A.cols != B.Cols() {
-			return NewError(ErrorBadInput, "A.ScaleMatrix(B): A and B dimensions don't match");
+			return NewError(ErrorDimensionMismatch);
 		}
 		
 		for index, value := range B.elements {

@@ -76,7 +76,7 @@ func (A *SparseMatrix) GetRowVector(i int) *SparseMatrix {
 
 func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, *error) {
 	if A.rows != B.rows {
-		return nil, NewError(ErrorBadInput, "Augment(A,B): A and B don't have the same number of rows")
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	C := ZerosSparse(A.rows, A.cols+B.cols);
 	
@@ -95,7 +95,7 @@ func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, *error) {
 
 func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, *error) {
 	if A.cols != B.cols {
-		return nil, NewError(ErrorBadInput, "Augment(A,B): A and B don't have the same number of rows")
+		return nil, NewError(ErrorDimensionMismatch);
 	}
 	C := ZerosSparse(A.rows+B.rows, A.cols);
 	

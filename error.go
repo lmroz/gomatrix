@@ -1,17 +1,18 @@
 package matrix
 
+import "fmt"
+
 const (
 	_	= iota;
 	ErrorNilMatrix;
-	ErrorBadInput;
+	ErrorDimensionMismatch;
 	ErrorIllegalIndex;
-	Exception;
+	ExceptionSingular;
+	ExceptionNotSPD;
 )
-
 
 type error struct {
 	errorCode	int;
-	errorString	string;
 }
 
 type Error interface {
@@ -20,18 +21,29 @@ type Error interface {
 	OK() bool;
 }
 
-func NewError(errorCode int, errorString string) *error {
+func NewError(errorCode int) *error {
 	E := new(error);
 	E.errorCode = errorCode;
-	E.errorString = errorString;
 	return E;
 }
 
 func (e *error) String() string	{
 	if e == nil {
-		return "no error"
+		return "No error"
 	}
-	return e.errorString
+	switch e.errorCode {
+	case ErrorNilMatrix:
+		return "Matrix is nil";
+	case ErrorDimensionMismatch:
+		return "Input dimensions do not match";
+	case ErrorIllegalIndex:
+		return "Index out of bounds";
+	case ExceptionSingular:
+		return "Matrix is singular";
+	case ExceptionNotSPD:
+		return "Matrix is not positive semidefinite";
+	}
+	return fmt.Sprintf("Error code %d", e.errorCode);
 }
 func (e *error) ErrorCode() int	{
 	if e == nil {
