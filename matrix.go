@@ -22,11 +22,6 @@ type MatrixRO interface {
 	Det() float64;
 	Trace() float64;
 	
-	//copyMatrix() Matrix;//a bug has been accepted to address the inability to do this
-	
-	//this might not be a useful function
-	isReadOnly() bool;
-	
 	//make a printable string
 	String() string;
 }
@@ -34,29 +29,7 @@ type MatrixRO interface {
 type Matrix interface {
 	MatrixRO;
 
-	//just here to do a v-table lookup for Copy(Matrix). will be moved to MatrixRO
-	copyMatrix() Matrix;
-
-
-	//	SwapRows(i1 int, i2 int);
-	//	ScaleRow(i int, f float64);
-	//	ScaleAddRow(i1 int, i2 int, f float64);
-	//return x such that this*x = b
-	//	Solve(b Matrix) Matrix;
-
-	//	Transpose() Matrix;
-	//	TransposeInPlace();
-	//	Inverse() Matrix;
-
-	//	OneNorm() float64;
-	//	TwoNorm() float64;
-	//	InfinityNorm() float64;
-
 	Set(i int, j int, v float64);
-}
-
-func Copy(A Matrix) Matrix {
-	return A.copyMatrix()
 }
 
 type matrix struct {
@@ -65,20 +38,17 @@ type matrix struct {
 }
 
 func (A *matrix) Nil() bool {
-	return A == nil
+	return A == nil;
 }
 
-func (A *matrix) Rows() int	{ return A.rows }
+func (A *matrix) Rows() int	{ return A.rows; }
 
-func (A *matrix) Cols() int	{ return A.cols }
+func (A *matrix) Cols() int	{ return A.cols; }
 
-func (A *matrix) NumElements() int	{ return A.rows * A.cols }
+func (A *matrix) NumElements() int	{ return A.rows * A.cols; }
 
-func (A *matrix) GetSize() (int, int)	{ return A.rows, A.cols }
+func (A *matrix) GetSize() (int, int)	{ return A.rows, A.cols; }
 
-func (m *matrix) isReadOnly() bool {
-	return false
-}
 
 
 

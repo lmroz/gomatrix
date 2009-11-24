@@ -20,3 +20,9 @@ GOFILES=\
 	pivot/pivot_basic.go\
 
 include $(GOROOT)/src/Make.pkg
+
+examples: examples.6
+	6l -o examples examples.6
+	
+examples.6: examples.go _obj/matrix.a
+	6g examples.go

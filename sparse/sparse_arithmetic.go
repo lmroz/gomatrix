@@ -110,6 +110,18 @@ func (A *SparseMatrix) Scale(f float64) *error {
 	return nil;
 }
 
+func (A *SparseMatrix) ElementMult(B MatrixRO) (*SparseMatrix, *error) {
+	C := A.Copy();
+	err := C.ScaleMatrix(B);
+	return C, err;
+}
+
+func (A *SparseMatrix) ElementMultSparse(B *SparseMatrix) (*SparseMatrix, *error) {
+	C := A.Copy();
+	err := C.ScaleMatrixSparse(B);
+	return C, err;
+}
+
 func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return NewError(ErrorBadInput, "A.ScaleMatrix(B): A and B dimensions don't match");
@@ -124,5 +136,15 @@ func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 }
 
 func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) *error {
+	if len(B.elements) > len(A.elements) {
+		if A.rows != B.Rows() || A.cols != B.Cols() {
+			return NewError(ErrorBadInput, "A.ScaleMatrix(B): A and B dimensions don't match");
+		}
+		
+		for index, value := range B.elements {
+			i, j := B.getRowColIndex(index);
+			A.Set(i, j, value * A.Get(i, j))
+		}
+	}
 	return A.ScaleMatrix(B);
 }

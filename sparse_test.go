@@ -9,53 +9,53 @@ import (
 func TestAdd_Sparse(t *testing.T) {
 	A := NormalsSparse(3, 3, 9);
 	B := NormalsSparse(3, 3, 9);
-	C, err := A.Plus(B);
-	if !err.OK() {
-		if verbose {
-			fmt.Printf("%v\n", err);
-		}
-		t.Fail()
+	C1, _ := A.Plus(B);
+	C2, _ := A.PlusSparse(B);
+	if !ApproxEquals(C1, Sum(A, B), ε) {
+		t.Fail();
 	}
-	for i := 0; i < C.Rows(); i++ {
-		for j := 0; j < C.Cols(); j++ {
-			if A.Get(i, j)+B.Get(i, j) != C.Get(i, j) {
-				t.Fail()
-			}
-		}
+	if !ApproxEquals(C2, Sum(A, B), ε) {
+		t.Fail();
 	}
 }
 
 func TestSubtract_Sparse(t *testing.T) {
 	A := NormalsSparse(3, 3, 9);
 	B := NormalsSparse(3, 3, 9);
-	C, err := A.Minus(B);
-	if !err.OK() {
-		if verbose {
-			fmt.Printf("%v\n", err);
-		}
-		t.Fail()
+	C1, _ := A.Minus(B);
+	C2, _ := A.MinusSparse(B);
+	if !ApproxEquals(C1, Difference(A, B), ε) {
+		t.Fail();
 	}
-	for i := 0; i < C.Rows(); i++ {
-		for j := 0; j < C.Cols(); j++ {
-			if A.Get(i, j)-B.Get(i, j) != C.Get(i, j) {
-				t.Fail()
-			}
-		}
+	if !ApproxEquals(C2, Difference(A, B), ε) {
+		t.Fail();
 	}
 }
 
 func TestTimes_Sparse(t *testing.T) {
-	A := NormalsSparse(3, 3, 90);
-	B := NormalsSparse(3, 3, 90);
-	C, err := A.Times(B);
-	if !err.OK() {
-		if verbose {
-			fmt.Printf("%v\n", err);
-		}
+	A := Normals(3, 3).SparseMatrix();
+	B := Normals(3, 3).SparseMatrix();
+	C1, _ := A.Times(B);
+	C2, _ := A.TimesSparse(B);
+	if !ApproxEquals(C1, Product(A, B), ε) {
 		t.Fail();
 	}
-	if !ApproxEquals(C, Product(A, B), ε) {
+	if !ApproxEquals(C2, Product(A, B), ε) {
 		t.Fail();
+	}
+}
+
+func TestElementMult_Sparse(t *testing.T) {
+	A := Normals(3, 3).SparseMatrix();
+	B := Normals(3, 3).SparseMatrix();
+	C1, _ := A.ElementMult(B);
+	C2, _ := A.ElementMultSparse(B);
+	D, _ := A.DenseMatrix().ElementMult(B);
+	if !Equals(D, C1) {
+		t.Fail()
+	}
+	if !Equals(D, C2) {
+		t.Fail()
 	}
 }
 

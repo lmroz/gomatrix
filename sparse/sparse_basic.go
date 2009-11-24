@@ -1,5 +1,7 @@
 package matrix
 
+import "math"
+
 func (A *SparseMatrix) SwapRows(r1 int, r2 int) {
 	js := map[int]bool {};
 	for index := range A.elements {
@@ -63,6 +65,20 @@ func (A *SparseMatrix) Trace() (res float64) {
 		if i == j {
 			res += value;
 		}
+	}
+	return;
+}
+
+func (A *SparseMatrix) OneNorm() (res float64) {
+	for _, value := range A.elements {
+		res += math.Fabs(value);	
+	}
+	return;
+}
+
+func (A *SparseMatrix) InfinityNorm() (res float64) {
+	for _, value := range A.elements {
+		res = max(res, math.Fabs(value));
 	}
 	return;
 }
