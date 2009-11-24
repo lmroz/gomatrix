@@ -13,11 +13,23 @@ func main() {
 	A = Normals(3, 3);
 	fmt.Printf("Or one filled with random data, A:\n%v\n\n", A);
 	
+	v := A.Get(1, 2);
+	fmt.Printf("You can access a particular element A_{1,2}: %f\n\n", v);
+	
+	A.Set(1, 2, 5);
+	fmt.Printf("Or change it to a different scalar:\n%v\n\n", A);
+	
+	A.SwapRows(0, 2);
+	fmt.Printf("Swapping rows is easy:\n%v\n\n", A);
+	
+	Ainv, _ := A.Inverse();
+	fmt.Printf("You can find A's inverse:\n%v\n\n", Ainv);
+	
 	b := Normals(3, 1);
 	fmt.Printf("And a column vector, b:\n%v\n\n", b);
 	
 	x, _ := A.Solve(b);
-	fmt.Printf("And solve x st Ax=b:\n%v\n\n", x);
+	fmt.Printf("And find x st Ax=b:\n%v\n\n", x);
 	
 	V, D := A.Eigen();
 	fmt.Printf("Perhaps you want its eigenvectors and eigenvalues V,D st VDV'=A:\n%v\n%v\n\n", V, D);
