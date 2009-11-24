@@ -1,18 +1,42 @@
 package matrix
 
-func (A *SparseMatrix) Plus(B *SparseMatrix) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Plus(B MatrixRO) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.Add(B);
 	return C, err;
 }
+func (A *SparseMatrix) PlusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
+	C := A.Copy();
+	err := C.AddSparse(B);
+	return C, err;
+}
 
-func (A *SparseMatrix) Minus(B *SparseMatrix) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Minus(B MatrixRO) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.Subtract(B);
 	return C, err;
 }
+func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
+	C := A.Copy();
+	err := C.SubtractSparse(B);
+	return C, err;
+}
 
-func (A *SparseMatrix) Add(B *SparseMatrix) *error {
+func (A *SparseMatrix) Add(B MatrixRO) *error {
+	if A.rows != B.Rows() || A.cols != B.Cols() {
+		return NewError(ErrorBadInput, "A.Add(B): A and B dimensions don't match");
+	}
+	
+	for i:=0; i<A.rows; i++ {
+		for j:=0; j<A.cols; j++ {
+			A.Set(i, j, A.Get(i, j) + B.Get(i, j))
+		}
+	}
+	
+	return nil;
+}
+
+func (A *SparseMatrix) AddSparse(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return NewError(ErrorBadInput, "A.Add(B): A and B dimensions don't match");
 	}
@@ -25,7 +49,21 @@ func (A *SparseMatrix) Add(B *SparseMatrix) *error {
 	return nil;
 }
 
-func (A *SparseMatrix) Subtract(B *SparseMatrix) *error {
+func (A *SparseMatrix) Subtract(B MatrixRO) *error {
+	if A.rows != B.Rows() || A.cols != B.Cols() {
+		return NewError(ErrorBadInput, "A.Add(B): A and B dimensions don't match");
+	}
+	
+	for i:=0; i<A.rows; i++ {
+		for j:=0; j<A.cols; j++ {
+			A.Set(i, j, A.Get(i, j) - B.Get(i, j))
+		}
+	}
+	
+	return nil;
+}
+
+func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return NewError(ErrorBadInput, "A.Subtract(B): A and B dimensions don't match");
 	}
@@ -60,6 +98,10 @@ func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 	return C, nil
 }
 
+func (A *SparseMatrix) TimesSparse(B *SparseMatrix) (*SparseMatrix, *error) {
+	return A.Times(B);//nothing clever yet
+}
+
 func (A *SparseMatrix) Scale(f float64) *error {
 	for index, value := range A.elements {
 		A.elements[index] = value*f;
@@ -79,4 +121,8 @@ func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 	}
 	
 	return nil;
+}
+
+func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) *error {
+	return A.ScaleMatrix(B);
 }

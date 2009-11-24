@@ -158,14 +158,22 @@ func solveUpper(A *DenseMatrix, b Matrix) *DenseMatrix {
 	return MakeDenseMatrix(x, A.Cols(), 1);
 }
 
-func (A *DenseMatrix) Solve(b Matrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, *error) {
 	Acopy := A.Copy();
 	P := Acopy.LUInPlace();
 	Pinv := P.Inverse();
-	pb := Product(Pinv, b);
+	pb, err := Pinv.Times(b);
+	
+	if !err.OK() {
+		return nil, err;
+	}
 	
 	y := solveLower(Acopy, pb);
 	x := solveUpper(Acopy, y);
 	return x, nil;
+}
+
+func (A *DenseMatrix) SolveDense(b *DenseMatrix) (*DenseMatrix, *error) {
+	return A.Solve(b);
 }
 
