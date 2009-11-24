@@ -6,7 +6,7 @@ import "math"
 //code translated/ripped off from Jama
 func (A *DenseMatrix) Eigen() (*DenseMatrix, *DenseMatrix, *error) {
 	if A.cols != A.rows {
-		return nil, nil, NewError(ErrorDimensionMismatch);
+		return nil, nil, NewError(ErrorDimensionMismatch)
 	}
 	n := A.cols;
 	V := A.Copy().Arrays();
@@ -17,8 +17,7 @@ func (A *DenseMatrix) Eigen() (*DenseMatrix, *DenseMatrix, *error) {
 		tred2(V[0:n], d[0:n], e[0:n]);	//pass slices so they're references
 
 		tql2(V[0:n], d[0:n], e[0:n]);
-	}
-	else {
+	} else {
 		H := A.GetMatrix(0, 0, n, n).Copy().Arrays();
 		ort := make([]float64, n);
 
@@ -858,4 +857,3 @@ func cdiv(xr float64, xi float64, yr float64, yi float64) (cdivr float64, cdivi 
 	}
 	return;
 }
-

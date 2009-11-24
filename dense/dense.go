@@ -14,10 +14,7 @@ type DenseMatrix struct {
 }
 
 
-	
-func (P *DenseMatrix) isReadOnly() bool {
-	return false;
-}
+func (P *DenseMatrix) isReadOnly() bool	{ return false }
 
 //This returns an array of slices referencing the matrix data. Changes to
 //the slices effect changes to the matrix
@@ -88,7 +85,7 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 
 func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Rows() != B.Rows() {
-		return nil, NewError(ErrorDimensionMismatch);
+		return nil, NewError(ErrorDimensionMismatch)
 	}
 	C := Zeros(A.Rows(), A.Cols()+B.Cols());
 	for i := 0; i < C.Rows(); i++ {
@@ -104,7 +101,7 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 
 func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Cols() != B.Cols() {
-		return nil, NewError(ErrorDimensionMismatch);
+		return nil, NewError(ErrorDimensionMismatch)
 	}
 	C := Zeros(A.Rows()+B.Rows(), A.Cols());
 	for j := 0; j < A.Cols(); j++ {
@@ -120,11 +117,11 @@ func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
 
 func (A *DenseMatrix) SparseMatrix() *SparseMatrix {
 	B := ZerosSparse(A.rows, A.cols);
-	for i:=0; i<A.rows; i++ {
-		for j:=0; j<A.cols; j++ {
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
 			v := A.Get(i, j);
 			if v != 0 {
-				B.Set(i, j, v);
+				B.Set(i, j, v)
 			}
 		}
 	}
@@ -202,7 +199,7 @@ func MakeDenseCopy(A MatrixRO) *DenseMatrix {
 			B.Set(i, j, A.Get(i, j))
 		}
 	}
-	return B
+	return B;
 }
 
 func MakeDenseMatrix(elements []float64, rows int, cols int) *DenseMatrix {
@@ -225,7 +222,7 @@ func MakeDenseMatrixStacked(data [][]float64) *DenseMatrix {
 
 func (A *DenseMatrix) String() string {
 	if A == nil {
-		return "{nil}";
+		return "{nil}"
 	}
 	s := "{";
 	for i := 0; i < A.Rows(); i++ {
@@ -245,4 +242,3 @@ func (A *DenseMatrix) String() string {
 	s += "}";
 	return s;
 }
-

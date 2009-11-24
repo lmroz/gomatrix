@@ -18,10 +18,10 @@ type MatrixRO interface {
 	GetSize() (int, int);
 
 	Get(i int, j int) float64;
-	
+
 	Det() float64;
 	Trace() float64;
-	
+
 	//make a printable string
 	String() string;
 }
@@ -37,18 +37,12 @@ type matrix struct {
 	cols	int;
 }
 
-func (A *matrix) Nil() bool {
-	return A == nil;
-}
+func (A *matrix) Nil() bool	{ return A == nil }
 
-func (A *matrix) Rows() int	{ return A.rows; }
+func (A *matrix) Rows() int	{ return A.rows }
 
-func (A *matrix) Cols() int	{ return A.cols; }
+func (A *matrix) Cols() int	{ return A.cols }
 
-func (A *matrix) NumElements() int	{ return A.rows * A.cols; }
+func (A *matrix) NumElements() int	{ return A.rows * A.cols }
 
-func (A *matrix) GetSize() (int, int)	{ return A.rows, A.cols; }
-
-
-
-
+func (A *matrix) GetSize() (int, int)	{ return A.rows, A.cols }

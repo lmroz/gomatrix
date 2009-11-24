@@ -28,4 +28,3 @@ func product(a []float64) float64 {
 	}
 	return p;
 }
-
