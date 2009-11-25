@@ -6,21 +6,24 @@ GOFILES=\
 	arithmetic.go\
 	error.go\
 	util.go\
-	dense/dense.go\
-	dense/dense_arithmetic.go\
-	dense/dense_basic.go\
-	dense/dense_data.go\
-	dense/dense_decomp.go\
-	dense/dense_eigen.go\
-	dense/dense_svd.go\
-	sparse/sparse.go\
-	sparse/sparse_arithmetic.go\
-	sparse/sparse_basic.go\
-	pivot/pivot.go\
-	pivot/pivot_arithmetic.go\
-	pivot/pivot_basic.go\
+	dense.go\
+	dense_arithmetic.go\
+	dense_basic.go\
+	dense_data.go\
+	dense_decomp.go\
+	dense_eigen.go\
+	dense_svd.go\
+	sparse.go\
+	sparse_arithmetic.go\
+	sparse_basic.go\
+	pivot.go\
+	pivot_arithmetic.go\
+	pivot_basic.go\
 
 include $(GOROOT)/src/Make.pkg
+
+src:
+	cp -r ../gomatrix $(GOROOT)/src/pkg/matrix
 
 examples: examples.6
 	6l -o examples examples.6
