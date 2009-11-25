@@ -95,11 +95,13 @@ func (A *DenseMatrix) U() *DenseMatrix {
 }
 
 func (A *DenseMatrix) Copy() *DenseMatrix {
-	B := Zeros(A.rows, A.cols);
-	for i := 0; i < A.rows; i++ {
-		for j := 0; j < A.cols; j++ {
-			B.Set(i, j, A.Get(i, j))
-		}
+	B := new(DenseMatrix);
+	B.rows = A.rows;
+	B.cols = A.cols;
+	B.step = A.cols;
+	B.elements = make([]float64, len(A.elements));
+	for i:=0; i<len(A.elements); i++ {
+		B.elements[i] = A.elements[i];
 	}
 	return B;
 }
@@ -237,7 +239,11 @@ func MakeDenseCopy(A MatrixRO) *DenseMatrix {
 }
 
 func MakeDenseMatrix(elements []float64, rows int, cols int) *DenseMatrix {
-	A := Zeros(rows, cols);
+	A := new(DenseMatrix);
+	A.elements = make([]float64, rows*cols);
+	A.rows = rows;
+	A.cols = cols;
+	A.step = cols;
 	A.elements = elements;
 	return A;
 }
