@@ -1,27 +1,48 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
+/*
+The sum of this matrix and another.
+*/
 func (A *SparseMatrix) Plus(B MatrixRO) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.Add(B);
 	return C, err;
 }
+
+/*
+The sum of this matrix and another sparse matrix, optimized for sparsity.
+*/
 func (A *SparseMatrix) PlusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.AddSparse(B);
 	return C, err;
 }
 
+/*
+The difference between this matrix and another.
+*/
 func (A *SparseMatrix) Minus(B MatrixRO) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.Subtract(B);
 	return C, err;
 }
+
+/*
+The difference between this matrix and another sparse matrix, optimized for sparsity.
+*/
 func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.SubtractSparse(B);
 	return C, err;
 }
 
+/*
+Add another matrix to this one in place.
+*/
 func (A *SparseMatrix) Add(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return NewError(ErrorDimensionMismatch)
@@ -36,6 +57,9 @@ func (A *SparseMatrix) Add(B MatrixRO) *error {
 	return nil;
 }
 
+/*
+Add another matrix to this one in place, optimized for sparsity.
+*/
 func (A *SparseMatrix) AddSparse(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return NewError(ErrorDimensionMismatch)
@@ -49,6 +73,9 @@ func (A *SparseMatrix) AddSparse(B *SparseMatrix) *error {
 	return nil;
 }
 
+/*
+Subtract another matrix from this one in place.
+*/
 func (A *SparseMatrix) Subtract(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return NewError(ErrorDimensionMismatch)
@@ -63,6 +90,10 @@ func (A *SparseMatrix) Subtract(B MatrixRO) *error {
 	return nil;
 }
 
+
+/*
+Subtract another matrix from this one in place, optimized for sparsity.
+*/
 func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return NewError(ErrorDimensionMismatch)
@@ -76,6 +107,9 @@ func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) *error {
 	return nil;
 }
 
+/*
+Get the product of this matrix and another.
+*/
 func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 	if A.cols != B.Rows() {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -98,10 +132,17 @@ func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 	return C, nil;
 }
 
+
+/*
+Get the product of this matrix and another, optimized for sparsity.
+*/
 func (A *SparseMatrix) TimesSparse(B *SparseMatrix) (*SparseMatrix, *error) {
 	return A.Times(B)	//nothing clever yet
 }
 
+/*
+Scale this matrix by f.
+*/
 func (A *SparseMatrix) Scale(f float64) *error {
 	for index, value := range A.elements {
 		A.elements[index] = value * f
@@ -110,18 +151,27 @@ func (A *SparseMatrix) Scale(f float64) *error {
 	return nil;
 }
 
+/*
+Get the element-wise product of this matrix and another.
+*/
 func (A *SparseMatrix) ElementMult(B MatrixRO) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.ScaleMatrix(B);
 	return C, err;
 }
 
+/*
+Get the element-wise product of this matrix and another, optimized for sparsity.
+*/
 func (A *SparseMatrix) ElementMultSparse(B *SparseMatrix) (*SparseMatrix, *error) {
 	C := A.Copy();
 	err := C.ScaleMatrixSparse(B);
 	return C, err;
 }
 
+/*
+Scale this matrix by another, element-wise.
+*/
 func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return NewError(ErrorDimensionMismatch)
@@ -135,6 +185,9 @@ func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 	return nil;
 }
 
+/*
+Scale this matrix by another sparse matrix, element-wise. Optimized for sparsity.
+*/
 func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) *error {
 	if len(B.elements) > len(A.elements) {
 		if A.rows != B.Rows() || A.cols != B.Cols() {

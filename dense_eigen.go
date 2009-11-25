@@ -1,10 +1,16 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
 import "math"
 
-//returns V,D st V*D*inv(V) = A and D is diagonal
-//code translated/ripped off from Jama
+/*
+Returns V,D st V*D*inv(V) = A and D is diagonal (or block diagonal).
+*/
 func (A *DenseMatrix) Eigen() (*DenseMatrix, *DenseMatrix, *error) {
+	//code translated/ripped off from Jama
 	if A.cols != A.rows {
 		return nil, nil, NewError(ErrorDimensionMismatch)
 	}

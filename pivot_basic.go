@@ -1,7 +1,14 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
 import "math"
 
+/*
+Swap two rows in this PivotMatrix.
+*/
 func (P *PivotMatrix) SwapRows(r1 int, r2 int) *error {
 	tmp := P.pivots[r1];
 	P.pivots[r1] = P.pivots[r2];
@@ -20,7 +27,6 @@ func (P *PivotMatrix) Symmetric() bool {
 	return true;
 }
 
-//for pivots we can speed this up a bit
 func (A *PivotMatrix) Inverse() *PivotMatrix	{ return A.Transpose() }
 
 func (P *PivotMatrix) Transpose() *PivotMatrix {
@@ -42,6 +48,9 @@ func (P *PivotMatrix) Trace() (r float64) {
 	return;
 }
 
+/*
+Returns x such that Px=b.
+*/
 func (P *PivotMatrix) Solve(b MatrixRO) (*DenseMatrix, *error) {
 	return P.Transpose().Times(b)	//error comes from times
 }

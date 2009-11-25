@@ -1,5 +1,12 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
+/*
+Multiply this pivot matrix by another.
+*/
 func (P *PivotMatrix) Times(A MatrixRO) (*DenseMatrix, *error) {
 	if P.Cols() != A.Rows() {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -16,6 +23,9 @@ func (P *PivotMatrix) Times(A MatrixRO) (*DenseMatrix, *error) {
 	return B, nil;
 }
 
+/*
+Multiplication optimized for when two pivots are the operands.
+*/
 func (P *PivotMatrix) TimesPivot(A *PivotMatrix) (*PivotMatrix, *error) {
 	if P.rows != A.rows {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -31,6 +41,9 @@ func (P *PivotMatrix) TimesPivot(A *PivotMatrix) (*PivotMatrix, *error) {
 	return MakePivotMatrix(newPivots, newSign), nil;
 }
 
+/*
+Equivalent to PxA, but streamlined to take advantage of the datastructures.
+*/
 func (P *PivotMatrix) RowPivotDense(A *DenseMatrix) (*DenseMatrix, *error) {
 	if P.rows != A.rows {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -47,6 +60,9 @@ func (P *PivotMatrix) RowPivotDense(A *DenseMatrix) (*DenseMatrix, *error) {
 	return B, nil;
 }
 
+/*
+Equivalent to AxP, but streamlined to take advantage of the datastructures.
+*/
 func (P *PivotMatrix) ColPivotDense(A *DenseMatrix) (*DenseMatrix, *error) {
 	if P.rows != A.cols {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -63,6 +79,9 @@ func (P *PivotMatrix) ColPivotDense(A *DenseMatrix) (*DenseMatrix, *error) {
 	return B, nil;
 }
 
+/*
+Equivalent to PxA, but streamlined to take advantage of the datastructures.
+*/
 func (P *PivotMatrix) RowPivotSparse(A *SparseMatrix) (*SparseMatrix, *error) {
 	if P.rows != A.rows {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -77,6 +96,9 @@ func (P *PivotMatrix) RowPivotSparse(A *SparseMatrix) (*SparseMatrix, *error) {
 	return B, nil;
 }
 
+/*
+Equivalent to AxP, but streamlined to take advantage of the datastructures.
+*/
 func (P *PivotMatrix) ColPivotSparse(A *SparseMatrix) (*SparseMatrix, *error) {
 	if P.rows != A.cols {
 		return nil, NewError(ErrorDimensionMismatch)
