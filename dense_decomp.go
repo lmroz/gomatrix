@@ -1,4 +1,6 @@
-//Copyright John Asmuth 2009
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 
 package matrix
 
@@ -6,6 +8,9 @@ import (
 	"math";
 )
 
+/*
+Returns the cholesky decomposition C of A, st CC'=A.
+*/
 func (A *DenseMatrix) Cholesky() (*DenseMatrix, *error) {
 	n := A.Rows();
 	L := Zeros(n, n);
@@ -42,6 +47,9 @@ func (A *DenseMatrix) Cholesky() (*DenseMatrix, *error) {
 }
 
 
+/*
+return L,U,P, st PLU=A.
+*/
 func (A *DenseMatrix) LU() (*DenseMatrix, *DenseMatrix, *PivotMatrix) {
 	m := A.Rows();
 	n := A.Cols();
@@ -58,6 +66,10 @@ func (A *DenseMatrix) LU() (*DenseMatrix, *DenseMatrix, *PivotMatrix) {
 	return L, U, P;
 }
 
+/*
+Overwrites A with [L\U] and returns P, st PLU=A. L is considered to
+have 1s in the diagonal.
+*/
 func (A *DenseMatrix) LUInPlace() *PivotMatrix {
 	m := A.Rows();
 	n := A.Cols();

@@ -1,8 +1,14 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
 import "math"
 
-//returns U, Σ, V st UΣV'=Arg
+/*
+Returns U, Σ, V st Σ is diagonal (or block diagonal) and UΣV'=Arg
+*/
 func (Arg *DenseMatrix) SVD() (*DenseMatrix, *DenseMatrix, *DenseMatrix, *error) {
 	//copied from Jama
 	// Derived from LINPACK code.

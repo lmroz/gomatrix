@@ -1,7 +1,14 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
 import "math"
 
+/*
+Swap two rows in this matrix.
+*/
 func (A *SparseMatrix) SwapRows(r1 int, r2 int) {
 	js := map[int]bool{};
 	for index := range A.elements {
@@ -17,6 +24,9 @@ func (A *SparseMatrix) SwapRows(r1 int, r2 int) {
 	}
 }
 
+/*
+Scale a row by a scalar.
+*/
 func (A *SparseMatrix) ScaleRow(r int, f float64) {
 	for index, value := range A.elements {
 		i, j := A.GetRowColIndex(index);
@@ -26,6 +36,9 @@ func (A *SparseMatrix) ScaleRow(r int, f float64) {
 	}
 }
 
+/*
+Add a multiple of row rs to row rd.
+*/
 func (A *SparseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 	for index, value := range A.elements {
 		i, j := A.GetRowColIndex(index);
@@ -75,6 +88,14 @@ func (A *SparseMatrix) OneNorm() (res float64) {
 		res += math.Fabs(value)
 	}
 	return;
+}
+
+func (A *SparseMatrix) TwoNorm() float64 {
+	var sum float64 = 0;
+	for _, value := range A.elements {
+		sum += value*value;
+	}
+	return math.Sqrt(sum);
 }
 
 func (A *SparseMatrix) InfinityNorm() (res float64) {

@@ -22,8 +22,10 @@ GOFILES=\
 
 include $(GOROOT)/src/Make.pkg
 
-src:
+src: cleansrc
 	cp -r ../gomatrix $(GOROOT)/src/pkg/matrix
+cleansrc:
+	rm -r $(GOROOT)/src/pkg/matrix
 
 examples: examples.6
 	6l -o examples examples.6

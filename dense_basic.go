@@ -1,4 +1,7 @@
-//Copyright 2009 John Asmuth
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
 import "math"
@@ -97,8 +100,14 @@ func (A *DenseMatrix) OneNorm() (ε float64) {
 }
 
 func (A *DenseMatrix) TwoNorm() float64 {
-	//requires computing of eigenvalues
-	return 0
+	var sum float64 = 0;
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			v := A.elements[i*A.step+j];
+			sum += v*v;
+		}
+	}
+	return math.Sqrt(sum);
 }
 
 func (A *DenseMatrix) InfinityNorm() (ε float64) {

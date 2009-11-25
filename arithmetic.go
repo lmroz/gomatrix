@@ -1,3 +1,7 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
 import (
@@ -5,7 +9,10 @@ import (
 	"reflect";
 )
 
-func Sum(A MatrixRO, B MatrixRO) Matrix {
+/*
+Finds the sum of two matrices.
+*/
+func Sum(A MatrixRO, B MatrixRO) *DenseMatrix {
 	C := MakeDenseCopy(A);
 	err := C.Add(MakeDenseCopy(B));
 	if err.OK() {
@@ -14,7 +21,10 @@ func Sum(A MatrixRO, B MatrixRO) Matrix {
 	return nil;
 }
 
-func Difference(A MatrixRO, B MatrixRO) Matrix {
+/*
+Finds the difference between two matrices.
+*/
+func Difference(A MatrixRO, B MatrixRO) *DenseMatrix {
 	C := MakeDenseCopy(A);
 	err := C.Subtract(MakeDenseCopy(B));
 	if err.OK() {
@@ -23,6 +33,9 @@ func Difference(A MatrixRO, B MatrixRO) Matrix {
 	return nil;
 }
 
+/*
+Finds the Product of two matrices.
+*/
 func Product(A MatrixRO, B MatrixRO) *DenseMatrix {
 	if A.Cols() != B.Rows() {
 		return nil
@@ -42,6 +55,10 @@ func Product(A MatrixRO, B MatrixRO) *DenseMatrix {
 	return C;
 }
 
+/*
+Uses a number of goroutines to do the dot products necessary
+for the matrix multiplication in parallel.
+*/
 func ParallelProduct(A MatrixRO, B MatrixRO, threads int) *DenseMatrix {
 	if A.Cols() != B.Rows() {
 		return nil
@@ -86,12 +103,18 @@ func ParallelProduct(A MatrixRO, B MatrixRO, threads int) *DenseMatrix {
 	return C;
 }
 
-func Scaled(A MatrixRO, f float64) Matrix {
+/*
+Scales a matrix by a scalar.
+*/
+func Scaled(A MatrixRO, f float64) *DenseMatrix {
 	B := MakeDenseCopy(A);
 	B.Scale(f);
 	return B;
 }
 
+/*
+Tests the element-wise equality of the two matrices.
+*/
 func Equals(A MatrixRO, B MatrixRO) bool {
 	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
 		return false
@@ -106,6 +129,10 @@ func Equals(A MatrixRO, B MatrixRO) bool {
 	return true;
 }
 
+/*
+Tests to see if the difference between two matrices,
+element-wise, exceeds ε.
+*/
 func ApproxEquals(A MatrixRO, B MatrixRO, ε float64) bool {
 	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
 		return false
@@ -120,6 +147,9 @@ func ApproxEquals(A MatrixRO, B MatrixRO, ε float64) bool {
 	return true;
 }
 
+/*
+Finds the product of any number of matrices.
+*/
 func MultipleProduct(values ...) Matrix {
 	v := reflect.NewValue(values).(*reflect.StructValue);
 	if v.NumField() < 2 {
@@ -134,6 +164,9 @@ func MultipleProduct(values ...) Matrix {
 			inter := v.Field(i).Interface();
 			if A, ok := inter.(MatrixRO); ok {
 				C = Product(C, A)
+			}
+			else {
+				return nil;
 			}
 		}
 		return C;

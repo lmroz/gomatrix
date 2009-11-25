@@ -1,3 +1,7 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
 import (
@@ -5,6 +9,9 @@ import (
 	"rand";
 )
 
+/*
+A sparse matrix based on go's map datastructure.
+*/
 type SparseMatrix struct {
 	matrix;
 	elements	map[int]float64;
@@ -16,36 +23,63 @@ type SparseMatrix struct {
 }
 
 func (A *SparseMatrix) Get(i int, j int) float64 {
-
 	x, ok := A.elements[i*A.step+j+A.offset];
-
 	if !ok {
 		return 0
 	}
-
 	return x;
 }
 
+/*
+Looks up an element given its element index.
+*/
+func (A *SparseMatrix) GetIndex(index int) float64 {
+	x, ok := A.elements[index];
+	if !ok {
+		return 0
+	}
+	return x;
+}
+
+/*
+Turn an element index into a row number.
+*/
 func (A *SparseMatrix) GetRowIndex(index int) int {
 	return (index - A.offset) / A.cols
 }
 
+/*
+Turn an element index into a column number.
+*/
 func (A *SparseMatrix) GetColIndex(index int) int {
 	return (index - A.offset) % A.cols
 }
 
+/*
+Turn an element index into a row and column number.
+*/
 func (A *SparseMatrix) GetRowColIndex(index int) (i int, j int) {
 	i = (index - A.offset) / A.step;
 	j = (index - A.offset) % A.step;
 	return;
 }
 
-// v == 0 results in removal of key from underlying map
 func (A *SparseMatrix) Set(i int, j int, v float64) {
+	// v == 0 results in removal of key from underlying map
 	A.elements[i*A.step+j+A.offset] = v, v != 0
 }
 
-//returns a channel that contains the indexes of non zero entries in this matrix
+/*
+Sets an element given its index.
+*/
+func (A *SparseMatrix) SetIndex(index int, v float64) {
+	// v == 0 results in removal of key from underlying map
+	A.elements[index] = v, v != 0
+}
+
+/*
+A channel that will carry the indices of non-zero elements.
+*/
 func (A *SparseMatrix) Indices() (out chan int) {
 	//maybe thread the populating?
 	for index := range A.elements {
@@ -54,7 +88,10 @@ func (A *SparseMatrix) Indices() (out chan int) {
 	return;
 }
 
-
+/*
+Get a matrix representing a subportion of A. Changes to the new matrix will be
+reflected in A.
+*/
 func (A *SparseMatrix) GetMatrix(i int, j int, rows int, cols int) *SparseMatrix {
 	B := new(SparseMatrix);
 	B.rows = rows;
@@ -65,14 +102,23 @@ func (A *SparseMatrix) GetMatrix(i int, j int, rows int, cols int) *SparseMatrix
 	return B;
 }
 
+/*
+Gets a reference to a column vector.
+*/
 func (A *SparseMatrix) GetColVector(j int) *SparseMatrix {
 	return A.GetMatrix(0, j, A.rows, j+1)
 }
 
+/*
+Gets a reference to a row vector.
+*/
 func (A *SparseMatrix) GetRowVector(i int) *SparseMatrix {
 	return A.GetMatrix(i, 0, i+1, A.cols)
 }
 
+/*
+Creates a new matrix [A B].
+*/
 func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, *error) {
 	if A.rows != B.rows {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -92,6 +138,9 @@ func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, *error) {
 	return C, nil;
 }
 
+/*
+Creates a new matrix [A;B], where A is above B.
+*/
 func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, *error) {
 	if A.cols != B.cols {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -111,6 +160,9 @@ func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, *error) {
 	return C, nil;
 }
 
+/*
+Returns a copy with all zeros above the diagonal.
+*/
 func (A *SparseMatrix) L() *SparseMatrix {
 	B := ZerosSparse(A.rows, A.cols);
 	for index, value := range A.elements {
@@ -122,6 +174,9 @@ func (A *SparseMatrix) L() *SparseMatrix {
 	return B;
 }
 
+/*
+Returns a copy with all zeros below the diagonal.
+*/
 func (A *SparseMatrix) U() *SparseMatrix {
 	B := ZerosSparse(A.rows, A.cols);
 	for index, value := range A.elements {
@@ -151,6 +206,9 @@ func ZerosSparse(rows int, cols int) *SparseMatrix {
 	return A;
 }
 
+/*
+Creates a matrix and puts a standard normal in n random elements, with replacement.
+*/
 func NormalsSparse(rows int, cols int, n int) *SparseMatrix {
 	A := ZerosSparse(rows, cols);
 	for k := 0; k < n; k++ {
@@ -161,12 +219,18 @@ func NormalsSparse(rows int, cols int, n int) *SparseMatrix {
 	return A;
 }
 
+/*
+Create a sparse matrix using the provided map as its backing.
+*/
 func MakeSparseMatrix(elements map[int]float64, rows int, cols int) *SparseMatrix {
 	A := ZerosSparse(rows, cols);
 	A.elements = elements;
 	return A;
 }
 
+/*
+Convert this sparse matrix into a dense matrix.
+*/
 func (A *SparseMatrix) DenseMatrix() *DenseMatrix {
 	B := Zeros(A.rows, A.cols);
 	for index, value := range A.elements {

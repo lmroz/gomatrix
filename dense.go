@@ -1,3 +1,7 @@
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package matrix
 
 import (
@@ -5,6 +9,9 @@ import (
 	"fmt";
 )
 
+/*
+A matrix backed by a flat array of all elements.
+*/
 type DenseMatrix struct {
 	matrix;
 	// flattened matrix data. elements[i*step+j] is row i, col j
@@ -13,11 +20,10 @@ type DenseMatrix struct {
 	step	int;
 }
 
-
-func (P *DenseMatrix) isReadOnly() bool	{ return false }
-
-//This returns an array of slices referencing the matrix data. Changes to
-//the slices effect changes to the matrix
+/*
+Returns an array of slices referencing the matrix data. Changes to
+the slices effect changes to the matrix.
+*/
 func (A *DenseMatrix) Arrays() [][]float64 {
 	a := make([][]float64, A.rows);
 	for i := 0; i < A.rows; i++ {
@@ -26,15 +32,25 @@ func (A *DenseMatrix) Arrays() [][]float64 {
 	return a;
 }
 
+/*
+Get the element in the ith row and jth column.
+*/
 func (A *DenseMatrix) Get(i int, j int) float64 {
 	return A.elements[i*A.step+j]
 }
 
+
+/*
+Set the element in the ith row and jth column to v.
+*/
 func (A *DenseMatrix) Set(i int, j int, v float64) {
 	A.elements[i*A.step+j] = v
 }
 
-
+/*
+Get a submatrix starting at i,j with rows rows and cols columns. Changes to
+the returned matrix show up in the original.
+*/
 func (A *DenseMatrix) GetMatrix(i int, j int, rows int, cols int) *DenseMatrix {
 	B := new(DenseMatrix);
 	B.elements = A.elements[i*A.step+j : (i+rows)*A.step];
@@ -52,7 +68,9 @@ func (A *DenseMatrix) GetRowVector(i int) *DenseMatrix {
 	return A.GetMatrix(i, 0, i+1, A.cols)
 }
 
-
+/*
+Get a copy of this matrix with 0s above the diagonal.
+*/
 func (A *DenseMatrix) L() *DenseMatrix {
 	B := A.Copy();
 	for i := 0; i < A.rows; i++ {
@@ -63,6 +81,9 @@ func (A *DenseMatrix) L() *DenseMatrix {
 	return B;
 }
 
+/*
+Get a copy of this matrix with 0s below the diagonal.
+*/
 func (A *DenseMatrix) U() *DenseMatrix {
 	B := A.Copy();
 	for i := 0; i < A.rows; i++ {
@@ -83,6 +104,9 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 	return B;
 }
 
+/*
+Get a new matrix [A B].
+*/
 func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Rows() != B.Rows() {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -99,6 +123,10 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 	return C, nil;
 }
 
+
+/*
+Get a new matrix [A; B], with A above B.
+*/
 func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
 	if A.Cols() != B.Cols() {
 		return nil, NewError(ErrorDimensionMismatch)
@@ -115,6 +143,9 @@ func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
 	return C, nil;
 }
 
+/*
+Create a sparse matrix copy.
+*/
 func (A *DenseMatrix) SparseMatrix() *SparseMatrix {
 	B := ZerosSparse(A.rows, A.cols);
 	for i := 0; i < A.rows; i++ {
@@ -163,6 +194,9 @@ func Numbers(rows int, cols int, num float64) *DenseMatrix {
 	return A;
 }
 
+/*
+Create an identity matrix with span rows and span columns.
+*/
 func Eye(span int) *DenseMatrix {
 	A := Zeros(span, span);
 	for i := 0; i < span; i++ {

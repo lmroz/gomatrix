@@ -1,34 +1,47 @@
-//Copyright John Asmuth 2009
-package matrix
+// Copyright 2009 The GoMatrix Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 
-// Interfaces are more like contracts than classes; only the functions
-// that absolutely need to be here should be here.  The interface should
-// represent the set of functions on which all other matrix functions are based.
+package matrix
 
 //The MatrixRO interface defines matrix operations that do not change the
 //underlying data, such as information requests or the creation of transforms
+/*
+Read-only matrix types (at the moment, PivotMatrix).
+*/
 type MatrixRO interface {
-	//returns true if the underlying object is nil
+	//Returns true if the underlying object is nil.
 	Nil() bool;
-
+	
+	//The number of rows in this matrix.
 	Rows() int;
+	//The number of columns in this matrix.
 	Cols() int;
-	// number of elements in the matrix
+	
+	//The number of elements in this matrix.
 	NumElements() int;
+	//The size pair, (Rows(), Cols())
 	GetSize() (int, int);
 
+	//The element in the ith row and jth column.
 	Get(i int, j int) float64;
 
+	//The determinant of this matrix.
 	Det() float64;
+	//The trace of this matrix.
 	Trace() float64;
 
-	//make a printable string
+	//A pretty-print string.
 	String() string;
 }
 
+/*
+A mutable matrix.
+*/
 type Matrix interface {
 	MatrixRO;
 
+	//Set the element at the ith row and jth column to v.
 	Set(i int, j int, v float64);
 }
 
