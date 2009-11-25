@@ -61,7 +61,7 @@ func (e *error) String() string {
 	case ExceptionNotSPD:
 		return "Matrix is not positive semidefinite"
 	}
-	return fmt.Sprintf("Error code %d", e.errorCode);
+	return fmt.Sprintf("Unknown error code %d", e.errorCode);
 }
 func (e *error) ErrorCode() int {
 	if e == nil {

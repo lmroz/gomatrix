@@ -32,3 +32,6 @@ examples: examples.6
 	
 examples.6: examples.go install
 	6g examples.go
+
+	
+	
