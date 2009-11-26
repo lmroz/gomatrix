@@ -4,28 +4,28 @@
 
 package matrix
 
-func max(x float64, y float64) float64 {
+func max(x, y float64) float64 {
 	if x > y {
 		return x
 	}
 	return y;
 }
 
-func maxInt(x int, y int) int {
+func maxInt(x, y int) int {
 	if x > y {
 		return x
 	}
 	return y;
 }
 
-func min(x float64, y float64) float64 {
+func min(x, y float64) float64 {
 	if x < y {
 		return x
 	}
 	return y;
 }
 
-func minInt(x int, y int) int {
+func minInt(x, y int) int {
 	if x < y {
 		return x
 	}

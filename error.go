@@ -7,7 +7,7 @@ package matrix
 import "fmt"
 
 const (
-	_	= iota;
+	NoError	= iota;
 	//The matrix returned was nil.
 	ErrorNilMatrix;
 	//The dimensions of the inputs do not make sense for this operation.
@@ -20,36 +20,10 @@ const (
 	ExceptionNotSPD;
 )
 
-type error struct {
-	errorCode int;
-}
+type Error int;
 
-/*
-Error types from matrix operations satisfy this interface.
-*/
-type Error interface {
-	//An english string describing the error.
-	String() string;
-	//The code for the error.
-	ErrorCode() int;
-	//If OK()==true, there is no error.
-	OK() bool;
-}
-
-/*
-Create a new error with the provided code.
-*/
-func NewError(errorCode int) *error {
-	E := new(error);
-	E.errorCode = errorCode;
-	return E;
-}
-
-func (e *error) String() string {
-	if e == nil {
-		return "No error"
-	}
-	switch e.errorCode {
+func (e Error) String() string {
+	switch e {
 	case ErrorNilMatrix:
 		return "Matrix is nil"
 	case ErrorDimensionMismatch:
@@ -61,18 +35,9 @@ func (e *error) String() string {
 	case ExceptionNotSPD:
 		return "Matrix is not positive semidefinite"
 	}
-	return fmt.Sprintf("Unknown error code %d", e.errorCode);
-}
-func (e *error) ErrorCode() int {
-	if e == nil {
-		return 0
-	}
-	return e.errorCode;
+	return fmt.Sprintf("Unknown error code %d", e);
 }
 
-func (e *error) OK() bool {
-	if e == nil {
-		return true
-	}
-	return e.ErrorCode() == 0;
+func (e Error) OK() bool {
+	return e == NoError;
 }

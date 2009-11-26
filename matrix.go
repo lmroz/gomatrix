@@ -58,4 +58,8 @@ func (A *matrix) Cols() int	{ return A.cols }
 
 func (A *matrix) NumElements() int	{ return A.rows * A.cols }
 
-func (A *matrix) GetSize() (int, int)	{ return A.rows, A.cols }
+func (A *matrix) GetSize() (rows, cols int)	{
+	rows = A.rows;
+	cols = A.cols;
+	return;
+}

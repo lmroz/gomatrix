@@ -12,7 +12,7 @@ import (
 /*
 Finds the sum of two matrices.
 */
-func Sum(A MatrixRO, B MatrixRO) *DenseMatrix {
+func Sum(A, B MatrixRO) *DenseMatrix {
 	C := MakeDenseCopy(A);
 	err := C.Add(MakeDenseCopy(B));
 	if err.OK() {
@@ -24,7 +24,7 @@ func Sum(A MatrixRO, B MatrixRO) *DenseMatrix {
 /*
 Finds the difference between two matrices.
 */
-func Difference(A MatrixRO, B MatrixRO) *DenseMatrix {
+func Difference(A, B MatrixRO) *DenseMatrix {
 	C := MakeDenseCopy(A);
 	err := C.Subtract(MakeDenseCopy(B));
 	if err.OK() {
@@ -36,7 +36,7 @@ func Difference(A MatrixRO, B MatrixRO) *DenseMatrix {
 /*
 Finds the Product of two matrices.
 */
-func Product(A MatrixRO, B MatrixRO) *DenseMatrix {
+func Product(A, B MatrixRO) *DenseMatrix {
 	if A.Cols() != B.Rows() {
 		return nil
 	}
@@ -59,7 +59,7 @@ func Product(A MatrixRO, B MatrixRO) *DenseMatrix {
 Uses a number of goroutines to do the dot products necessary
 for the matrix multiplication in parallel.
 */
-func ParallelProduct(A MatrixRO, B MatrixRO, threads int) *DenseMatrix {
+func ParallelProduct(A, B MatrixRO, threads int) *DenseMatrix {
 	if A.Cols() != B.Rows() {
 		return nil
 	}
@@ -115,7 +115,7 @@ func Scaled(A MatrixRO, f float64) *DenseMatrix {
 /*
 Tests the element-wise equality of the two matrices.
 */
-func Equals(A MatrixRO, B MatrixRO) bool {
+func Equals(A, B MatrixRO) bool {
 	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
 		return false
 	}
@@ -133,7 +133,7 @@ func Equals(A MatrixRO, B MatrixRO) bool {
 Tests to see if the difference between two matrices,
 element-wise, exceeds ε.
 */
-func ApproxEquals(A MatrixRO, B MatrixRO, ε float64) bool {
+func ApproxEquals(A, B MatrixRO, ε float64) bool {
 	if A.Rows() != B.Rows() || A.Cols() != B.Cols() {
 		return false
 	}

@@ -9,7 +9,7 @@ import "math"
 /*
 Returns U, Σ, V st Σ is diagonal (or block diagonal) and UΣV'=Arg
 */
-func (Arg *DenseMatrix) SVD() (*DenseMatrix, *DenseMatrix, *DenseMatrix, *error) {
+func (Arg *DenseMatrix) SVD() (theU, Σ, theV *DenseMatrix, err Error) {
 	//copied from Jama
 	// Derived from LINPACK code.
 	// Initialize.
@@ -24,7 +24,8 @@ func (Arg *DenseMatrix) SVD() (*DenseMatrix, *DenseMatrix, *DenseMatrix, *error)
 	*/
 
 	if m < n {
-		return nil, nil, nil, NewError(ErrorDimensionMismatch)
+		err = ErrorDimensionMismatch;
+		return;
 	}
 
 	nu := minInt(m, n);
@@ -466,9 +467,9 @@ func (Arg *DenseMatrix) SVD() (*DenseMatrix, *DenseMatrix, *DenseMatrix, *error)
 	}
 	//fmt.Printf("testing\n%v\n%v\n%v\n%v\n%v\n", A, V, U, e, s);
 
-	theU := MakeDenseMatrixStacked(U).GetMatrix(0, 0, m, minInt(m+1, n));
-	Σ := Diagonal(s);
-	theV := MakeDenseMatrixStacked(V);
+	theU = MakeDenseMatrixStacked(U).GetMatrix(0, 0, m, minInt(m+1, n));
+	Σ = Diagonal(s);
+	theV = MakeDenseMatrixStacked(V);
 
-	return theU, Σ, theV, nil;
+	return;
 }

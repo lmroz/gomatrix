@@ -50,4 +50,9 @@ func main() {
 	fmt.Printf("Or LU decompositions L,U,P st PLU=A:\n%v\n%v\n%v\n\n", L, U, P);
 
 	fmt.Printf("Or A's trace (%f) and determinant (%f)\n\n", A.Trace(), A.Det());
+	
+	S := Eye(3).SparseMatrix();
+	for i := range S.Indices() {
+		fmt.Printf("%d\n", i);
+	}
 }

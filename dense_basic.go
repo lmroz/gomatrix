@@ -52,9 +52,9 @@ func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 	}
 }
 
-func (A *DenseMatrix) Inverse() (*DenseMatrix, *error) {
+func (A *DenseMatrix) Inverse() (*DenseMatrix, Error) {
 	if A.Rows() != A.Cols() {
-		return nil, NewError(ErrorDimensionMismatch)
+		return nil, ErrorDimensionMismatch
 	}
 	aug, _ := A.Augment(Eye(A.Rows()));
 	for i := 0; i < aug.Rows(); i++ {
@@ -68,7 +68,7 @@ func (A *DenseMatrix) Inverse() (*DenseMatrix, *error) {
 			aug.SwapRows(i, j)
 		}
 		if aug.Get(i, i) == 0 {
-			return nil, NewError(ExceptionSingular)
+			return nil, ExceptionSingular
 		}
 		aug.ScaleRow(i, 1.0/aug.Get(i, i));
 		for k := 0; k < aug.Rows(); k++ {
@@ -79,7 +79,7 @@ func (A *DenseMatrix) Inverse() (*DenseMatrix, *error) {
 		}
 	}
 	inv := aug.GetMatrix(0, A.Cols(), A.Rows(), A.Cols());
-	return inv, nil;
+	return inv, NoError;
 }
 
 func (A *DenseMatrix) Det() float64 {
@@ -164,7 +164,7 @@ func solveUpper(A *DenseMatrix, b Matrix) *DenseMatrix {
 	return MakeDenseMatrix(x, A.Cols(), 1);
 }
 
-func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, *error) {
+func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, Error) {
 	Acopy := A.Copy();
 	P := Acopy.LUInPlace();
 	Pinv := P.Inverse();
@@ -176,9 +176,9 @@ func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, *error) {
 
 	y := solveLower(Acopy, pb);
 	x := solveUpper(Acopy, y);
-	return x, nil;
+	return x, NoError;
 }
 
-func (A *DenseMatrix) SolveDense(b *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) SolveDense(b *DenseMatrix) (*DenseMatrix, Error) {
 	return A.Solve(b)
 }

@@ -7,7 +7,7 @@ package matrix
 /*
 The sum of this matrix and another.
 */
-func (A *SparseMatrix) Plus(B MatrixRO) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Plus(B MatrixRO) (*SparseMatrix, Error) {
 	C := A.Copy();
 	err := C.Add(B);
 	return C, err;
@@ -16,7 +16,7 @@ func (A *SparseMatrix) Plus(B MatrixRO) (*SparseMatrix, *error) {
 /*
 The sum of this matrix and another sparse matrix, optimized for sparsity.
 */
-func (A *SparseMatrix) PlusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
+func (A *SparseMatrix) PlusSparse(B *SparseMatrix) (*SparseMatrix, Error) {
 	C := A.Copy();
 	err := C.AddSparse(B);
 	return C, err;
@@ -25,7 +25,7 @@ func (A *SparseMatrix) PlusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
 /*
 The difference between this matrix and another.
 */
-func (A *SparseMatrix) Minus(B MatrixRO) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Minus(B MatrixRO) (*SparseMatrix, Error) {
 	C := A.Copy();
 	err := C.Subtract(B);
 	return C, err;
@@ -34,7 +34,7 @@ func (A *SparseMatrix) Minus(B MatrixRO) (*SparseMatrix, *error) {
 /*
 The difference between this matrix and another sparse matrix, optimized for sparsity.
 */
-func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
+func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, Error) {
 	C := A.Copy();
 	err := C.SubtractSparse(B);
 	return C, err;
@@ -43,9 +43,9 @@ func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, *error) {
 /*
 Add another matrix to this one in place.
 */
-func (A *SparseMatrix) Add(B MatrixRO) *error {
+func (A *SparseMatrix) Add(B MatrixRO) Error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 
 	for i := 0; i < A.rows; i++ {
@@ -54,15 +54,15 @@ func (A *SparseMatrix) Add(B MatrixRO) *error {
 		}
 	}
 
-	return nil;
+	return NoError;
 }
 
 /*
 Add another matrix to this one in place, optimized for sparsity.
 */
-func (A *SparseMatrix) AddSparse(B *SparseMatrix) *error {
+func (A *SparseMatrix) AddSparse(B *SparseMatrix) Error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 
 	for index, value := range B.elements {
@@ -70,15 +70,15 @@ func (A *SparseMatrix) AddSparse(B *SparseMatrix) *error {
 		A.Set(i, j, A.Get(i, j)+value);
 	}
 
-	return nil;
+	return NoError;
 }
 
 /*
 Subtract another matrix from this one in place.
 */
-func (A *SparseMatrix) Subtract(B MatrixRO) *error {
+func (A *SparseMatrix) Subtract(B MatrixRO) Error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 
 	for i := 0; i < A.rows; i++ {
@@ -87,16 +87,16 @@ func (A *SparseMatrix) Subtract(B MatrixRO) *error {
 		}
 	}
 
-	return nil;
+	return NoError;
 }
 
 
 /*
 Subtract another matrix from this one in place, optimized for sparsity.
 */
-func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) *error {
+func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) Error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 
 	for index, value := range B.elements {
@@ -104,15 +104,15 @@ func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) *error {
 		A.Set(i, j, A.Get(i, j)-value);
 	}
 
-	return nil;
+	return NoError;
 }
 
 /*
 Get the product of this matrix and another.
 */
-func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, Error) {
 	if A.cols != B.Rows() {
-		return nil, NewError(ErrorDimensionMismatch)
+		return nil, ErrorDimensionMismatch
 	}
 
 	C := ZerosSparse(A.rows, B.Cols());
@@ -129,32 +129,32 @@ func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, *error) {
 		}
 	}
 
-	return C, nil;
+	return C, NoError;
 }
 
 
 /*
 Get the product of this matrix and another, optimized for sparsity.
 */
-func (A *SparseMatrix) TimesSparse(B *SparseMatrix) (*SparseMatrix, *error) {
+func (A *SparseMatrix) TimesSparse(B *SparseMatrix) (*SparseMatrix, Error) {
 	return A.Times(B)	//nothing clever yet
 }
 
 /*
 Scale this matrix by f.
 */
-func (A *SparseMatrix) Scale(f float64) *error {
+func (A *SparseMatrix) Scale(f float64) Error {
 	for index, value := range A.elements {
 		A.elements[index] = value * f
 	}
 
-	return nil;
+	return NoError;
 }
 
 /*
 Get the element-wise product of this matrix and another.
 */
-func (A *SparseMatrix) ElementMult(B MatrixRO) (*SparseMatrix, *error) {
+func (A *SparseMatrix) ElementMult(B MatrixRO) (*SparseMatrix, Error) {
 	C := A.Copy();
 	err := C.ScaleMatrix(B);
 	return C, err;
@@ -163,7 +163,7 @@ func (A *SparseMatrix) ElementMult(B MatrixRO) (*SparseMatrix, *error) {
 /*
 Get the element-wise product of this matrix and another, optimized for sparsity.
 */
-func (A *SparseMatrix) ElementMultSparse(B *SparseMatrix) (*SparseMatrix, *error) {
+func (A *SparseMatrix) ElementMultSparse(B *SparseMatrix) (*SparseMatrix, Error) {
 	C := A.Copy();
 	err := C.ScaleMatrixSparse(B);
 	return C, err;
@@ -172,9 +172,9 @@ func (A *SparseMatrix) ElementMultSparse(B *SparseMatrix) (*SparseMatrix, *error
 /*
 Scale this matrix by another, element-wise.
 */
-func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
+func (A *SparseMatrix) ScaleMatrix(B MatrixRO) Error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 
 	for index, value := range A.elements {
@@ -182,16 +182,16 @@ func (A *SparseMatrix) ScaleMatrix(B MatrixRO) *error {
 		A.Set(i, j, value*B.Get(i, j));
 	}
 
-	return nil;
+	return NoError;
 }
 
 /*
 Scale this matrix by another sparse matrix, element-wise. Optimized for sparsity.
 */
-func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) *error {
+func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) Error {
 	if len(B.elements) > len(A.elements) {
 		if A.rows != B.Rows() || A.cols != B.Cols() {
-			return NewError(ErrorDimensionMismatch)
+			return ErrorDimensionMismatch
 		}
 
 		for index, value := range B.elements {
