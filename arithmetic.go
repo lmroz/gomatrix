@@ -70,7 +70,7 @@ func ParallelProduct(A, B MatrixRO, threads int) *DenseMatrix {
 	quit := make(chan bool);
 
 	dotRowCol := func() {
-		for true {
+		for {
 			select {
 			case i := <-in:
 				sums := make([]float64, B.Cols());

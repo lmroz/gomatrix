@@ -44,6 +44,10 @@ func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, Error) {
 Add another matrix to this one in place.
 */
 func (A *SparseMatrix) Add(B MatrixRO) Error {
+	if Bs, ok := B.(*SparseMatrix); ok {
+		return A.AddSparse(Bs);
+	}
+	
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return ErrorDimensionMismatch
 	}
@@ -77,6 +81,10 @@ func (A *SparseMatrix) AddSparse(B *SparseMatrix) Error {
 Subtract another matrix from this one in place.
 */
 func (A *SparseMatrix) Subtract(B MatrixRO) Error {
+	if Bs, ok := B.(*SparseMatrix); ok {
+		return A.SubtractSparse(Bs);
+	}
+	
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return ErrorDimensionMismatch
 	}
@@ -111,6 +119,10 @@ func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) Error {
 Get the product of this matrix and another.
 */
 func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, Error) {
+	if Bs, ok := B.(*SparseMatrix); ok {
+		return A.TimesSparse(Bs);
+	}
+
 	if A.cols != B.Rows() {
 		return nil, ErrorDimensionMismatch
 	}
@@ -190,13 +202,13 @@ Scale this matrix by another sparse matrix, element-wise. Optimized for sparsity
 */
 func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) Error {
 	if len(B.elements) > len(A.elements) {
-		if A.rows != B.Rows() || A.cols != B.Cols() {
+		if A.rows != B.rows || A.cols != B.cols {
 			return ErrorDimensionMismatch
 		}
 
-		for index, value := range B.elements {
-			i, j := B.GetRowColIndex(index);
-			A.Set(i, j, value*A.Get(i, j));
+		for index, value := range A.elements {
+			i, j := A.GetRowColIndex(index);
+			A.Set(i, j, value*B.Get(i, j));
 		}
 	}
 	return A.ScaleMatrix(B);

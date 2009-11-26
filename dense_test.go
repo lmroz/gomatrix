@@ -14,7 +14,7 @@ import (
 
 const ε = 0.000001
 const verbose = false
-const speedTest = false
+const speedTest = true
 
 /* TEST: arithmetic.go */
 
@@ -35,7 +35,7 @@ func TestApproximates(t *testing.T) {
 	B := Numbers(3, 3, .1);
 	C := Numbers(3, 3, .6);
 	D, err := A.ElementMult(B);
-	if !err.OK() && !ApproxEquals(D, C, .000001) {
+	if !err.OK() && !ApproxEquals(D, C, ε) {
 		t.Fail()
 	}
 }
@@ -777,6 +777,14 @@ func TestSpeed(t *testing.T) {
 	}
 	end = time.Nanoseconds();
 	fmt.Printf("%d 4x8 x 8x4 matrix multiplications in %fs\n", count, float(end-start)/1000000000);
+
+	count = 100000;
+	start = time.Nanoseconds();
+	for i := 0; i < count; i++ {
+		A.TimesDense(B)
+	}
+	end = time.Nanoseconds();
+	fmt.Printf("%d 4x8 x 8x4 dense matrix multiplications in %fs\n", count, float(end-start)/1000000000);
 
 	A = Normals(4, 4);
 	B = Normals(4, 4);

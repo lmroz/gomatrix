@@ -23,10 +23,7 @@ type SparseMatrix struct {
 }
 
 func (A *SparseMatrix) Get(i, j int) float64 {
-	x, ok := A.elements[i*A.step+j+A.offset];
-	if !ok {
-		return 0
-	}
+	x, _ := A.elements[i*A.step+j+A.offset];
 	return x;
 }
 

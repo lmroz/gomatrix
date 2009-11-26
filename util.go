@@ -33,16 +33,16 @@ func minInt(x, y int) int {
 }
 
 func sum(a []float64) (s float64) {
-	for i := 0; i < len(a); i++ {
-		s += a[i]
+	for _, v := range a {
+		s += v
 	}
 	return;
 }
 
 func product(a []float64) float64 {
 	p := float64(1);
-	for i := 0; i < len(a); i++ {
-		p *= a[i]
+	for _, v := range a {
+		p *= v
 	}
 	return p;
 }
