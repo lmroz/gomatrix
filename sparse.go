@@ -22,7 +22,7 @@ type SparseMatrix struct {
 	step	int;
 }
 
-func (A *SparseMatrix) Get(i int, j int) float64 {
+func (A *SparseMatrix) Get(i, j int) float64 {
 	x, ok := A.elements[i*A.step+j+A.offset];
 	if !ok {
 		return 0
@@ -44,15 +44,17 @@ func (A *SparseMatrix) GetIndex(index int) float64 {
 /*
 Turn an element index into a row number.
 */
-func (A *SparseMatrix) GetRowIndex(index int) int {
-	return (index - A.offset) / A.cols
+func (A *SparseMatrix) GetRowIndex(index int) (i int) {
+	i = (index - A.offset) / A.cols;
+	return;
 }
 
 /*
 Turn an element index into a column number.
 */
-func (A *SparseMatrix) GetColIndex(index int) int {
-	return (index - A.offset) % A.cols
+func (A *SparseMatrix) GetColIndex(index int) (j int) {
+	j = (index - A.offset) % A.cols;
+	return;
 }
 
 /*
@@ -82,9 +84,15 @@ A channel that will carry the indices of non-zero elements.
 */
 func (A *SparseMatrix) Indices() (out chan int) {
 	//maybe thread the populating?
-	for index := range A.elements {
-		out <- index
-	}
+	out = make(chan int);
+	go func(o chan int) {
+		for index := range A.elements {
+			fmt.Printf("o%d\n", index);
+			o <- index
+		}
+		fmt.Printf("done sending\n");
+		return;
+	}(out);
 	return;
 }
 
@@ -92,14 +100,22 @@ func (A *SparseMatrix) Indices() (out chan int) {
 Get a matrix representing a subportion of A. Changes to the new matrix will be
 reflected in A.
 */
-func (A *SparseMatrix) GetMatrix(i int, j int, rows int, cols int) *SparseMatrix {
-	B := new(SparseMatrix);
-	B.rows = rows;
-	B.cols = cols;
-	B.offset = (i+A.offset/A.step)*A.step + (j + A.offset%A.step);
-	B.step = A.step;
-	B.elements = A.elements;
-	return B;
+func (A *SparseMatrix) GetMatrix(i, j, rows, cols int) (subMatrix *SparseMatrix) {
+	if i < 0 || j < 0 || i+rows > A.rows || j+cols > A.cols {
+		i = maxInt(0, i);
+		j = maxInt(0, j);
+		rows = minInt(A.rows-i, rows);
+		rows = minInt(A.cols-j, cols);
+	}
+
+	subMatrix = new(SparseMatrix);
+	subMatrix.rows = rows;
+	subMatrix.cols = cols;
+	subMatrix.offset = (i+A.offset/A.step)*A.step + (j + A.offset%A.step);
+	subMatrix.step = A.step;
+	subMatrix.elements = A.elements;
+	
+	return;
 }
 
 /*
@@ -119,9 +135,9 @@ func (A *SparseMatrix) GetRowVector(i int) *SparseMatrix {
 /*
 Creates a new matrix [A B].
 */
-func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, Error) {
 	if A.rows != B.rows {
-		return nil, NewError(ErrorDimensionMismatch)
+		return nil, ErrorDimensionMismatch
 	}
 	C := ZerosSparse(A.rows, A.cols+B.cols);
 
@@ -135,15 +151,15 @@ func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, *error) {
 		C.Set(i, j+A.cols, value);
 	}
 
-	return C, nil;
+	return C, NoError;
 }
 
 /*
 Creates a new matrix [A;B], where A is above B.
 */
-func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, *error) {
+func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, Error) {
 	if A.cols != B.cols {
-		return nil, NewError(ErrorDimensionMismatch)
+		return nil, ErrorDimensionMismatch
 	}
 	C := ZerosSparse(A.rows+B.rows, A.cols);
 
@@ -157,7 +173,7 @@ func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, *error) {
 		C.Set(i+A.rows, j, value);
 	}
 
-	return C, nil;
+	return C, NoError;
 }
 
 /*

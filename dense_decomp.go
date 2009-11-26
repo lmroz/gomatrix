@@ -11,9 +11,9 @@ import (
 /*
 Returns the cholesky decomposition C of A, st CC'=A.
 */
-func (A *DenseMatrix) Cholesky() (*DenseMatrix, *error) {
+func (A *DenseMatrix) Cholesky() (L *DenseMatrix, err Error) {
 	n := A.Rows();
-	L := Zeros(n, n);
+	L = Zeros(n, n);
 	isspd := A.Cols() == n;
 
 	for j := 0; j < n; j++ {
@@ -40,37 +40,37 @@ func (A *DenseMatrix) Cholesky() (*DenseMatrix, *error) {
 	}
 
 	if !isspd {
-		return L, NewError(ExceptionNotSPD)
+		err = ExceptionNotSPD
 	}
 
-	return L, nil;
+	return;
 }
 
 
 /*
 return L,U,P, st PLU=A.
 */
-func (A *DenseMatrix) LU() (*DenseMatrix, *DenseMatrix, *PivotMatrix) {
+func (A *DenseMatrix) LU() (L, U *DenseMatrix, P *PivotMatrix) {
 	m := A.Rows();
 	n := A.Cols();
 	C := A.Copy();
 
-	P := C.LUInPlace();
+	P = C.LUInPlace();
 
-	L := C.L();
+	L = C.L();
 	for i := 0; i < m && i < n; i++ {
 		L.Set(i, i, 1)
 	}
-	U := C.U();
+	U = C.U();
 
-	return L, U, P;
+	return;
 }
 
 /*
 Overwrites A with [L\U] and returns P, st PLU=A. L is considered to
 have 1s in the diagonal.
 */
-func (A *DenseMatrix) LUInPlace() *PivotMatrix {
+func (A *DenseMatrix) LUInPlace() (P *PivotMatrix) {
 	m := A.Rows();
 	n := A.Cols();
 	LUcolj := make([]float64, m);
@@ -119,18 +119,18 @@ func (A *DenseMatrix) LUInPlace() *PivotMatrix {
 		}
 	}
 
-	P := MakePivotMatrix(piv, pivsign);
+	P = MakePivotMatrix(piv, pivsign);
 
-	return P;
+	return;
 }
 
 
-func (A *DenseMatrix) QR() (*DenseMatrix, *DenseMatrix) {
+func (A *DenseMatrix) QR() (Q, R *DenseMatrix) {
 	m := A.Rows();
 	n := A.Cols();
 	QR := A.Copy();
-	Q := Zeros(m, n);
-	R := Zeros(m, n);
+	Q = Zeros(m, n);
+	R = Zeros(m, n);
 	i, j, k := 0, 0, 0;
 	norm := float64(0.0);
 	s := float64(0.0);
@@ -191,5 +191,5 @@ func (A *DenseMatrix) QR() (*DenseMatrix, *DenseMatrix) {
 		}
 	}
 
-	return Q, R;
+	return;
 }

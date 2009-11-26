@@ -4,32 +4,32 @@
 
 package matrix
 
-func (A *DenseMatrix) Plus(B *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) Plus(B MatrixRO) (*DenseMatrix, Error) {
 	C := A.Copy();
 	err := C.Add(B);
 	return C, err;
 }
-func (A *DenseMatrix) PlusDense(B *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) PlusDense(B *DenseMatrix) (*DenseMatrix, Error) {
 	C := A.Copy();
 	err := C.AddDense(B);
 	return C, err;
 }
 
-func (A *DenseMatrix) Minus(B *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) Minus(B MatrixRO) (*DenseMatrix, Error) {
 	C := A.Copy();
 	err := C.Subtract(B);
 	return C, err;
 }
 
-func (A *DenseMatrix) MinusDense(B *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) MinusDense(B *DenseMatrix) (*DenseMatrix, Error) {
 	C := A.Copy();
 	err := C.SubtractDense(B);
 	return C, err;
 }
 
-func (A *DenseMatrix) Add(B MatrixRO) *error {
+func (A *DenseMatrix) Add(B MatrixRO) Error {
 	if A.cols != B.Cols() || A.rows != B.Rows() {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 
 	for i := 0; i < A.rows; i++ {
@@ -40,16 +40,16 @@ func (A *DenseMatrix) Add(B MatrixRO) *error {
 		}
 	}
 
-	return nil;
+	return NoError;
 }
 
-func (A *DenseMatrix) AddDense(B *DenseMatrix) *error {
+func (A *DenseMatrix) AddDense(B *DenseMatrix) Error {
 	return A.Add(B)
 }
 
-func (A *DenseMatrix) Subtract(B MatrixRO) *error {
+func (A *DenseMatrix) Subtract(B MatrixRO) Error {
 	if A.cols != B.Cols() || A.rows != B.Rows() {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 
 	for i := 0; i < A.rows; i++ {
@@ -60,16 +60,16 @@ func (A *DenseMatrix) Subtract(B MatrixRO) *error {
 		}
 	}
 
-	return nil;
+	return NoError;
 }
 
-func (A *DenseMatrix) SubtractDense(B *DenseMatrix) *error {
+func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
 	return A.Subtract(B)
 }
 
-func (A *DenseMatrix) Times(B MatrixRO) (*DenseMatrix, *error) {
+func (A *DenseMatrix) Times(B MatrixRO) (*DenseMatrix, Error) {
 	if A.cols != B.Rows() {
-		return nil, NewError(ErrorDimensionMismatch)
+		return nil, ErrorDimensionMismatch
 	}
 	C := Zeros(A.rows, B.Cols());
 
@@ -83,12 +83,12 @@ func (A *DenseMatrix) Times(B MatrixRO) (*DenseMatrix, *error) {
 		}
 	}
 
-	return C, nil;
+	return C, NoError;
 }
 
-func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
 	if A.cols != B.rows {
-		return nil, NewError(ErrorDimensionMismatch)
+		return nil, ErrorDimensionMismatch
 	}
 	C := Zeros(A.rows, B.cols);
 
@@ -113,17 +113,17 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, *error) {
 		//Astart += A.step;
 	}
 
-	return C, nil;
+	return C, NoError;
 }
 
 
-func (A *DenseMatrix) ElementMult(B MatrixRO) (*DenseMatrix, *error) {
+func (A *DenseMatrix) ElementMult(B MatrixRO) (*DenseMatrix, Error) {
 	C := A.Copy();
 	err := C.ScaleMatrix(B);
 	return C, err;
 }
 
-func (A *DenseMatrix) ElementMultDense(B *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) ElementMultDense(B *DenseMatrix) (*DenseMatrix, Error) {
 	C := A.Copy();
 	err := C.ScaleMatrixDense(B);
 	return C, err;
@@ -139,9 +139,9 @@ func (A *DenseMatrix) Scale(f float64) {
 	}
 }
 
-func (A *DenseMatrix) ScaleMatrix(B MatrixRO) *error {
+func (A *DenseMatrix) ScaleMatrix(B MatrixRO) Error {
 	if A.rows != B.Rows() || A.cols != B.Cols() {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 	for i := 0; i < A.rows; i++ {
 		indexA := i * A.step;
@@ -150,12 +150,12 @@ func (A *DenseMatrix) ScaleMatrix(B MatrixRO) *error {
 			indexA++;
 		}
 	}
-	return nil;
+	return NoError;
 }
 
-func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) *error {
+func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) Error {
 	if A.rows != B.rows || A.cols != B.cols {
-		return NewError(ErrorDimensionMismatch)
+		return ErrorDimensionMismatch
 	}
 	for i := 0; i < A.rows; i++ {
 		indexA := i * A.step;
@@ -166,5 +166,5 @@ func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) *error {
 			indexB++;
 		}
 	}
-	return nil;
+	return NoError;
 }

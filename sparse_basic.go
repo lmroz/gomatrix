@@ -9,7 +9,7 @@ import "math"
 /*
 Swap two rows in this matrix.
 */
-func (A *SparseMatrix) SwapRows(r1 int, r2 int) {
+func (A *SparseMatrix) SwapRows(r1, r2 int) {
 	js := map[int]bool{};
 	for index := range A.elements {
 		i, j := A.GetRowColIndex(index);
@@ -39,7 +39,7 @@ func (A *SparseMatrix) ScaleRow(r int, f float64) {
 /*
 Add a multiple of row rs to row rd.
 */
-func (A *SparseMatrix) ScaleAddRow(rd int, rs int, f float64) {
+func (A *SparseMatrix) ScaleAddRow(rd, rs int, f float64) {
 	for index, value := range A.elements {
 		i, j := A.GetRowColIndex(index);
 		if i == rs {

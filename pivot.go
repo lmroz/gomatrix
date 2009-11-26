@@ -16,7 +16,7 @@ type PivotMatrix struct {
 	pivotSign	float64;
 }
 
-func (P *PivotMatrix) Get(i int, j int) float64 {
+func (P *PivotMatrix) Get(i, j int) float64 {
 	if P.pivots[j] == i {
 		return 1
 	}

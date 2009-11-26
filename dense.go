@@ -35,8 +35,9 @@ func (A *DenseMatrix) Arrays() [][]float64 {
 /*
 Get the element in the ith row and jth column.
 */
-func (A *DenseMatrix) Get(i int, j int) float64 {
-	return A.elements[i*A.step+j]
+func (A *DenseMatrix) Get(i int, j int) (v float64) {
+	v = A.elements[i*A.step+j];
+	return;
 }
 
 
@@ -51,7 +52,7 @@ func (A *DenseMatrix) Set(i int, j int, v float64) {
 Get a submatrix starting at i,j with rows rows and cols columns. Changes to
 the returned matrix show up in the original.
 */
-func (A *DenseMatrix) GetMatrix(i int, j int, rows int, cols int) *DenseMatrix {
+func (A *DenseMatrix) GetMatrix(i, j, rows, cols int) *DenseMatrix {
 	B := new(DenseMatrix);
 	B.elements = A.elements[i*A.step+j : (i+rows)*A.step];
 	B.rows = rows;
@@ -109,9 +110,9 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 /*
 Get a new matrix [A B].
 */
-func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, Error) {
 	if A.Rows() != B.Rows() {
-		return nil, NewError(ErrorDimensionMismatch)
+		return nil, ErrorDimensionMismatch
 	}
 	C := Zeros(A.Rows(), A.Cols()+B.Cols());
 	for i := 0; i < C.Rows(); i++ {
@@ -122,16 +123,16 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, *error) {
 			C.Set(i, j+A.Cols(), B.Get(i, j))
 		}
 	}
-	return C, nil;
+	return C, NoError;
 }
 
 
 /*
 Get a new matrix [A; B], with A above B.
 */
-func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
+func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, Error) {
 	if A.Cols() != B.Cols() {
-		return nil, NewError(ErrorDimensionMismatch)
+		return nil, ErrorDimensionMismatch;
 	}
 	C := Zeros(A.Rows()+B.Rows(), A.Cols());
 	for j := 0; j < A.Cols(); j++ {
@@ -142,7 +143,7 @@ func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, *error) {
 			C.Set(i+A.Rows(), j, B.Get(i, j))
 		}
 	}
-	return C, nil;
+	return C, NoError;
 }
 
 /*
@@ -161,7 +162,7 @@ func (A *DenseMatrix) SparseMatrix() *SparseMatrix {
 	return B;
 }
 
-func Zeros(rows int, cols int) *DenseMatrix {
+func Zeros(rows, cols int) *DenseMatrix {
 	A := new(DenseMatrix);
 	A.elements = make([]float64, rows*cols);
 	A.rows = rows;
@@ -170,7 +171,7 @@ func Zeros(rows int, cols int) *DenseMatrix {
 	return A;
 }
 
-func Ones(rows int, cols int) *DenseMatrix {
+func Ones(rows, cols int) *DenseMatrix {
 	A := new(DenseMatrix);
 	A.elements = make([]float64, rows*cols);
 	A.rows = rows;
@@ -184,7 +185,7 @@ func Ones(rows int, cols int) *DenseMatrix {
 	return A;
 }
 
-func Numbers(rows int, cols int, num float64) *DenseMatrix {
+func Numbers(rows, cols int, num float64) *DenseMatrix {
 	A := Zeros(rows, cols);
 
 	for i := 0; i < A.Rows(); i++ {
@@ -207,7 +208,7 @@ func Eye(span int) *DenseMatrix {
 	return A;
 }
 
-func Normals(rows int, cols int) *DenseMatrix {
+func Normals(rows, cols int) *DenseMatrix {
 	A := Zeros(rows, cols);
 
 	for i := 0; i < A.Rows(); i++ {
@@ -238,7 +239,7 @@ func MakeDenseCopy(A MatrixRO) *DenseMatrix {
 	return B;
 }
 
-func MakeDenseMatrix(elements []float64, rows int, cols int) *DenseMatrix {
+func MakeDenseMatrix(elements []float64, rows, cols int) *DenseMatrix {
 	A := new(DenseMatrix);
 	A.elements = make([]float64, rows*cols);
 	A.rows = rows;

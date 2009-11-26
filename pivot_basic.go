@@ -9,13 +9,14 @@ import "math"
 /*
 Swap two rows in this PivotMatrix.
 */
-func (P *PivotMatrix) SwapRows(r1 int, r2 int) *error {
-	tmp := P.pivots[r1];
-	P.pivots[r1] = P.pivots[r2];
-	P.pivots[r2] = tmp;
+func (P *PivotMatrix) SwapRows(r1, r2 int) Error {
+//	tmp := P.pivots[r1];
+//	P.pivots[r1] = P.pivots[r2];
+//	P.pivots[r2] = tmp;
+	P.pivots[r1], P.pivots[r2] = P.pivots[r2], P.pivots[r1];
 	P.pivotSign *= -1;
 
-	return nil;
+	return NoError;
 }
 
 func (P *PivotMatrix) Symmetric() bool {
@@ -51,7 +52,7 @@ func (P *PivotMatrix) Trace() (r float64) {
 /*
 Returns x such that Px=b.
 */
-func (P *PivotMatrix) Solve(b MatrixRO) (*DenseMatrix, *error) {
+func (P *PivotMatrix) Solve(b MatrixRO) (*DenseMatrix, Error) {
 	return P.Transpose().Times(b)	//error comes from times
 }
 
