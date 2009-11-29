@@ -51,8 +51,12 @@ func main() {
 
 	fmt.Printf("Or A's trace (%f) and determinant (%f)\n\n", A.Trace(), A.Det());
 	
+	fmt.Printf("The non-zero entries of a sparse matrix:");
 	S := Eye(3).SparseMatrix();
-	for i := range S.Indices() {
-		fmt.Printf("%d\n", i);
+	for index := range S.Indices() {
+		i, j := S.GetRowColIndex(index);
+		fmt.Printf(" (%d, %d)", i, j);
 	}
+	fmt.Printf("\n\n");
+	
 }
