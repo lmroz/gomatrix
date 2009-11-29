@@ -47,7 +47,7 @@ func main() {
 	fmt.Printf("We can find QR decompositions Q,R st QR=A:\n%v\n%v\n\n", Q, R);
 
 	L, U, P := A.LU();
-	fmt.Printf("Or LU decompositions L,U,P st PLU=A:\n%v\n%v\n%v\n\n", L, U, P);
+	fmt.Printf("Or LU decompositions L,U,P st PLU=A:\n%v\n\n%v\n\n%v\n\n", L, U, P);
 
 	fmt.Printf("Or A's trace (%f) and determinant (%f)\n\n", A.Trace(), A.Det());
 	
