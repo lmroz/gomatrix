@@ -84,11 +84,9 @@ func (A *SparseMatrix) Indices() (out chan int) {
 	out = make(chan int);
 	go func(o chan int) {
 		for index := range A.elements {
-			fmt.Printf("o%d\n", index);
 			o <- index
 		}
-		fmt.Printf("done sending\n");
-		return;
+		close(o);
 	}(out);
 	return;
 }
