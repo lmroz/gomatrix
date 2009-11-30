@@ -6,7 +6,6 @@ package matrix
 
 import (
 	"rand";
-	"fmt";
 )
 
 /*
@@ -262,24 +261,5 @@ func MakeDenseMatrixStacked(data [][]float64) *DenseMatrix {
 }
 
 func (A *DenseMatrix) String() string {
-	if A == nil {
-		return "{nil}"
-	}
-	s := "{";
-	for i := 0; i < A.Rows(); i++ {
-		for j := 0; j < A.Cols(); j++ {
-			s += fmt.Sprintf("%f", A.Get(i, j));
-			if i != A.Rows()-1 || j != A.Cols()-1 {
-				s += ","
-			}
-			if j != A.cols-1 {
-				s += " "
-			}
-		}
-		if i != A.Rows()-1 {
-			s += "\n"
-		}
-	}
-	s += "}";
-	return s;
+	return String(A);
 }

@@ -5,7 +5,6 @@
 package matrix
 
 import (
-	"fmt";
 	"rand";
 )
 
@@ -252,22 +251,5 @@ func (A *SparseMatrix) DenseMatrix() *DenseMatrix {
 }
 
 func (A *SparseMatrix) String() string {
-
-	s := "{";
-	for i := 0; i < A.Rows(); i++ {
-		for j := 0; j < A.Cols(); j++ {
-			s += fmt.Sprintf("%f", A.Get(i, j));
-			if i != A.Rows()-1 || j != A.Cols()-1 {
-				s += ","
-			}
-			if j != A.cols-1 {
-				s += " "
-			}
-		}
-		if i != A.Rows()-1 {
-			s += "\n"
-		}
-	}
-	s += "}";
-	return s;
+	return String(A);
 }
