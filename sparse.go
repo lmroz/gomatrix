@@ -250,6 +250,10 @@ func (A *SparseMatrix) DenseMatrix() *DenseMatrix {
 	return B;
 }
 
+func (A *SparseMatrix) SparseMatrix() *SparseMatrix {
+	return A.Copy();
+}
+
 func (A *SparseMatrix) String() string {
 	return String(A);
 }

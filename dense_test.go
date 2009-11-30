@@ -14,7 +14,7 @@ import (
 
 const ε = 0.000001
 const verbose = false
-const speedTest = true
+const speedTest = false
 
 /* TEST: arithmetic.go */
 
@@ -92,7 +92,8 @@ func TestProduct(t *testing.T) {
 		t.Fail()
 	}
 
-	Ctrue := MakeDenseMatrix([]float64{48, 14, -56, -46,
+	var Ctrue Matrix;
+	Ctrue = MakeDenseMatrix([]float64{48, 14, -56, -46,
 		66, -21, -10, -108,
 		-240, 68, 101, 356,
 		114, -122, -56, -203,
@@ -476,7 +477,8 @@ func TestEigen(t *testing.T) {
 		t.Fail();
 	}
 
-	B, _ = B.Times(B.Transpose());
+	Bm, _ := B.Times(B.Transpose());
+	B = Bm.DenseMatrix();
 	V, D, _ = B.Eigen();
 	Vinv, _ = V.Inverse();
 
@@ -837,7 +839,8 @@ func TestSpeed(t *testing.T) {
 	fmt.Printf("%d 6x6 matrix determinants in %fs\n", count, float(end-start)/1000000000);
 
 	A = Normals(6, 6);
-	B, _ = A.Times(A.Transpose());
+	Bm, _ := A.Times(A.Transpose());
+	B, _ = Bm.(*DenseMatrix);
 
 	count = 100000;
 	start = time.Nanoseconds();

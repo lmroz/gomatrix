@@ -38,6 +38,9 @@ type MatrixRO interface {
 
 	//A pretty-print string.
 	String() string;
+	
+	DenseMatrix() *DenseMatrix;
+	SparseMatrix() *SparseMatrix;
 }
 
 /*
@@ -48,6 +51,13 @@ type Matrix interface {
 
 	//Set the element at the ith row and jth column to v.
 	Set(i int, j int, v float64);
+	
+	//this method belongs in MatrixRO, but issue#287 (http://code.google.com/p/go/issues/detail?id=287)
+	Plus(MatrixRO) (Matrix, Error);
+	//this method belongs in MatrixRO, but issue#287 (http://code.google.com/p/go/issues/detail?id=287)
+	Minus(MatrixRO) (Matrix, Error);
+	//this method belongs in MatrixRO, but issue#287 (http://code.google.com/p/go/issues/detail?id=287)
+	Times(MatrixRO) (Matrix, Error);
 }
 
 type matrix struct {
@@ -71,6 +81,19 @@ func (A *matrix) GetSize() (rows, cols int)	{
 
 
 func String(A MatrixRO) string {
+	
+	condense := func(vs string) string {
+		if strings.Index(vs, ".") != -1 {
+			for vs[len(vs)-1] == '0' {
+				vs = vs[0:len(vs)-1];
+			}
+		}
+		if vs[len(vs)-1] == '.' {
+			vs = vs[0:len(vs)-1];
+		}
+		return vs;
+	};
+	
 	if A == nil {
 		return "{nil}"
 	}
@@ -80,16 +103,8 @@ func String(A MatrixRO) string {
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			v := A.Get(i, j);
-			vs := fmt.Sprintf("%f", v);
+			vs := condense(fmt.Sprintf("%f", v));
 			
-			if strings.Index(vs, ".") != -1 {
-				for vs[len(vs)-1] == '0' {
-					vs = vs[0:len(vs)-1];
-				}
-			}
-			if vs[len(vs)-1] == '.' {
-				vs = vs[0:len(vs)-1];
-			}
 			
 			maxLen = maxInt(maxLen, len(vs));
 		}
@@ -99,16 +114,8 @@ func String(A MatrixRO) string {
 		for j := 0; j < A.Cols(); j++ {
 			v := A.Get(i, j);
 			
-			vs := fmt.Sprintf("%f", v);
+			vs := condense(fmt.Sprintf("%f", v));
 			
-			if strings.Index(vs, ".") != -1 {
-				for vs[len(vs)-1] == '0' {
-					vs = vs[0:len(vs)-1];
-				}
-			}
-			if vs[len(vs)-1] == '.' {
-				vs = vs[0:len(vs)-1];
-			}
 			for len(vs) < maxLen {
 				vs = " "+vs;
 			}

@@ -161,6 +161,10 @@ func (A *DenseMatrix) SparseMatrix() *SparseMatrix {
 	return B;
 }
 
+func (A *DenseMatrix) DenseMatrix() *DenseMatrix {
+	return A.Copy();
+}
+
 func Zeros(rows, cols int) *DenseMatrix {
 	A := new(DenseMatrix);
 	A.elements = make([]float64, rows*cols);
