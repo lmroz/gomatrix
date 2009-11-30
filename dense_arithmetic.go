@@ -4,7 +4,7 @@
 
 package matrix
 
-func (A *DenseMatrix) Plus(B MatrixRO) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Plus(B MatrixRO) (Matrix, Error) {
 	C := A.Copy();
 	err := C.Add(B);
 	return C, err;
@@ -15,7 +15,7 @@ func (A *DenseMatrix) PlusDense(B *DenseMatrix) (*DenseMatrix, Error) {
 	return C, err;
 }
 
-func (A *DenseMatrix) Minus(B MatrixRO) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Minus(B MatrixRO) (Matrix, Error) {
 	C := A.Copy();
 	err := C.Subtract(B);
 	return C, err;
@@ -102,7 +102,7 @@ func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
 	return NoError;
 }
 
-func (A *DenseMatrix) Times(B MatrixRO) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Times(B MatrixRO) (Matrix, Error) {
 	if Bd, ok := B.(*DenseMatrix); ok {
 		return A.TimesDense(Bd);
 	}
@@ -156,7 +156,7 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
 }
 
 
-func (A *DenseMatrix) ElementMult(B MatrixRO) (*DenseMatrix, Error) {
+func (A *DenseMatrix) ElementMult(B MatrixRO) (Matrix, Error) {
 	C := A.Copy();
 	err := C.ScaleMatrix(B);
 	return C, err;

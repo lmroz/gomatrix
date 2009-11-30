@@ -7,7 +7,7 @@ package matrix
 /*
 The sum of this matrix and another.
 */
-func (A *SparseMatrix) Plus(B MatrixRO) (*SparseMatrix, Error) {
+func (A *SparseMatrix) Plus(B MatrixRO) (Matrix, Error) {
 	C := A.Copy();
 	err := C.Add(B);
 	return C, err;
@@ -25,7 +25,7 @@ func (A *SparseMatrix) PlusSparse(B *SparseMatrix) (*SparseMatrix, Error) {
 /*
 The difference between this matrix and another.
 */
-func (A *SparseMatrix) Minus(B MatrixRO) (*SparseMatrix, Error) {
+func (A *SparseMatrix) Minus(B MatrixRO) (Matrix, Error) {
 	C := A.Copy();
 	err := C.Subtract(B);
 	return C, err;
@@ -118,7 +118,7 @@ func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) Error {
 /*
 Get the product of this matrix and another.
 */
-func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, Error) {
+func (A *SparseMatrix) Times(B MatrixRO) (Matrix, Error) {
 	/* uncomment this if an efficient version is written
 	if Bs, ok := B.(*SparseMatrix); ok {
 		return A.TimesSparse(Bs);
@@ -151,7 +151,25 @@ func (A *SparseMatrix) Times(B MatrixRO) (*SparseMatrix, Error) {
 Get the product of this matrix and another, optimized for sparsity.
 */
 func (A *SparseMatrix) TimesSparse(B *SparseMatrix) (*SparseMatrix, Error) {
-	return A.Times(B)	//nothing clever yet
+	if A.cols != B.Rows() {
+		return nil, ErrorDimensionMismatch
+	}
+
+	C := ZerosSparse(A.rows, B.Cols());
+
+	for index, value := range A.elements {
+		i, k := A.GetRowColIndex(index);
+		//not sure if there is a more efficient way to do this without using
+		//a different data structure
+		for j := 0; j < B.Cols(); j++ {
+			v := B.Get(k, j);
+			if v != 0 {
+				C.Set(i, j, C.Get(i, j)+value*v)
+			}
+		}
+	}
+
+	return C, NoError;
 }
 
 /*
