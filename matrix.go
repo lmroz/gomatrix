@@ -4,6 +4,11 @@
 
 package matrix
 
+import (
+	"strings";
+	"fmt";
+)
+
 //The MatrixRO interface defines matrix operations that do not change the
 //underlying data, such as information requests or the creation of transforms
 /*
@@ -62,4 +67,63 @@ func (A *matrix) GetSize() (rows, cols int)	{
 	rows = A.rows;
 	cols = A.cols;
 	return;
+}
+
+
+func String(A MatrixRO) string {
+	if A == nil {
+		return "{nil}"
+	}
+	s := "{";
+	
+	maxLen := 0;
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			v := A.Get(i, j);
+			vs := fmt.Sprintf("%f", v);
+			
+			if strings.Index(vs, ".") != -1 {
+				for vs[len(vs)-1] == '0' {
+					vs = vs[0:len(vs)-1];
+				}
+			}
+			if vs[len(vs)-1] == '.' {
+				vs = vs[0:len(vs)-1];
+			}
+			
+			maxLen = maxInt(maxLen, len(vs));
+		}
+	}
+	
+	for i := 0; i < A.Rows(); i++ {
+		for j := 0; j < A.Cols(); j++ {
+			v := A.Get(i, j);
+			
+			vs := fmt.Sprintf("%f", v);
+			
+			if strings.Index(vs, ".") != -1 {
+				for vs[len(vs)-1] == '0' {
+					vs = vs[0:len(vs)-1];
+				}
+			}
+			if vs[len(vs)-1] == '.' {
+				vs = vs[0:len(vs)-1];
+			}
+			for len(vs) < maxLen {
+				vs = " "+vs;
+			}
+			s += vs;
+			if i != A.Rows()-1 || j != A.Cols()-1 {
+				s += ","
+			}
+			if j != A.Cols()-1 {
+				s += " "
+			}
+		}
+		if i != A.Rows()-1 {
+			s += "\n "
+		}
+	}
+	s += "}";
+	return s;
 }

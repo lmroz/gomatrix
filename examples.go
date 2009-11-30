@@ -35,7 +35,7 @@ func main() {
 	fmt.Printf("And find x st Ax=b:\n%v\n\n", x);
 
 	V, D, _ := A.Eigen();
-	fmt.Printf("Perhaps you want its eigenvectors and eigenvalues V,D st VDV'=A:\n%v\n%v\n\n", V, D);
+	fmt.Printf("Perhaps you want its eigenvectors and eigenvalues V,D st VDV'=A:\n%v\n\n%v\n\n", V, D);
 
 	B, _ := A.TimesDense(A.Transpose());
 	fmt.Printf("We can make a symmetric matrix by finding B st B=A*A':\n%v\n\n", B);
@@ -44,7 +44,7 @@ func main() {
 	fmt.Printf("And find its cholesky decomposition C st CC'=B:\n%v\n\n", C);
 
 	Q, R := A.QR();
-	fmt.Printf("We can find QR decompositions Q,R st QR=A:\n%v\n%v\n\n", Q, R);
+	fmt.Printf("We can find QR decompositions Q,R st QR=A:\n%v\n\n%v\n\n", Q, R);
 
 	L, U, P := A.LU();
 	fmt.Printf("Or LU decompositions L,U,P st PLU=A:\n%v\n\n%v\n\n%v\n\n", L, U, P);
