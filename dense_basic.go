@@ -104,7 +104,7 @@ func (A *DenseMatrix) TwoNorm() float64 {
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < A.cols; j++ {
 			v := A.elements[i*A.step+j];
-			sum += v*v;
+			sum += v * v;
 		}
 	}
 	return math.Sqrt(sum);

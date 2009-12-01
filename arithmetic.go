@@ -164,9 +164,8 @@ func MultipleProduct(values ...) Matrix {
 			inter := v.Field(i).Interface();
 			if A, ok := inter.(MatrixRO); ok {
 				C = Product(C, A)
-			}
-			else {
-				return nil;
+			} else {
+				return nil
 			}
 		}
 		return C;

@@ -20,7 +20,7 @@ const (
 	ExceptionNotSPD;
 )
 
-type Error int;
+type Error int
 
 func (e Error) String() string {
 	switch e {
@@ -38,6 +38,4 @@ func (e Error) String() string {
 	return fmt.Sprintf("Unknown error code %d", e);
 }
 
-func (e Error) OK() bool {
-	return e == NoError;
-}
+func (e Error) OK() bool	{ return e == NoError }

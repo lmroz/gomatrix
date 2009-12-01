@@ -115,7 +115,7 @@ func TestProduct(t *testing.T) {
 
 func TestParallelProduct(t *testing.T) {
 	if true {
-		return;
+		return
 	}
 
 	w := 100000;
@@ -498,16 +498,16 @@ func TestSVD(t *testing.T) {
 		-6, 0, -10, 7,
 	},
 		4, 4);
-	U, Σ, V, _ :=A.SVD();
-	Arecomp :=Product(Product(U, Σ), V.Transpose());
+	U, Σ, V, _ := A.SVD();
+	Arecomp := Product(Product(U, Σ), V.Transpose());
 	if !ApproxEquals(A, Arecomp, ε) {
-		t.Fail();
+		t.Fail()
 	}
 	A = Normals(5, 3);
 	U, Σ, V, _ = A.SVD();
 	Arecomp = Product(Product(U, Σ), V.Transpose());
 	if !ApproxEquals(A, Arecomp, ε) {
-		t.Fail();
+		t.Fail()
 	}
 }
 
@@ -784,7 +784,7 @@ func TestSpeed(t *testing.T) {
 		A.Times(B)
 	}
 	end = time.Nanoseconds();
-	duration = end-start;
+	duration = end - start;
 	fmt.Printf("%d %dx%d x %dx%d matrix multiplications in %fs\n", count, h, w, w, h, float(end-start)/1000000000);
 
 	count = 100000;

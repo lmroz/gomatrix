@@ -51,22 +51,22 @@ func (A *DenseMatrix) AddDense(B *DenseMatrix) Error {
 	for i := 0; i < A.rows; i++ {
 		indexA := i * A.step;
 		indexB := i * B.step;
-		
+
 		for j := 0; j < A.cols; j++ {
 			A.elements[indexA] += B.elements[indexB];
 			indexA++;
 			indexB++;
 		}
 	}
-	
+
 	return NoError;
 }
 
 func (A *DenseMatrix) Subtract(B MatrixRO) Error {
 	if Bd, ok := B.(*DenseMatrix); ok {
-		return A.SubtractDense(Bd);
+		return A.SubtractDense(Bd)
 	}
-	
+
 	if A.cols != B.Cols() || A.rows != B.Rows() {
 		return ErrorDimensionMismatch
 	}
@@ -83,7 +83,7 @@ func (A *DenseMatrix) Subtract(B MatrixRO) Error {
 }
 
 func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
-	
+
 	if A.cols != B.cols || A.rows != B.rows {
 		return ErrorDimensionMismatch
 	}
@@ -91,20 +91,20 @@ func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
 	for i := 0; i < A.rows; i++ {
 		indexA := i * A.step;
 		indexB := i * B.step;
-		
+
 		for j := 0; j < A.cols; j++ {
 			A.elements[indexA] -= B.elements[indexB];
 			indexA++;
 			indexB++;
 		}
 	}
-	
+
 	return NoError;
 }
 
 func (A *DenseMatrix) Times(B MatrixRO) (Matrix, Error) {
 	if Bd, ok := B.(*DenseMatrix); ok {
-		return A.TimesDense(Bd);
+		return A.TimesDense(Bd)
 	}
 
 	if A.cols != B.Rows() {
@@ -180,7 +180,7 @@ func (A *DenseMatrix) Scale(f float64) {
 
 func (A *DenseMatrix) ScaleMatrix(B MatrixRO) Error {
 	if Bd, ok := B.(*DenseMatrix); ok {
-		return A.ScaleMatrixDense(Bd);
+		return A.ScaleMatrixDense(Bd)
 	}
 
 	if A.rows != B.Rows() || A.cols != B.Cols() {

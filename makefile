@@ -21,17 +21,3 @@ GOFILES=\
 	pivot_basic.go\
 
 include $(GOROOT)/src/Make.pkg
-
-src: cleansrc
-	cp -r ../gomatrix $(GOROOT)/src/pkg/matrix
-cleansrc:
-	rm -r $(GOROOT)/src/pkg/matrix
-
-examples: examples.6
-	6l -o examples examples.6
-	
-examples.6: examples.go install
-	6g examples.go
-
-	
-	

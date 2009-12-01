@@ -10,9 +10,9 @@ import "math"
 Swap two rows in this PivotMatrix.
 */
 func (P *PivotMatrix) SwapRows(r1, r2 int) Error {
-//	tmp := P.pivots[r1];
-//	P.pivots[r1] = P.pivots[r2];
-//	P.pivots[r2] = tmp;
+	//	tmp := P.pivots[r1];
+	//	P.pivots[r1] = P.pivots[r2];
+	//	P.pivots[r2] = tmp;
 	P.pivots[r1], P.pivots[r2] = P.pivots[r2], P.pivots[r1];
 	P.pivotSign *= -1;
 
