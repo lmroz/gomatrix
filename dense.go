@@ -100,8 +100,8 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 	B.cols = A.cols;
 	B.step = A.cols;
 	B.elements = make([]float64, len(A.elements));
-	for i:=0; i<len(A.elements); i++ {
-		B.elements[i] = A.elements[i];
+	for i := 0; i < len(A.elements); i++ {
+		B.elements[i] = A.elements[i]
 	}
 	return B;
 }
@@ -131,7 +131,7 @@ Get a new matrix [A; B], with A above B.
 */
 func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, Error) {
 	if A.Cols() != B.Cols() {
-		return nil, ErrorDimensionMismatch;
+		return nil, ErrorDimensionMismatch
 	}
 	C := Zeros(A.Rows()+B.Rows(), A.Cols());
 	for j := 0; j < A.Cols(); j++ {
@@ -162,7 +162,7 @@ func (A *DenseMatrix) SparseMatrix() *SparseMatrix {
 }
 
 func (A *DenseMatrix) DenseMatrix() *DenseMatrix {
-	return A.Copy();
+	return A.Copy()
 }
 
 func Zeros(rows, cols int) *DenseMatrix {
@@ -264,6 +264,4 @@ func MakeDenseMatrixStacked(data [][]float64) *DenseMatrix {
 	return MakeDenseMatrix(elements, rows, cols);
 }
 
-func (A *DenseMatrix) String() string {
-	return String(A);
-}
+func (A *DenseMatrix) String() string	{ return String(A) }

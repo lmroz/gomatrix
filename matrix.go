@@ -17,12 +17,12 @@ Read-only matrix types (at the moment, PivotMatrix).
 type MatrixRO interface {
 	//Returns true if the underlying object is nil.
 	Nil() bool;
-	
+
 	//The number of rows in this matrix.
 	Rows() int;
 	//The number of columns in this matrix.
 	Cols() int;
-	
+
 	//The number of elements in this matrix.
 	NumElements() int;
 	//The size pair, (Rows(), Cols())
@@ -38,7 +38,7 @@ type MatrixRO interface {
 
 	//A pretty-print string.
 	String() string;
-	
+
 	DenseMatrix() *DenseMatrix;
 	SparseMatrix() *SparseMatrix;
 }
@@ -51,7 +51,7 @@ type Matrix interface {
 
 	//Set the element at the ith row and jth column to v.
 	Set(i int, j int, v float64);
-	
+
 	//this method belongs in MatrixRO, but issue#287 (http://code.google.com/p/go/issues/detail?id=287)
 	Plus(MatrixRO) (Matrix, Error);
 	//this method belongs in MatrixRO, but issue#287 (http://code.google.com/p/go/issues/detail?id=287)
@@ -73,7 +73,7 @@ func (A *matrix) Cols() int	{ return A.cols }
 
 func (A *matrix) NumElements() int	{ return A.rows * A.cols }
 
-func (A *matrix) GetSize() (rows, cols int)	{
+func (A *matrix) GetSize() (rows, cols int) {
 	rows = A.rows;
 	cols = A.cols;
 	return;
@@ -81,43 +81,42 @@ func (A *matrix) GetSize() (rows, cols int)	{
 
 
 func String(A MatrixRO) string {
-	
+
 	condense := func(vs string) string {
 		if strings.Index(vs, ".") != -1 {
 			for vs[len(vs)-1] == '0' {
-				vs = vs[0:len(vs)-1];
+				vs = vs[0 : len(vs)-1]
 			}
 		}
 		if vs[len(vs)-1] == '.' {
-			vs = vs[0:len(vs)-1];
+			vs = vs[0 : len(vs)-1]
 		}
 		return vs;
 	};
-	
+
 	if A == nil {
 		return "{nil}"
 	}
 	s := "{";
-	
+
 	maxLen := 0;
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			v := A.Get(i, j);
 			vs := condense(fmt.Sprintf("%f", v));
-			
-			
+
 			maxLen = maxInt(maxLen, len(vs));
 		}
 	}
-	
+
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			v := A.Get(i, j);
-			
+
 			vs := condense(fmt.Sprintf("%f", v));
-			
+
 			for len(vs) < maxLen {
-				vs = " "+vs;
+				vs = " " + vs
 			}
 			s += vs;
 			if i != A.Rows()-1 || j != A.Cols()-1 {

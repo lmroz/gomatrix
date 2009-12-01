@@ -45,9 +45,9 @@ Add another matrix to this one in place.
 */
 func (A *SparseMatrix) Add(B MatrixRO) Error {
 	if Bs, ok := B.(*SparseMatrix); ok {
-		return A.AddSparse(Bs);
+		return A.AddSparse(Bs)
 	}
-	
+
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return ErrorDimensionMismatch
 	}
@@ -82,9 +82,9 @@ Subtract another matrix from this one in place.
 */
 func (A *SparseMatrix) Subtract(B MatrixRO) Error {
 	if Bs, ok := B.(*SparseMatrix); ok {
-		return A.SubtractSparse(Bs);
+		return A.SubtractSparse(Bs)
 	}
-	
+
 	if A.rows != B.Rows() || A.cols != B.Cols() {
 		return ErrorDimensionMismatch
 	}

@@ -92,7 +92,7 @@ func (A *SparseMatrix) OneNorm() (res float64) {
 func (A *SparseMatrix) TwoNorm() float64 {
 	var sum float64 = 0;
 	for _, value := range A.elements {
-		sum += value*value;
+		sum += value * value
 	}
 	return math.Sqrt(sum);
 }

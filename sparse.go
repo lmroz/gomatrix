@@ -108,7 +108,7 @@ func (A *SparseMatrix) GetMatrix(i, j, rows, cols int) (subMatrix *SparseMatrix)
 	subMatrix.offset = (i+A.offset/A.step)*A.step + (j + A.offset%A.step);
 	subMatrix.step = A.step;
 	subMatrix.elements = A.elements;
-	
+
 	return;
 }
 
@@ -251,9 +251,7 @@ func (A *SparseMatrix) DenseMatrix() *DenseMatrix {
 }
 
 func (A *SparseMatrix) SparseMatrix() *SparseMatrix {
-	return A.Copy();
+	return A.Copy()
 }
 
-func (A *SparseMatrix) String() string {
-	return String(A);
-}
+func (A *SparseMatrix) String() string	{ return String(A) }

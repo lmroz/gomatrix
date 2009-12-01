@@ -58,6 +58,4 @@ func MakePivotMatrix(pivots []int, pivotSign float64) *PivotMatrix {
 	return P;
 }
 
-func (A *PivotMatrix) String() string {
-	return String(A);
-}
+func (A *PivotMatrix) String() string	{ return String(A) }
