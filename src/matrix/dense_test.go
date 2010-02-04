@@ -14,7 +14,7 @@ import (
 
 const ε = 0.000001
 const verbose = false
-const speedTest = false
+const speedTest = true
 
 /* TEST: arithmetic.go */
 
@@ -114,19 +114,14 @@ func TestProduct(t *testing.T) {
 }
 
 func TestParallelProduct(t *testing.T) {
-	if true {
-		return
-	}
 
 	w := 100000;
 	h := 40;
 
-	if !verbose || true {
+	if !verbose {
 		w = 100;
 		h = 4;
 	}
-
-	threads := 2;
 
 	rand.Seed(time.Nanoseconds());
 	A := Normals(h, w);
@@ -146,7 +141,7 @@ func TestParallelProduct(t *testing.T) {
 	}
 
 	start = time.Nanoseconds();
-	C = ParallelProduct(A, B, threads);
+	C = ParallelProduct(A, B);
 	if !err.OK() {
 		t.Fail()
 	}
@@ -760,124 +755,4 @@ func TestMultipleProduct(t *testing.T) {
 	if !Equals(E, C) {
 		t.Fail()
 	}
-}
-
-func TestSpeed(t *testing.T) {
-	if !speedTest {
-		//no failing this test - it just provides a benchmark
-		return
-	}
-
-	var start, end, duration int64;
-	var count int;
-
-	var A, B *DenseMatrix;
-
-	w := 2;
-	h := 2;
-	A = Normals(h, w);
-	B = Normals(w, h);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.Times(B)
-	}
-	end = time.Nanoseconds();
-	duration = end - start;
-	fmt.Printf("%d %dx%d x %dx%d matrix multiplications in %fs\n", count, h, w, w, h, float(end-start)/1000000000);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.TimesDense(B)
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d %dx%d x %dx%d dense matrix multiplications in %fs\n", count, h, w, w, h, float(end-start)/1000000000);
-	fmt.Printf("For a ratio of %f.\n", float64(duration)/float64(end-start));
-
-	A = Normals(4, 4);
-	B = Normals(4, 4);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.ElementMult(B)
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d 4x4 matrix element multiplications in %fs\n", count, float(end-start)/1000000000);
-
-	A = Normals(4, 4);
-	B = Normals(4, 4);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.Plus(B)
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d 4x4 matrix additions in %fs\n", count, float(end-start)/1000000000);
-
-	A = Normals(6, 6);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.Inverse()
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d 6x6 matrix inversions in %fs\n", count, float(end-start)/1000000000);
-
-	A = Normals(6, 6);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.Det()
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d 6x6 matrix determinants in %fs\n", count, float(end-start)/1000000000);
-
-	A = Normals(6, 6);
-	Bm, _ := A.Times(A.Transpose());
-	B, _ = Bm.(*DenseMatrix);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		B.Cholesky()
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d 6x6 cholesky decompositions in %fs\n", count, float(end-start)/1000000000);
-
-	A = Normals(6, 6);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.QR()
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d 6x6 QR decompositions in %fs\n", count, float(end-start)/1000000000);
-
-	A = Normals(6, 6);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.Eigen()
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d 6x6 Eigenvector decompositions in %fs\n", count, float(end-start)/1000000000);
-
-	A = Normals(6, 6);
-
-	count = 100000;
-	start = time.Nanoseconds();
-	for i := 0; i < count; i++ {
-		A.SVD()
-	}
-	end = time.Nanoseconds();
-	fmt.Printf("%d 6x6 singular value decompositions in %fs\n", count, float(end-start)/1000000000);
-
 }

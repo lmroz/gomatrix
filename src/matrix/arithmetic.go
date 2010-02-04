@@ -59,7 +59,7 @@ func Product(A, B MatrixRO) *DenseMatrix {
 Uses a number of goroutines to do the dot products necessary
 for the matrix multiplication in parallel.
 */
-func ParallelProduct(A, B MatrixRO, threads int) *DenseMatrix {
+func ParallelProduct(A, B MatrixRO) *DenseMatrix {
 	if A.Cols() != B.Rows() {
 		return nil
 	}
@@ -87,6 +87,8 @@ func ParallelProduct(A, B MatrixRO, threads int) *DenseMatrix {
 			}
 		}
 	};
+
+	threads := 2;
 
 	for i := 0; i < threads; i++ {
 		go dotRowCol()

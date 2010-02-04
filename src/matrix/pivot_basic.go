@@ -52,7 +52,7 @@ func (P *PivotMatrix) Trace() (r float64) {
 /*
 Returns x such that Px=b.
 */
-func (P *PivotMatrix) Solve(b MatrixRO) (*DenseMatrix, Error) {
+func (P *PivotMatrix) Solve(b MatrixRO) (Matrix, Error) {
 	return P.Transpose().Times(b)	//error comes from times
 }
 
