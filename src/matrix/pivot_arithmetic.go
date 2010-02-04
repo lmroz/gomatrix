@@ -4,10 +4,28 @@
 
 package matrix
 
+func (P *PivotMatrix) Minus(A MatrixRO) (Matrix, Error) {
+	if P.rows != A.Rows() || P.cols != A.Cols() {
+		return nil, ErrorDimensionMismatch
+	}
+	B := P.DenseMatrix()
+	B.Subtract(A)
+	return B, NoError
+}
+
+func (P *PivotMatrix) Plus(A MatrixRO) (Matrix, Error) {
+	if P.rows != A.Rows() || P.cols != A.Cols() {
+		return nil, ErrorDimensionMismatch
+	}
+	B := P.DenseMatrix()
+	B.Add(A)
+	return B, NoError
+}
+
 /*
 Multiply this pivot matrix by another.
 */
-func (P *PivotMatrix) Times(A MatrixRO) (*DenseMatrix, Error) {
+func (P *PivotMatrix) Times(A MatrixRO) (Matrix, Error) {
 	if P.Cols() != A.Rows() {
 		return nil, ErrorDimensionMismatch
 	}

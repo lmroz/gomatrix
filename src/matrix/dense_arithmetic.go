@@ -49,13 +49,8 @@ func (A *DenseMatrix) AddDense(B *DenseMatrix) Error {
 	}
 
 	for i := 0; i < A.rows; i++ {
-		indexA := i * A.step;
-		indexB := i * B.step;
-
 		for j := 0; j < A.cols; j++ {
-			A.elements[indexA] += B.elements[indexB];
-			indexA++;
-			indexB++;
+			A.elements[i*A.step+j] += B.elements[i*B.step+j]
 		}
 	}
 
@@ -103,6 +98,7 @@ func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
 }
 
 func (A *DenseMatrix) Times(B MatrixRO) (Matrix, Error) {
+
 	if Bd, ok := B.(*DenseMatrix); ok {
 		return A.TimesDense(Bd)
 	}
@@ -130,27 +126,31 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
 		return nil, ErrorDimensionMismatch
 	}
 	C := Zeros(A.rows, B.cols);
-
-	//Astart := 0;
-	for i := 0; i < A.rows; i++ {
-		for j := 0; j < B.cols; j++ {
-			//Bstart := j;
-			sum := float64(0);
-			for k := 0; k < A.cols; k++ {
-				sum += A.elements[i*A.step+k] * B.elements[k*B.step+j]
-				//sum += A.elements[i*A.step+k] * B.Get(k, j);
-
-				//for some reason this next line is *slower*...
-				//sum += A.elements[Astart+k] * B.elements[k*B.step+j];
-
-				//slowest, though a more mature compiler might inline it to be
-				//like the first version
-				//sum += A.Get(i, k) * B.Get(k, j);
+	///*
+	wait := parFor(countBoxes(0, A.rows), func(iBox box) {
+		i := iBox.(int);
+		sums := C.elements[i*C.step : (i+1)*C.step];
+		for k := 0; k < A.Cols(); k++ {
+			for j := 0; j < B.Cols(); j++ {
+				sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
 			}
-			C.elements[i*C.step+j] = sum;
 		}
-		//Astart += A.step;
-	}
+	});
+
+	wait();
+	//*/
+	/*
+
+		for i := 0; i < A.rows; i++ {
+			for j := 0; j < B.cols; j++ {
+				sum := float64(0);
+				for k := 0; k < A.cols; k++ {
+					sum += A.elements[i*A.step+k] * B.elements[k*B.step+j]
+				}
+				C.elements[i*C.step+j] = sum;
+			}
+		}
+	*/
 
 	return C, NoError;
 }

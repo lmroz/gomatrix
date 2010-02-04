@@ -31,6 +31,10 @@ type MatrixRO interface {
 	//The element in the ith row and jth column.
 	Get(i int, j int) float64;
 
+	Plus(MatrixRO) (Matrix, Error);
+	Minus(MatrixRO) (Matrix, Error);
+	Times(MatrixRO) (Matrix, Error);
+
 	//The determinant of this matrix.
 	Det() float64;
 	//The trace of this matrix.
@@ -41,6 +45,7 @@ type MatrixRO interface {
 
 	DenseMatrix() *DenseMatrix;
 	SparseMatrix() *SparseMatrix;
+	
 }
 
 /*
@@ -51,13 +56,6 @@ type Matrix interface {
 
 	//Set the element at the ith row and jth column to v.
 	Set(i int, j int, v float64);
-
-	//this method belongs in MatrixRO, but issue#287 (http://code.google.com/p/go/issues/detail?id=287)
-	Plus(MatrixRO) (Matrix, Error);
-	//this method belongs in MatrixRO, but issue#287 (http://code.google.com/p/go/issues/detail?id=287)
-	Minus(MatrixRO) (Matrix, Error);
-	//this method belongs in MatrixRO, but issue#287 (http://code.google.com/p/go/issues/detail?id=287)
-	Times(MatrixRO) (Matrix, Error);
 }
 
 type matrix struct {

@@ -19,5 +19,6 @@ GOFILES=\
         pivot.go\
         pivot_arithmetic.go\
         pivot_basic.go\
+		settings.go\
 
 include $(GOROOT)/src/Make.pkg

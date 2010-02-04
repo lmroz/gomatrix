@@ -4,6 +4,8 @@
 
 package matrix
 
+import "sync"
+
 func max(x, y float64) float64 {
 	if x > y {
 		return x
@@ -45,4 +47,43 @@ func product(a []float64) float64 {
 		p *= v
 	}
 	return p;
+}
+
+type box interface{}
+
+func countBoxes(start, cap int) chan box {
+	ints := make(chan box);
+	go func() {
+		for i := start; i < cap; i++ {
+			ints <- i
+		}
+		close(ints);
+	}();
+	return ints;
+}
+
+
+func parFor(inputs <-chan box, foo func(i box)) (wait func()) {
+	m := new(sync.Mutex);
+	block := make(chan bool, MaxThreads);
+	for j := 0; j < MaxThreads; j++ {
+		go func() {
+			for {
+				m.Lock();
+				i, done := <-inputs, closed(inputs);
+				m.Unlock();
+				if done {
+					break
+				}
+				foo(i);
+			}
+			block <- true;
+		}()
+	}
+	wait = func() {
+		for i := 0; i < MaxThreads; i++ {
+			<-block
+		}
+	};
+	return;
 }

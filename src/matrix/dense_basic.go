@@ -24,9 +24,7 @@ func (m *DenseMatrix) SwapRows(r1 int, r2 int) {
 	index1 := r1 * m.step;
 	index2 := r2 * m.step;
 	for j := 0; j < m.cols; j++ {
-		tmp := m.elements[index1];
-		m.elements[index1] = m.elements[index2];
-		m.elements[index2] = tmp;
+		m.elements[index1], m.elements[index2] = m.elements[index2], m.elements[index1];
 		index1++;
 		index2++;
 	}
@@ -37,7 +35,6 @@ func (m *DenseMatrix) ScaleRow(r int, f float64) {
 	for j := 0; j < m.cols; j++ {
 		m.elements[index] *= f;
 		index++;
-		//m.Set(r, j, m.Get(r, j)*f)
 	}
 }
 
@@ -45,7 +42,6 @@ func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 	indexd := rd * m.step;
 	indexs := rs * m.step;
 	for j := 0; j < m.cols; j++ {
-		//m.Set(rd, j, m.Get(rd, j)+m.Get(rs, j)*f)
 		m.elements[indexd] += f * m.elements[indexs];
 		indexd++;
 		indexs++;
