@@ -1,7 +1,0 @@
-"make test" will compile and test functionality.
-
-"make install" will install this package in your system.
-
-"make examples" will compile a program "examples" which demonstrates some basic matrix operations.
-
-"make src" will copy the source into your system, allowing godoc to pick it up.
