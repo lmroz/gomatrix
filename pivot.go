@@ -15,6 +15,14 @@ type PivotMatrix struct {
 }
 
 func (P *PivotMatrix) Get(i, j int) float64 {
+	i = i%P.rows
+	if i < 0 {
+		i = P.rows-i
+	}
+	j = j%P.cols
+	if j < 0 {
+		j = P.cols-j
+	}
 	if P.pivots[j] == i {
 		return 1
 	}

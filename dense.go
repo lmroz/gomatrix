@@ -48,6 +48,14 @@ func (A *DenseMatrix) Array() []float64 {
 Get the element in the ith row and jth column.
 */
 func (A *DenseMatrix) Get(i int, j int) (v float64) {
+	i = i%A.rows
+	if i < 0 {
+		i = A.rows-i
+	}
+	j = j%A.cols
+	if j < 0 {
+		j = A.cols-j
+	}
 	v = A.elements[i*A.step+j];
 	return;
 }
@@ -57,6 +65,14 @@ func (A *DenseMatrix) Get(i int, j int) (v float64) {
 Set the element in the ith row and jth column to v.
 */
 func (A *DenseMatrix) Set(i int, j int, v float64) {
+	i = i%A.rows
+	if i < 0 {
+		i = A.rows-i
+	}
+	j = j%A.cols
+	if j < 0 {
+		j = A.cols-j
+	}
 	A.elements[i*A.step+j] = v
 }
 
