@@ -31,6 +31,9 @@ func (A *DenseMatrix) Arrays() [][]float64 {
 	return a;
 }
 
+/*
+Returns the contents of this matrix stored into a flat array (row-major).
+*/
 func (A *DenseMatrix) Array() []float64 {
 	a := make([]float64, A.rows*A.cols)
 	for i := 0; i < A.rows; i++ {
