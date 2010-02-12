@@ -31,6 +31,16 @@ func (A *DenseMatrix) Arrays() [][]float64 {
 	return a;
 }
 
+func (A *DenseMatrix) Array() []float64 {
+	a := make([]float64, A.rows*A.cols)
+	for i := 0; i < A.rows; i++ {
+		for j := 0; j < A.cols; j++ {
+			a[i*A.rows+j] = A.elements[i*A.step+j]
+		}
+	}
+	return a;
+}
+
 /*
 Get the element in the ith row and jth column.
 */
