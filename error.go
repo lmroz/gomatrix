@@ -7,17 +7,17 @@ package matrix
 import "fmt"
 
 const (
-	NoError	= iota;
+	NoError = iota
 	//The matrix returned was nil.
-	ErrorNilMatrix;
+	ErrorNilMatrix
 	//The dimensions of the inputs do not make sense for this operation.
-	ErrorDimensionMismatch;
+	ErrorDimensionMismatch
 	//The indices provided are out of bounds.
-	ErrorIllegalIndex;
+	ErrorIllegalIndex
 	//The matrix provided has a singularity.
-	ExceptionSingular;
+	ExceptionSingular
 	//The matrix provided is not positive semi-definite.
-	ExceptionNotSPD;
+	ExceptionNotSPD
 )
 
 type Error int
@@ -35,7 +35,7 @@ func (e Error) String() string {
 	case ExceptionNotSPD:
 		return "Matrix is not positive semidefinite"
 	}
-	return fmt.Sprintf("Unknown error code %d", e);
+	return fmt.Sprintf("Unknown error code %d", e)
 }
 
-func (e Error) OK() bool	{ return e == NoError }
+func (e Error) OK() bool { return e == NoError }

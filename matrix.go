@@ -5,8 +5,8 @@
 package matrix
 
 import (
-	"strings";
-	"fmt";
+	"strings"
+	"fmt"
 )
 
 //The MatrixRO interface defines matrix operations that do not change the
@@ -16,65 +16,68 @@ Read-only matrix types (at the moment, PivotMatrix).
 */
 type MatrixRO interface {
 	//Returns true if the underlying object is nil.
-	Nil() bool;
+	Nil() bool
 
 	//The number of rows in this matrix.
-	Rows() int;
+	Rows() int
 	//The number of columns in this matrix.
-	Cols() int;
+	Cols() int
 
 	//The number of elements in this matrix.
-	NumElements() int;
+	NumElements() int
 	//The size pair, (Rows(), Cols())
-	GetSize() (int, int);
+	GetSize() (int, int)
 
 	//The element in the ith row and jth column.
-	Get(i int, j int) float64;
+	Get(i int, j int) float64
 
-	Plus(MatrixRO) (Matrix, Error);
-	Minus(MatrixRO) (Matrix, Error);
-	Times(MatrixRO) (Matrix, Error);
+	Plus(MatrixRO) (Matrix, Error)
+	Minus(MatrixRO) (Matrix, Error)
+	Times(MatrixRO) (Matrix, Error)
 
 	//The determinant of this matrix.
-	Det() float64;
+	Det() float64
 	//The trace of this matrix.
-	Trace() float64;
+	Trace() float64
 
 	//A pretty-print string.
-	String() string;
+	String() string
 
-	DenseMatrix() *DenseMatrix;
-	SparseMatrix() *SparseMatrix;
-	
+	DenseMatrix() *DenseMatrix
+	SparseMatrix() *SparseMatrix
 }
 
 /*
 A mutable matrix.
 */
 type Matrix interface {
-	MatrixRO;
+	MatrixRO
 
 	//Set the element at the ith row and jth column to v.
-	Set(i int, j int, v float64);
+	Set(i int, j int, v float64)
+
+	Add(MatrixRO) Error
+	Subtract(MatrixRO) Error
+	Scale(float64)
 }
 
 type matrix struct {
-	rows	int;
-	cols	int;
+	rows int
+	cols int
 }
 
-func (A *matrix) Nil() bool	{ return A == nil }
+func (A *matrix) Nil() bool { return A == nil }
 
-func (A *matrix) Rows() int	{ return A.rows }
+func (A *matrix) Rows() int { return A.rows }
 
-func (A *matrix) Cols() int	{ return A.cols }
+func (A *matrix) Cols() int { return A.cols }
 
-func (A *matrix) NumElements() int	{ return A.rows * A.cols }
+func (A *matrix) NumElements() int { return A.rows * A.cols }
 
 func (A *matrix) GetSize() (rows, cols int) {
-	rows = A.rows;
-	cols = A.cols;
-	return;
+	rows = A.rows
+	cols = A.cols
+	return
 }
 
 
@@ -89,34 +92,34 @@ func String(A MatrixRO) string {
 		if vs[len(vs)-1] == '.' {
 			vs = vs[0 : len(vs)-1]
 		}
-		return vs;
-	};
+		return vs
+	}
 
 	if A == nil {
 		return "{nil}"
 	}
-	s := "{";
+	s := "{"
 
-	maxLen := 0;
+	maxLen := 0
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
-			v := A.Get(i, j);
-			vs := condense(fmt.Sprintf("%f", v));
+			v := A.Get(i, j)
+			vs := condense(fmt.Sprintf("%f", v))
 
-			maxLen = maxInt(maxLen, len(vs));
+			maxLen = maxInt(maxLen, len(vs))
 		}
 	}
 
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
-			v := A.Get(i, j);
+			v := A.Get(i, j)
 
-			vs := condense(fmt.Sprintf("%f", v));
+			vs := condense(fmt.Sprintf("%f", v))
 
 			for len(vs) < maxLen {
 				vs = " " + vs
 			}
-			s += vs;
+			s += vs
 			if i != A.Rows()-1 || j != A.Cols()-1 {
 				s += ","
 			}
@@ -128,6 +131,6 @@ func String(A MatrixRO) string {
 			s += "\n "
 		}
 	}
-	s += "}";
-	return s;
+	s += "}"
+	return s
 }

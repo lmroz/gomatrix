@@ -5,16 +5,16 @@
 package matrix
 
 import (
-	"testing";
-	"rand";
-	"fmt";
+	"testing"
+	"rand"
+	"fmt"
 )
 
 func TestAdd_Sparse(t *testing.T) {
-	A := NormalsSparse(3, 3, 9);
-	B := NormalsSparse(3, 3, 9);
-	C1, _ := A.Plus(B);
-	C2, _ := A.PlusSparse(B);
+	A := NormalsSparse(3, 3, 9)
+	B := NormalsSparse(3, 3, 9)
+	C1, _ := A.Plus(B)
+	C2, _ := A.PlusSparse(B)
 	if !ApproxEquals(C1, Sum(A, B), ε) {
 		t.Fail()
 	}
@@ -24,10 +24,10 @@ func TestAdd_Sparse(t *testing.T) {
 }
 
 func TestSubtract_Sparse(t *testing.T) {
-	A := NormalsSparse(3, 3, 9);
-	B := NormalsSparse(3, 3, 9);
-	C1, _ := A.Minus(B);
-	C2, _ := A.MinusSparse(B);
+	A := NormalsSparse(3, 3, 9)
+	B := NormalsSparse(3, 3, 9)
+	C1, _ := A.Minus(B)
+	C2, _ := A.MinusSparse(B)
 	if !ApproxEquals(C1, Difference(A, B), ε) {
 		t.Fail()
 	}
@@ -37,10 +37,10 @@ func TestSubtract_Sparse(t *testing.T) {
 }
 
 func TestTimes_Sparse(t *testing.T) {
-	A := Normals(3, 3).SparseMatrix();
-	B := Normals(3, 3).SparseMatrix();
-	C1, _ := A.Times(B);
-	C2, _ := A.TimesSparse(B);
+	A := Normals(3, 3).SparseMatrix()
+	B := Normals(3, 3).SparseMatrix()
+	C1, _ := A.Times(B)
+	C2, _ := A.TimesSparse(B)
 	if !ApproxEquals(C1, Product(A, B), ε) {
 		t.Fail()
 	}
@@ -50,11 +50,11 @@ func TestTimes_Sparse(t *testing.T) {
 }
 
 func TestElementMult_Sparse(t *testing.T) {
-	A := Normals(3, 3).SparseMatrix();
-	B := Normals(3, 3).SparseMatrix();
-	C1, _ := A.ElementMult(B);
-	C2, _ := A.ElementMultSparse(B);
-	D, _ := A.DenseMatrix().ElementMult(B);
+	A := Normals(3, 3).SparseMatrix()
+	B := Normals(3, 3).SparseMatrix()
+	C1, _ := A.ElementMult(B)
+	C2, _ := A.ElementMultSparse(B)
+	D, _ := A.DenseMatrix().ElementMult(B)
 	if !Equals(D, C1) {
 		t.Fail()
 	}
@@ -64,13 +64,13 @@ func TestElementMult_Sparse(t *testing.T) {
 }
 
 func TestGetMatrix_Sparse(t *testing.T) {
-	A := ZerosSparse(6, 6);
+	A := ZerosSparse(6, 6)
 	for i := 0; i < 36; i++ {
-		x := rand.Intn(6);
-		y := rand.Intn(6);
-		A.Set(y, x, 1);
+		x := rand.Intn(6)
+		y := rand.Intn(6)
+		A.Set(y, x, 1)
 	}
-	B := A.GetMatrix(1, 1, 4, 4);
+	B := A.GetMatrix(1, 1, 4, 4)
 
 	for i := 0; i < 4; i++ {
 		for j := 0; j < 4; j++ {
@@ -83,10 +83,10 @@ func TestGetMatrix_Sparse(t *testing.T) {
 }
 
 func TestAugment_Sparse(t *testing.T) {
-	var A, B, C *SparseMatrix;
-	A = NormalsSparse(4, 4, 16);
-	B = NormalsSparse(4, 4, 16);
-	C, _ = A.Augment(B);
+	var A, B, C *SparseMatrix
+	A = NormalsSparse(4, 4, 16)
+	B = NormalsSparse(4, 4, 16)
+	C, _ = A.Augment(B)
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
@@ -102,16 +102,16 @@ func TestAugment_Sparse(t *testing.T) {
 		}
 	}
 
-	A = NormalsSparse(2, 2, 4);
-	B = NormalsSparse(4, 4, 16);
-	C, err := A.Augment(B);
+	A = NormalsSparse(2, 2, 4)
+	B = NormalsSparse(4, 4, 16)
+	C, err := A.Augment(B)
 	if err.OK() {
 		t.Fail()
 	}
 
-	A = NormalsSparse(4, 4, 16);
-	B = NormalsSparse(4, 2, 8);
-	C, _ = A.Augment(B);
+	A = NormalsSparse(4, 4, 16)
+	B = NormalsSparse(4, 2, 8)
+	C, _ = A.Augment(B)
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
@@ -129,10 +129,10 @@ func TestAugment_Sparse(t *testing.T) {
 }
 
 func TestStack_Sparse(t *testing.T) {
-	var A, B, C *SparseMatrix;
-	A = NormalsSparse(4, 4, 16);
-	B = NormalsSparse(4, 4, 16);
-	C, _ = A.Stack(B);
+	var A, B, C *SparseMatrix
+	A = NormalsSparse(4, 4, 16)
+	B = NormalsSparse(4, 4, 16)
+	C, _ = A.Stack(B)
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {
@@ -148,19 +148,19 @@ func TestStack_Sparse(t *testing.T) {
 		}
 	}
 
-	A = NormalsSparse(2, 2, 4);
-	B = NormalsSparse(4, 4, 16);
-	C, err := A.Stack(B);
+	A = NormalsSparse(2, 2, 4)
+	B = NormalsSparse(4, 4, 16)
+	C, err := A.Stack(B)
 	if err.OK() {
 		if verbose {
 			fmt.Printf("%v\n", err)
 		}
-		t.Fail();
+		t.Fail()
 	}
 
-	A = NormalsSparse(4, 4, 16);
-	B = NormalsSparse(2, 4, 8);
-	C, _ = A.Stack(B);
+	A = NormalsSparse(4, 4, 16)
+	B = NormalsSparse(2, 4, 8)
+	C, _ = A.Stack(B)
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			if C.Get(i, j) != A.Get(i, j) {

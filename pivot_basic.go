@@ -13,10 +13,10 @@ func (P *PivotMatrix) SwapRows(r1, r2 int) Error {
 	//	tmp := P.pivots[r1];
 	//	P.pivots[r1] = P.pivots[r2];
 	//	P.pivots[r2] = tmp;
-	P.pivots[r1], P.pivots[r2] = P.pivots[r2], P.pivots[r1];
-	P.pivotSign *= -1;
+	P.pivots[r1], P.pivots[r2] = P.pivots[r2], P.pivots[r1]
+	P.pivotSign *= -1
 
-	return NoError;
+	return NoError
 }
 
 func (P *PivotMatrix) Symmetric() bool {
@@ -25,20 +25,20 @@ func (P *PivotMatrix) Symmetric() bool {
 			return false
 		}
 	}
-	return true;
+	return true
 }
 
-func (A *PivotMatrix) Inverse() *PivotMatrix	{ return A.Transpose() }
+func (A *PivotMatrix) Inverse() *PivotMatrix { return A.Transpose() }
 
 func (P *PivotMatrix) Transpose() *PivotMatrix {
-	newPivots := make([]int, P.rows);
+	newPivots := make([]int, P.rows)
 	for i := 0; i < P.rows; i++ {
 		newPivots[P.pivots[i]] = i
 	}
-	return MakePivotMatrix(newPivots, P.pivotSign);
+	return MakePivotMatrix(newPivots, P.pivotSign)
 }
 
-func (P *PivotMatrix) Det() float64	{ return P.pivotSign }
+func (P *PivotMatrix) Det() float64 { return P.pivotSign }
 
 func (P *PivotMatrix) Trace() (r float64) {
 	for i := 0; i < len(P.pivots); i++ {
@@ -46,17 +46,17 @@ func (P *PivotMatrix) Trace() (r float64) {
 			r += 1
 		}
 	}
-	return;
+	return
 }
 
 /*
 Returns x such that Px=b.
 */
 func (P *PivotMatrix) Solve(b MatrixRO) (Matrix, Error) {
-	return P.Transpose().Times(b)	//error comes from times
+	return P.Transpose().Times(b) //error comes from times
 }
 
 
-func (A *PivotMatrix) OneNorm() float64		{ return float64(A.rows) }
-func (A *PivotMatrix) TwoNorm() float64		{ return math.Sqrt(float64(A.rows)) }
-func (A *PivotMatrix) InfinityNorm() float64	{ return 1 }
+func (A *PivotMatrix) OneNorm() float64      { return float64(A.rows) }
+func (A *PivotMatrix) TwoNorm() float64      { return math.Sqrt(float64(A.rows)) }
+func (A *PivotMatrix) InfinityNorm() float64 { return 1 }

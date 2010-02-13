@@ -8,36 +8,36 @@ package matrix
 The sum of this matrix and another.
 */
 func (A *SparseMatrix) Plus(B MatrixRO) (Matrix, Error) {
-	C := A.Copy();
-	err := C.Add(B);
-	return C, err;
+	C := A.Copy()
+	err := C.Add(B)
+	return C, err
 }
 
 /*
 The sum of this matrix and another sparse matrix, optimized for sparsity.
 */
 func (A *SparseMatrix) PlusSparse(B *SparseMatrix) (*SparseMatrix, Error) {
-	C := A.Copy();
-	err := C.AddSparse(B);
-	return C, err;
+	C := A.Copy()
+	err := C.AddSparse(B)
+	return C, err
 }
 
 /*
 The difference between this matrix and another.
 */
 func (A *SparseMatrix) Minus(B MatrixRO) (Matrix, Error) {
-	C := A.Copy();
-	err := C.Subtract(B);
-	return C, err;
+	C := A.Copy()
+	err := C.Subtract(B)
+	return C, err
 }
 
 /*
 The difference between this matrix and another sparse matrix, optimized for sparsity.
 */
 func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, Error) {
-	C := A.Copy();
-	err := C.SubtractSparse(B);
-	return C, err;
+	C := A.Copy()
+	err := C.SubtractSparse(B)
+	return C, err
 }
 
 /*
@@ -58,7 +58,7 @@ func (A *SparseMatrix) Add(B MatrixRO) Error {
 		}
 	}
 
-	return NoError;
+	return NoError
 }
 
 /*
@@ -70,11 +70,11 @@ func (A *SparseMatrix) AddSparse(B *SparseMatrix) Error {
 	}
 
 	for index, value := range B.elements {
-		i, j := A.GetRowColIndex(index);
-		A.Set(i, j, A.Get(i, j)+value);
+		i, j := A.GetRowColIndex(index)
+		A.Set(i, j, A.Get(i, j)+value)
 	}
 
-	return NoError;
+	return NoError
 }
 
 /*
@@ -95,7 +95,7 @@ func (A *SparseMatrix) Subtract(B MatrixRO) Error {
 		}
 	}
 
-	return NoError;
+	return NoError
 }
 
 
@@ -108,11 +108,11 @@ func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) Error {
 	}
 
 	for index, value := range B.elements {
-		i, j := A.GetRowColIndex(index);
-		A.Set(i, j, A.Get(i, j)-value);
+		i, j := A.GetRowColIndex(index)
+		A.Set(i, j, A.Get(i, j)-value)
 	}
 
-	return NoError;
+	return NoError
 }
 
 /*
@@ -129,21 +129,21 @@ func (A *SparseMatrix) Times(B MatrixRO) (Matrix, Error) {
 		return nil, ErrorDimensionMismatch
 	}
 
-	C := ZerosSparse(A.rows, B.Cols());
+	C := ZerosSparse(A.rows, B.Cols())
 
 	for index, value := range A.elements {
-		i, k := A.GetRowColIndex(index);
+		i, k := A.GetRowColIndex(index)
 		//not sure if there is a more efficient way to do this without using
 		//a different data structure
 		for j := 0; j < B.Cols(); j++ {
-			v := B.Get(k, j);
+			v := B.Get(k, j)
 			if v != 0 {
 				C.Set(i, j, C.Get(i, j)+value*v)
 			}
 		}
 	}
 
-	return C, NoError;
+	return C, NoError
 }
 
 
@@ -155,50 +155,48 @@ func (A *SparseMatrix) TimesSparse(B *SparseMatrix) (*SparseMatrix, Error) {
 		return nil, ErrorDimensionMismatch
 	}
 
-	C := ZerosSparse(A.rows, B.Cols());
+	C := ZerosSparse(A.rows, B.Cols())
 
 	for index, value := range A.elements {
-		i, k := A.GetRowColIndex(index);
+		i, k := A.GetRowColIndex(index)
 		//not sure if there is a more efficient way to do this without using
 		//a different data structure
 		for j := 0; j < B.Cols(); j++ {
-			v := B.Get(k, j);
+			v := B.Get(k, j)
 			if v != 0 {
 				C.Set(i, j, C.Get(i, j)+value*v)
 			}
 		}
 	}
 
-	return C, NoError;
+	return C, NoError
 }
 
 /*
 Scale this matrix by f.
 */
-func (A *SparseMatrix) Scale(f float64) Error {
+func (A *SparseMatrix) Scale(f float64) {
 	for index, value := range A.elements {
 		A.elements[index] = value * f
 	}
-
-	return NoError;
 }
 
 /*
 Get the element-wise product of this matrix and another.
 */
 func (A *SparseMatrix) ElementMult(B MatrixRO) (*SparseMatrix, Error) {
-	C := A.Copy();
-	err := C.ScaleMatrix(B);
-	return C, err;
+	C := A.Copy()
+	err := C.ScaleMatrix(B)
+	return C, err
 }
 
 /*
 Get the element-wise product of this matrix and another, optimized for sparsity.
 */
 func (A *SparseMatrix) ElementMultSparse(B *SparseMatrix) (*SparseMatrix, Error) {
-	C := A.Copy();
-	err := C.ScaleMatrixSparse(B);
-	return C, err;
+	C := A.Copy()
+	err := C.ScaleMatrixSparse(B)
+	return C, err
 }
 
 /*
@@ -210,11 +208,11 @@ func (A *SparseMatrix) ScaleMatrix(B MatrixRO) Error {
 	}
 
 	for index, value := range A.elements {
-		i, j := A.GetRowColIndex(index);
-		A.Set(i, j, value*B.Get(i, j));
+		i, j := A.GetRowColIndex(index)
+		A.Set(i, j, value*B.Get(i, j))
 	}
 
-	return NoError;
+	return NoError
 }
 
 /*
@@ -227,9 +225,9 @@ func (A *SparseMatrix) ScaleMatrixSparse(B *SparseMatrix) Error {
 		}
 
 		for index, value := range A.elements {
-			i, j := A.GetRowColIndex(index);
-			A.Set(i, j, value*B.Get(i, j));
+			i, j := A.GetRowColIndex(index)
+			A.Set(i, j, value*B.Get(i, j))
 		}
 	}
-	return A.ScaleMatrix(B);
+	return A.ScaleMatrix(B)
 }
