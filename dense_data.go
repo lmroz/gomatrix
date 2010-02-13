@@ -7,33 +7,33 @@ package matrix
 
 //returns a copy of the row (not a slice)
 func (A *DenseMatrix) RowCopy(i int) []float64 {
-	row := make([]float64, A.cols);
+	row := make([]float64, A.cols)
 	for j := 0; j < A.cols; j++ {
 		row[j] = A.Get(i, j)
 	}
-	return row;
+	return row
 }
 
 //returns a copy of the column (not a slice)
 func (A *DenseMatrix) ColCopy(j int) []float64 {
-	col := make([]float64, A.rows);
+	col := make([]float64, A.rows)
 	for i := 0; i < A.rows; i++ {
 		col[i] = A.Get(i, j)
 	}
-	return col;
+	return col
 }
 
 //returns a copy of the diagonal (not a slice)
 func (A *DenseMatrix) DiagonalCopy() []float64 {
-	span := A.rows;
+	span := A.rows
 	if A.cols < span {
 		span = A.cols
 	}
-	diag := make([]float64, span);
+	diag := make([]float64, span)
 	for i := 0; i < span; i++ {
 		diag[i] = A.Get(i, i)
 	}
-	return diag;
+	return diag
 }
 
 func (A *DenseMatrix) BufferRow(i int, buf []float64) {

@@ -5,26 +5,26 @@
 package matrix
 
 func (A *DenseMatrix) Plus(B MatrixRO) (Matrix, Error) {
-	C := A.Copy();
-	err := C.Add(B);
-	return C, err;
+	C := A.Copy()
+	err := C.Add(B)
+	return C, err
 }
 func (A *DenseMatrix) PlusDense(B *DenseMatrix) (*DenseMatrix, Error) {
-	C := A.Copy();
-	err := C.AddDense(B);
-	return C, err;
+	C := A.Copy()
+	err := C.AddDense(B)
+	return C, err
 }
 
 func (A *DenseMatrix) Minus(B MatrixRO) (Matrix, Error) {
-	C := A.Copy();
-	err := C.Subtract(B);
-	return C, err;
+	C := A.Copy()
+	err := C.Subtract(B)
+	return C, err
 }
 
 func (A *DenseMatrix) MinusDense(B *DenseMatrix) (*DenseMatrix, Error) {
-	C := A.Copy();
-	err := C.SubtractDense(B);
-	return C, err;
+	C := A.Copy()
+	err := C.SubtractDense(B)
+	return C, err
 }
 
 func (A *DenseMatrix) Add(B MatrixRO) Error {
@@ -33,14 +33,14 @@ func (A *DenseMatrix) Add(B MatrixRO) Error {
 	}
 
 	for i := 0; i < A.rows; i++ {
-		index := i * A.step;
+		index := i * A.step
 		for j := 0; j < A.cols; j++ {
-			A.elements[index] += B.Get(i, j);
-			index++;
+			A.elements[index] += B.Get(i, j)
+			index++
 		}
 	}
 
-	return NoError;
+	return NoError
 }
 
 func (A *DenseMatrix) AddDense(B *DenseMatrix) Error {
@@ -54,7 +54,7 @@ func (A *DenseMatrix) AddDense(B *DenseMatrix) Error {
 		}
 	}
 
-	return NoError;
+	return NoError
 }
 
 func (A *DenseMatrix) Subtract(B MatrixRO) Error {
@@ -67,14 +67,14 @@ func (A *DenseMatrix) Subtract(B MatrixRO) Error {
 	}
 
 	for i := 0; i < A.rows; i++ {
-		index := i * A.step;
+		index := i * A.step
 		for j := 0; j < A.cols; j++ {
-			A.elements[index] -= B.Get(i, j);
-			index++;
+			A.elements[index] -= B.Get(i, j)
+			index++
 		}
 	}
 
-	return NoError;
+	return NoError
 }
 
 func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
@@ -84,17 +84,17 @@ func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
 	}
 
 	for i := 0; i < A.rows; i++ {
-		indexA := i * A.step;
-		indexB := i * B.step;
+		indexA := i * A.step
+		indexB := i * B.step
 
 		for j := 0; j < A.cols; j++ {
-			A.elements[indexA] -= B.elements[indexB];
-			indexA++;
-			indexB++;
+			A.elements[indexA] -= B.elements[indexB]
+			indexA++
+			indexB++
 		}
 	}
 
-	return NoError;
+	return NoError
 }
 
 func (A *DenseMatrix) Times(B MatrixRO) (Matrix, Error) {
@@ -106,38 +106,38 @@ func (A *DenseMatrix) Times(B MatrixRO) (Matrix, Error) {
 	if A.cols != B.Rows() {
 		return nil, ErrorDimensionMismatch
 	}
-	C := Zeros(A.rows, B.Cols());
+	C := Zeros(A.rows, B.Cols())
 
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < B.Cols(); j++ {
-			sum := float64(0);
+			sum := float64(0)
 			for k := 0; k < A.cols; k++ {
 				sum += A.elements[i*A.step+k] * B.Get(k, j)
 			}
-			C.elements[i*C.step+j] = sum;
+			C.elements[i*C.step+j] = sum
 		}
 	}
 
-	return C, NoError;
+	return C, NoError
 }
 
 func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
 	if A.cols != B.rows {
 		return nil, ErrorDimensionMismatch
 	}
-	C := Zeros(A.rows, B.cols);
+	C := Zeros(A.rows, B.cols)
 	///*
 	wait := parFor(countBoxes(0, A.rows), func(iBox box) {
-		i := iBox.(int);
-		sums := C.elements[i*C.step : (i+1)*C.step];
+		i := iBox.(int)
+		sums := C.elements[i*C.step : (i+1)*C.step]
 		for k := 0; k < A.Cols(); k++ {
 			for j := 0; j < B.Cols(); j++ {
 				sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
 			}
 		}
-	});
+	})
 
-	wait();
+	wait()
 	//*/
 	/*
 
@@ -152,28 +152,28 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
 		}
 	*/
 
-	return C, NoError;
+	return C, NoError
 }
 
 
 func (A *DenseMatrix) ElementMult(B MatrixRO) (Matrix, Error) {
-	C := A.Copy();
-	err := C.ScaleMatrix(B);
-	return C, err;
+	C := A.Copy()
+	err := C.ScaleMatrix(B)
+	return C, err
 }
 
 func (A *DenseMatrix) ElementMultDense(B *DenseMatrix) (*DenseMatrix, Error) {
-	C := A.Copy();
-	err := C.ScaleMatrixDense(B);
-	return C, err;
+	C := A.Copy()
+	err := C.ScaleMatrixDense(B)
+	return C, err
 }
 
 func (A *DenseMatrix) Scale(f float64) {
 	for i := 0; i < A.rows; i++ {
-		index := i * A.step;
+		index := i * A.step
 		for j := 0; j < A.cols; j++ {
-			A.elements[index] *= f;
-			index++;
+			A.elements[index] *= f
+			index++
 		}
 	}
 }
@@ -187,13 +187,13 @@ func (A *DenseMatrix) ScaleMatrix(B MatrixRO) Error {
 		return ErrorDimensionMismatch
 	}
 	for i := 0; i < A.rows; i++ {
-		indexA := i * A.step;
+		indexA := i * A.step
 		for j := 0; j < A.cols; j++ {
-			A.elements[indexA] *= B.Get(i, j);
-			indexA++;
+			A.elements[indexA] *= B.Get(i, j)
+			indexA++
 		}
 	}
-	return NoError;
+	return NoError
 }
 
 func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) Error {
@@ -201,13 +201,13 @@ func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) Error {
 		return ErrorDimensionMismatch
 	}
 	for i := 0; i < A.rows; i++ {
-		indexA := i * A.step;
-		indexB := i * B.step;
+		indexA := i * A.step
+		indexB := i * B.step
 		for j := 0; j < A.cols; j++ {
-			A.elements[indexA] *= B.elements[indexB];
-			indexA++;
-			indexB++;
+			A.elements[indexA] *= B.elements[indexB]
+			indexA++
+			indexB++
 		}
 	}
-	return NoError;
+	return NoError
 }
