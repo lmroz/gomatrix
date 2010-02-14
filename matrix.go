@@ -29,7 +29,7 @@ type MatrixRO interface {
 	GetSize() (int, int)
 
 	//The element in the ith row and jth column.
-	Get(i int, j int) float64
+	Get(i, j int) float64
 
 	Plus(MatrixRO) (Matrix, Error)
 	Minus(MatrixRO) (Matrix, Error)
@@ -82,7 +82,6 @@ func (A *matrix) GetSize() (rows, cols int) {
 
 
 func String(A MatrixRO) string {
-
 	condense := func(vs string) string {
 		if strings.Index(vs, ".") != -1 {
 			for vs[len(vs)-1] == '0' {
