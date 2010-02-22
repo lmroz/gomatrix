@@ -65,8 +65,9 @@ func countBoxes(start, cap int) chan box {
 
 func parFor(inputs <-chan box, foo func(i box)) (wait func()) {
 	m := new(sync.Mutex)
-	block := make(chan bool, MaxThreads)
-	for j := 0; j < MaxThreads; j++ {
+	n := MaxProcs
+	block := make(chan bool, n)
+	for j := 0; j < n; j++ {
 		go func() {
 			for {
 				m.Lock()
@@ -81,7 +82,7 @@ func parFor(inputs <-chan box, foo func(i box)) (wait func()) {
 		}()
 	}
 	wait = func() {
-		for i := 0; i < MaxThreads; i++ {
+		for i := 0; i < n; i++ {
 			<-block
 		}
 	}
