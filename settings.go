@@ -1,3 +1,3 @@
 package matrix
 
-var MaxThreads int = 4
+var MaxProcs int = 1

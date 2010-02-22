@@ -127,20 +127,19 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
 	}
 	C := Zeros(A.rows, B.cols)
 	///*
-	wait := parFor(countBoxes(0, A.rows), func(iBox box) {
-		i := iBox.(int)
-		sums := C.elements[i*C.step : (i+1)*C.step]
-		for k := 0; k < A.Cols(); k++ {
-			for j := 0; j < B.Cols(); j++ {
-				sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
+	if MaxProcs > 1 {
+		wait := parFor(countBoxes(0, A.rows), func(iBox box) {
+			i := iBox.(int)
+			sums := C.elements[i*C.step : (i+1)*C.step]
+			for k := 0; k < A.Cols(); k++ {
+				for j := 0; j < B.Cols(); j++ {
+					sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
+				}
 			}
-		}
-	})
+		})
 
-	wait()
-	//*/
-	/*
-
+		wait()
+	} else {
 		for i := 0; i < A.rows; i++ {
 			for j := 0; j < B.cols; j++ {
 				sum := float64(0);
@@ -150,7 +149,7 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
 				C.elements[i*C.step+j] = sum;
 			}
 		}
-	*/
+	}
 
 	return C, NoError
 }
