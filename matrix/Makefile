@@ -1,6 +1,6 @@
 include $(GOROOT)/src/Make.$(GOARCH)
 
-TARG=matrix
+TARG=gomatrix.googlecode.com/hg/matrix
 GOFILES=\
         matrix.go\
         arithmetic.go\

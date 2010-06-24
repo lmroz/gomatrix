@@ -1,14 +1,14 @@
 package main
 
 import (
-	. "matrix"
 	"fmt"
 	"time"
+	. "gomatrix.googlecode.com/hg/matrix"
 )
 
 func main() {
-	for w := 0; w <= 400; w += 50 {
-		for h := 0; h <= 400; h += 50 {
+	for w := 0; w <= 600; w += 100 {
+		for h := 0; h <= 600; h += 100 {
 			if w == 0 && h != 0 {
 				fmt.Printf("%d,", h)
 			}
@@ -26,7 +26,7 @@ func main() {
 			times := []float{0, 0}
 			for MaxProcs = 1; MaxProcs < len(times)+1; MaxProcs++ {
 				start := time.Nanoseconds()
-				for i := 0; i < 10; i++ {
+				for i := 0; i < 50; i++ {
 					A.Times(B)
 				}
 				end := time.Nanoseconds()
