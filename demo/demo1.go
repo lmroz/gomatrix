@@ -5,7 +5,7 @@ package main
 
 import (
 	"fmt"
-	. "matrix"
+	. "gomatrix.googlecode.com/hg/matrix"
 )
 
 func main() {

@@ -6,7 +6,7 @@ package matrix
 
 import (
 	"math"
-	"reflect"
+	//"reflect"
 )
 
 /*
@@ -152,6 +152,8 @@ func ApproxEquals(A, B MatrixRO, ε float64) bool {
 /*
 Finds the product of any number of matrices.
 */
+/*
+//this stopped compiling
 func MultipleProduct(values ...) Matrix {
 	v := reflect.NewValue(values).(*reflect.StructValue)
 	if v.NumField() < 2 {
@@ -175,3 +177,4 @@ func MultipleProduct(values ...) Matrix {
 
 	return nil
 }
+*/
