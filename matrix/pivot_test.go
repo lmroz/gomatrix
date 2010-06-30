@@ -29,7 +29,7 @@ func TestRowPivot(t *testing.T) {
 	}
 	A = Normals(4, 3)
 	_, err := P.RowPivotDense(A)
-	if err.OK() {
+	if (err == nil) {
 		t.Fail()
 	}
 	C := Normals(3, 4).SparseMatrix()
@@ -50,7 +50,7 @@ func TestColPivot(t *testing.T) {
 	}
 	A = Normals(3, 4)
 	_, err := P.ColPivotDense(A)
-	if err.OK() {
+	if (err == nil) {
 		t.Fail()
 	}
 	C := Normals(4, 3).SparseMatrix()

@@ -105,7 +105,7 @@ func TestAugment_Sparse(t *testing.T) {
 	A = NormalsSparse(2, 2, 4)
 	B = NormalsSparse(4, 4, 16)
 	C, err := A.Augment(B)
-	if err.OK() {
+	if (err == nil) {
 		t.Fail()
 	}
 
@@ -151,7 +151,7 @@ func TestStack_Sparse(t *testing.T) {
 	A = NormalsSparse(2, 2, 4)
 	B = NormalsSparse(4, 4, 16)
 	C, err := A.Stack(B)
-	if err.OK() {
+	if (err == nil) {
 		if verbose {
 			fmt.Printf("%v\n", err)
 		}
