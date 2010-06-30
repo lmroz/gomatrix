@@ -166,7 +166,7 @@ func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, Error) {
 	Pinv := P.Inverse()
 	pb, err := Pinv.Times(b)
 
-	if !err.OK() {
+	if !(err == nil) {
 		return nil, err
 	}
 

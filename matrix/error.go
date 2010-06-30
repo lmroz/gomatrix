@@ -4,38 +4,60 @@
 
 package matrix
 
-import "fmt"
-
-const (
-	NoError = iota
-	//The matrix returned was nil.
-	ErrorNilMatrix
-	//The dimensions of the inputs do not make sense for this operation.
-	ErrorDimensionMismatch
-	//The indices provided are out of bounds.
-	ErrorIllegalIndex
-	//The matrix provided has a singularity.
-	ExceptionSingular
-	//The matrix provided is not positive semi-definite.
-	ExceptionNotSPD
+import (
+	"fmt"
+	"os"
 )
 
-type Error int
+const (
+	noError = iota
+	//The matrix returned was nil.
+	errorNilMatrix
+	//The dimensions of the inputs do not make sense for this operation.
+	errorDimensionMismatch
+	//The indices provided are out of bounds.
+	errorIllegalIndex
+	//The matrix provided has a singularity.
+	exceptionSingular
+	//The matrix provided is not positive semi-definite.
+	exceptionNotSPD
+)
 
-func (e Error) String() string {
+type Error interface {
+	os.Error
+	OK() bool
+}
+
+type error int
+
+func (e error) String() string {
 	switch e {
-	case ErrorNilMatrix:
+	case errorNilMatrix:
 		return "Matrix is nil"
-	case ErrorDimensionMismatch:
+	case errorDimensionMismatch:
 		return "Input dimensions do not match"
-	case ErrorIllegalIndex:
+	case errorIllegalIndex:
 		return "Index out of bounds"
-	case ExceptionSingular:
+	case exceptionSingular:
 		return "Matrix is singular"
-	case ExceptionNotSPD:
+	case exceptionNotSPD:
 		return "Matrix is not positive semidefinite"
 	}
 	return fmt.Sprintf("Unknown error code %d", e)
 }
 
-func (e Error) OK() bool { return e == NoError }
+func (e error) OK() bool { return e == noError }
+
+var (
+	NoError Error = nil
+	//The matrix returned was nil.
+	ErrorNilMatrix Error = error(errorNilMatrix)
+	//The dimensions of the inputs do not make sense for this operation.
+	ErrorDimensionMismatch Error = error(errorDimensionMismatch)
+	//The indices provided are out of bounds.
+	ErrorIllegalIndex Error = error(errorIllegalIndex)
+	//The matrix provided has a singularity.
+	ExceptionSingular Error = error(exceptionSingular)
+	//The matrix provided is not positive semi-definite.
+	ExceptionNotSPD Error = error(exceptionNotSPD)
+)

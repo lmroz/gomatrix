@@ -35,7 +35,7 @@ func TestApproximates(t *testing.T) {
 	B := Numbers(3, 3, .1)
 	C := Numbers(3, 3, .6)
 	D, err := A.ElementMult(B)
-	if !err.OK() && !ApproxEquals(D, C, ε) {
+	if !(err == nil) && !ApproxEquals(D, C, ε) {
 		t.Fail()
 	}
 }
@@ -88,7 +88,7 @@ func TestProduct(t *testing.T) {
 
 	C, err := A.Times(B)
 
-	if !err.OK() {
+	if !(err == nil) {
 		t.Fail()
 	}
 
@@ -132,7 +132,7 @@ func TestParallelProduct(t *testing.T) {
 
 	start = time.Nanoseconds()
 	Ctrue, err := A.Times(B)
-	if !err.OK() {
+	if !(err == nil) {
 		t.Fail()
 	}
 	end = time.Nanoseconds()
@@ -142,7 +142,7 @@ func TestParallelProduct(t *testing.T) {
 
 	start = time.Nanoseconds()
 	C = ParallelProduct(A, B)
-	if !err.OK() {
+	if !(err == nil) {
 		t.Fail()
 	}
 	end = time.Nanoseconds()
@@ -171,7 +171,7 @@ func TestElementMult(t *testing.T) {
 		4, 4)
 	C, err := A.ElementMult(T)
 
-	if !err.OK() {
+	if !(err == nil) {
 		t.Fail()
 	}
 
@@ -252,13 +252,13 @@ func TestInverse(t *testing.T) {
 		4, 4)
 	Ainv, err := A.Inverse()
 
-	if !err.OK() {
+	if !(err == nil) {
 		t.Fail()
 	}
 
 	AAinv, err := A.Times(Ainv)
 
-	if !err.OK() {
+	if !(err == nil) {
 		t.Fail()
 	}
 
@@ -322,7 +322,7 @@ func TestSolve(t *testing.T) {
 	b := MakeDenseMatrix([]float64{1, 1, 1, 1}, 4, 1)
 	x, err := A.Solve(b)
 
-	if !err.OK() {
+	if !(err == nil) {
 		t.Fail()
 	}
 
@@ -342,7 +342,7 @@ func TestCholesky(t *testing.T) {
 	},
 		3, 3)
 	B, err := A.Cholesky()
-	if !err.OK() {
+	if !(err == nil) {
 		t.Fail()
 	}
 	if !ApproxEquals(A, Product(B, B.Transpose()), ε) {
@@ -363,7 +363,7 @@ func TestLU(t *testing.T) {
 	LU, err := L.Times(U)
 	PLU, err := P.Times(LU)
 
-	if !err.OK() {
+	if !(err == nil) {
 		if verbose {
 			fmt.Printf("TestLU: %v\n", err)
 		}
@@ -612,7 +612,7 @@ func TestAugment(t *testing.T) {
 	A = Normals(2, 2)
 	B = Normals(4, 4)
 	C, err := A.Augment(B)
-	if err.OK() {
+	if (err == nil) {
 		t.Fail()
 	}
 
@@ -660,7 +660,7 @@ func TestStack(t *testing.T) {
 	A = Normals(4, 4)
 	B = Normals(4, 2)
 	C, err := A.Stack(B)
-	if err.OK() {
+	if (err == nil) {
 		t.Fail()
 	}
 
@@ -745,6 +745,7 @@ func TestNormals(t *testing.T) {
 
 /* TEST: util.go */
 
+/*
 func TestMultipleProduct(t *testing.T) {
 	A := Ones(3, 1)
 	B := Ones(1, 3)
@@ -756,3 +757,4 @@ func TestMultipleProduct(t *testing.T) {
 		t.Fail()
 	}
 }
+*/

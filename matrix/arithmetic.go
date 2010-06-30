@@ -15,7 +15,7 @@ Finds the sum of two matrices.
 func Sum(A, B MatrixRO) *DenseMatrix {
 	C := MakeDenseCopy(A)
 	err := C.Add(MakeDenseCopy(B))
-	if err.OK() {
+	if (err == nil) {
 		return C
 	}
 	return nil
@@ -27,7 +27,7 @@ Finds the difference between two matrices.
 func Difference(A, B MatrixRO) *DenseMatrix {
 	C := MakeDenseCopy(A)
 	err := C.Subtract(MakeDenseCopy(B))
-	if err.OK() {
+	if (err == nil) {
 		return C
 	}
 	return nil
