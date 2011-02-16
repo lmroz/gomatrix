@@ -1,6 +1,7 @@
 _obj
+bin
 gomatrix.xcodeproj
-matrix/_go_.6
+_go_.6
 matrix/_obj
 .DS_Store
 build

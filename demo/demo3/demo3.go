@@ -23,7 +23,7 @@ func main() {
 			}
 			A := Normals(h, w)
 			B := Normals(w, h)
-			times := []float{0, 0}
+			times := []float64{0, 0}
 			for MaxProcs = 1; MaxProcs < len(times)+1; MaxProcs++ {
 				start := time.Nanoseconds()
 				for i := 0; i < 50; i++ {
@@ -31,7 +31,7 @@ func main() {
 				}
 				end := time.Nanoseconds()
 				duration := end - start
-				times[MaxProcs-1] = float(duration)/1000000000
+				times[MaxProcs-1] = float64(duration)/1000000000
 			}
 			ratio := times[1]/times[0]
 			fmt.Printf("%f,", ratio)
