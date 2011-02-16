@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//target:gomatrix.googlecode.com/hg/matrix
 package matrix
 
 import (
