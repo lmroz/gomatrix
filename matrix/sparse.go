@@ -6,6 +6,7 @@ package matrix
 
 import (
 	"rand"
+	"os"
 )
 
 /*
@@ -145,7 +146,7 @@ func (A *SparseMatrix) GetRowVector(i int) *SparseMatrix {
 /*
 Creates a new matrix [A B].
 */
-func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, Error) {
+func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, os.Error) {
 	if A.rows != B.rows {
 		return nil, ErrorDimensionMismatch
 	}
@@ -161,13 +162,13 @@ func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, Error) {
 		C.Set(i, j+A.cols, value)
 	}
 
-	return C, NoError
+	return C, nil
 }
 
 /*
 Creates a new matrix [A;B], where A is above B.
 */
-func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, Error) {
+func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, os.Error) {
 	if A.cols != B.cols {
 		return nil, ErrorDimensionMismatch
 	}
@@ -183,7 +184,7 @@ func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, Error) {
 		C.Set(i+A.rows, j, value)
 	}
 
-	return C, NoError
+	return C, nil
 }
 
 /*

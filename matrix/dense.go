@@ -5,6 +5,7 @@
 package matrix
 
 import (
+	"os"
 	"rand"
 )
 
@@ -141,7 +142,7 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 /*
 Get a new matrix [A B].
 */
-func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	if A.Rows() != B.Rows() {
 		return nil, ErrorDimensionMismatch
 	}
@@ -154,14 +155,14 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, Error) {
 			C.Set(i, j+A.Cols(), B.Get(i, j))
 		}
 	}
-	return C, NoError
+	return C, nil
 }
 
 
 /*
 Get a new matrix [A; B], with A above B.
 */
-func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	if A.Cols() != B.Cols() {
 		return nil, ErrorDimensionMismatch
 	}
@@ -174,7 +175,7 @@ func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, Error) {
 			C.Set(i+A.Rows(), j, B.Get(i, j))
 		}
 	}
-	return C, NoError
+	return C, nil
 }
 
 /*
