@@ -4,7 +4,10 @@
 
 package matrix
 
-import "math"
+import (
+	"math"
+	"os"
+)
 
 func (A *DenseMatrix) Symmetric() bool {
 	if A.rows != A.cols {
@@ -48,7 +51,7 @@ func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 	}
 }
 
-func (A *DenseMatrix) Inverse() (*DenseMatrix, Error) {
+func (A *DenseMatrix) Inverse() (*DenseMatrix, os.Error) {
 	if A.Rows() != A.Cols() {
 		return nil, ErrorDimensionMismatch
 	}
@@ -75,7 +78,7 @@ func (A *DenseMatrix) Inverse() (*DenseMatrix, Error) {
 		}
 	}
 	inv := aug.GetMatrix(0, A.Cols(), A.Rows(), A.Cols())
-	return inv, NoError
+	return inv, nil
 }
 
 func (A *DenseMatrix) Det() float64 {
@@ -160,7 +163,7 @@ func solveUpper(A *DenseMatrix, b Matrix) *DenseMatrix {
 	return MakeDenseMatrix(x, A.Cols(), 1)
 }
 
-func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, Error) {
+func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, os.Error) {
 	Acopy := A.Copy()
 	P := Acopy.LUInPlace()
 	Pinv := P.Inverse()
@@ -172,9 +175,9 @@ func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, Error) {
 
 	y := solveLower(Acopy, pb)
 	x := solveUpper(Acopy, y)
-	return x, NoError
+	return x, nil
 }
 
-func (A *DenseMatrix) SolveDense(b *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) SolveDense(b *DenseMatrix) (*DenseMatrix, os.Error) {
 	return A.Solve(b)
 }

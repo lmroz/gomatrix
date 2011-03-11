@@ -8,6 +8,7 @@ package matrix
 import (
 	"strings"
 	"fmt"
+	"os"
 )
 
 //The MatrixRO interface defines matrix operations that do not change the
@@ -32,9 +33,9 @@ type MatrixRO interface {
 	//The element in the ith row and jth column.
 	Get(i, j int) float64
 
-	Plus(MatrixRO) (Matrix, Error)
-	Minus(MatrixRO) (Matrix, Error)
-	Times(MatrixRO) (Matrix, Error)
+	Plus(MatrixRO) (Matrix, os.Error)
+	Minus(MatrixRO) (Matrix, os.Error)
+	Times(MatrixRO) (Matrix, os.Error)
 
 	//The determinant of this matrix.
 	Det() float64
@@ -57,8 +58,8 @@ type Matrix interface {
 	//Set the element at the ith row and jth column to v.
 	Set(i int, j int, v float64)
 
-	Add(MatrixRO) Error
-	Subtract(MatrixRO) Error
+	Add(MatrixRO) os.Error
+	Subtract(MatrixRO) os.Error
 	Scale(float64)
 }
 

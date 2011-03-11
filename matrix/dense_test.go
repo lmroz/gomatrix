@@ -137,7 +137,7 @@ func TestParallelProduct(t *testing.T) {
 	}
 	end = time.Nanoseconds()
 	if verbose {
-		fmt.Printf("%fs for synchronous\n", float(end-start)/1000000000)
+		fmt.Printf("%fs for synchronous\n", float64(end-start)/1000000000)
 	}
 
 	start = time.Nanoseconds()
@@ -147,7 +147,7 @@ func TestParallelProduct(t *testing.T) {
 	}
 	end = time.Nanoseconds()
 	if verbose {
-		fmt.Printf("%fs for parallel\n", float(end-start)/1000000000)
+		fmt.Printf("%fs for parallel\n", float64(end-start)/1000000000)
 	}
 
 	if !Equals(C, Ctrue) {

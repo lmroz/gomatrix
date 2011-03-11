@@ -4,30 +4,34 @@
 
 package matrix
 
-func (A *DenseMatrix) Plus(B MatrixRO) (Matrix, Error) {
+import (
+	"os"
+)
+
+func (A *DenseMatrix) Plus(B MatrixRO) (Matrix, os.Error) {
 	C := A.Copy()
 	err := C.Add(B)
 	return C, err
 }
-func (A *DenseMatrix) PlusDense(B *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) PlusDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	C := A.Copy()
 	err := C.AddDense(B)
 	return C, err
 }
 
-func (A *DenseMatrix) Minus(B MatrixRO) (Matrix, Error) {
+func (A *DenseMatrix) Minus(B MatrixRO) (Matrix, os.Error) {
 	C := A.Copy()
 	err := C.Subtract(B)
 	return C, err
 }
 
-func (A *DenseMatrix) MinusDense(B *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) MinusDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	C := A.Copy()
 	err := C.SubtractDense(B)
 	return C, err
 }
 
-func (A *DenseMatrix) Add(B MatrixRO) Error {
+func (A *DenseMatrix) Add(B MatrixRO) os.Error {
 	if A.cols != B.Cols() || A.rows != B.Rows() {
 		return ErrorDimensionMismatch
 	}
@@ -40,10 +44,10 @@ func (A *DenseMatrix) Add(B MatrixRO) Error {
 		}
 	}
 
-	return NoError
+	return nil
 }
 
-func (A *DenseMatrix) AddDense(B *DenseMatrix) Error {
+func (A *DenseMatrix) AddDense(B *DenseMatrix) os.Error {
 	if A.cols != B.cols || A.rows != B.rows {
 		return ErrorDimensionMismatch
 	}
@@ -54,10 +58,10 @@ func (A *DenseMatrix) AddDense(B *DenseMatrix) Error {
 		}
 	}
 
-	return NoError
+	return nil
 }
 
-func (A *DenseMatrix) Subtract(B MatrixRO) Error {
+func (A *DenseMatrix) Subtract(B MatrixRO) os.Error {
 	if Bd, ok := B.(*DenseMatrix); ok {
 		return A.SubtractDense(Bd)
 	}
@@ -74,10 +78,10 @@ func (A *DenseMatrix) Subtract(B MatrixRO) Error {
 		}
 	}
 
-	return NoError
+	return nil
 }
 
-func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
+func (A *DenseMatrix) SubtractDense(B *DenseMatrix) os.Error {
 
 	if A.cols != B.cols || A.rows != B.rows {
 		return ErrorDimensionMismatch
@@ -94,10 +98,10 @@ func (A *DenseMatrix) SubtractDense(B *DenseMatrix) Error {
 		}
 	}
 
-	return NoError
+	return nil
 }
 
-func (A *DenseMatrix) Times(B MatrixRO) (Matrix, Error) {
+func (A *DenseMatrix) Times(B MatrixRO) (Matrix, os.Error) {
 
 	if Bd, ok := B.(*DenseMatrix); ok {
 		return A.TimesDense(Bd)
@@ -118,10 +122,10 @@ func (A *DenseMatrix) Times(B MatrixRO) (Matrix, Error) {
 		}
 	}
 
-	return C, NoError
+	return C, nil
 }
 
-func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	if A.cols != B.rows {
 		return nil, ErrorDimensionMismatch
 	}
@@ -151,17 +155,17 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, Error) {
 		}
 	}
 
-	return C, NoError
+	return C, nil
 }
 
 
-func (A *DenseMatrix) ElementMult(B MatrixRO) (Matrix, Error) {
+func (A *DenseMatrix) ElementMult(B MatrixRO) (Matrix, os.Error) {
 	C := A.Copy()
 	err := C.ScaleMatrix(B)
 	return C, err
 }
 
-func (A *DenseMatrix) ElementMultDense(B *DenseMatrix) (*DenseMatrix, Error) {
+func (A *DenseMatrix) ElementMultDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	C := A.Copy()
 	err := C.ScaleMatrixDense(B)
 	return C, err
@@ -177,7 +181,7 @@ func (A *DenseMatrix) Scale(f float64) {
 	}
 }
 
-func (A *DenseMatrix) ScaleMatrix(B MatrixRO) Error {
+func (A *DenseMatrix) ScaleMatrix(B MatrixRO) os.Error {
 	if Bd, ok := B.(*DenseMatrix); ok {
 		return A.ScaleMatrixDense(Bd)
 	}
@@ -192,10 +196,10 @@ func (A *DenseMatrix) ScaleMatrix(B MatrixRO) Error {
 			indexA++
 		}
 	}
-	return NoError
+	return nil
 }
 
-func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) Error {
+func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) os.Error {
 	if A.rows != B.rows || A.cols != B.cols {
 		return ErrorDimensionMismatch
 	}
@@ -208,5 +212,5 @@ func (A *DenseMatrix) ScaleMatrixDense(B *DenseMatrix) Error {
 			indexB++
 		}
 	}
-	return NoError
+	return nil
 }

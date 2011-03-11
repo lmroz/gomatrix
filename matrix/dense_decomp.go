@@ -6,12 +6,13 @@ package matrix
 
 import (
 	"math"
+	"os"
 )
 
 /*
 Returns the cholesky decomposition C of A, st CC'=A.
 */
-func (A *DenseMatrix) Cholesky() (L *DenseMatrix, err Error) {
+func (A *DenseMatrix) Cholesky() (L *DenseMatrix, err os.Error) {
 	n := A.Rows()
 	L = Zeros(n, n)
 	isspd := A.Cols() == n

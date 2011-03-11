@@ -10,9 +10,8 @@ import (
 )
 
 const (
-	noError = iota
 	//The matrix returned was nil.
-	errorNilMatrix
+	errorNilMatrix = iota + 1
 	//The dimensions of the inputs do not make sense for this operation.
 	errorDimensionMismatch
 	//The indices provided are out of bounds.
@@ -22,11 +21,6 @@ const (
 	//The matrix provided is not positive semi-definite.
 	exceptionNotSPD
 )
-
-type Error interface {
-	os.Error
-	OK() bool
-}
 
 type error int
 
@@ -46,18 +40,16 @@ func (e error) String() string {
 	return fmt.Sprintf("Unknown error code %d", e)
 }
 
-func (e error) OK() bool { return e == noError }
 
 var (
-	NoError Error = nil
 	//The matrix returned was nil.
-	ErrorNilMatrix Error = error(errorNilMatrix)
+	ErrorNilMatrix os.Error = error(errorNilMatrix)
 	//The dimensions of the inputs do not make sense for this operation.
-	ErrorDimensionMismatch Error = error(errorDimensionMismatch)
+	ErrorDimensionMismatch os.Error = error(errorDimensionMismatch)
 	//The indices provided are out of bounds.
-	ErrorIllegalIndex Error = error(errorIllegalIndex)
+	ErrorIllegalIndex os.Error = error(errorIllegalIndex)
 	//The matrix provided has a singularity.
-	ExceptionSingular Error = error(exceptionSingular)
+	ExceptionSingular os.Error = error(exceptionSingular)
 	//The matrix provided is not positive semi-definite.
-	ExceptionNotSPD Error = error(exceptionNotSPD)
+	ExceptionNotSPD os.Error = error(exceptionNotSPD)
 )

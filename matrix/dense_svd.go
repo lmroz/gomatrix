@@ -4,12 +4,15 @@
 
 package matrix
 
-import "math"
+import (
+	"math"
+	"os"
+)
 
 /*
 Returns U, Σ, V st Σ is diagonal (or block diagonal) and UΣV'=Arg
 */
-func (Arg *DenseMatrix) SVD() (theU, Σ, theV *DenseMatrix, err Error) {
+func (Arg *DenseMatrix) SVD() (theU, Σ, theV *DenseMatrix, err os.Error) {
 	//copied from Jama
 	// Derived from LINPACK code.
 	// Initialize.

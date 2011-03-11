@@ -6,65 +6,66 @@ package matrix
 
 import (
 	"math"
-	//"reflect"
+	"os"
 )
 
 /*
 Finds the sum of two matrices.
 */
-func Sum(A, B MatrixRO) *DenseMatrix {
-	C := MakeDenseCopy(A)
-	err := C.Add(MakeDenseCopy(B))
-	if (err == nil) {
-		return C
+func Sum(A MatrixRO, Bs ...MatrixRO) (C *DenseMatrix) {
+	C = MakeDenseCopy(A)
+	var err os.Error
+	for _, B := range Bs {
+		err = C.Add(MakeDenseCopy(B))
+		if err != nil {
+			break
+		}
 	}
-	return nil
+	if (err != nil) {
+		C = nil
+	}
+	return
 }
 
 /*
 Finds the difference between two matrices.
 */
-func Difference(A, B MatrixRO) *DenseMatrix {
-	C := MakeDenseCopy(A)
+func Difference(A, B MatrixRO) (C *DenseMatrix) {
+	C = MakeDenseCopy(A)
 	err := C.Subtract(MakeDenseCopy(B))
-	if (err == nil) {
-		return C
+	if (err != nil) {
+		C = nil
 	}
-	return nil
+	return
 }
 
 /*
 Finds the Product of two matrices.
 */
-func Product(A, B MatrixRO) *DenseMatrix {
-	if A.Cols() != B.Rows() {
-		return nil
-	}
-	C := Zeros(A.Rows(), B.Cols())
-
-	for i := 0; i < A.Rows(); i++ {
-		for j := 0; j < B.Cols(); j++ {
-			sum := float64(0)
-			for k := 0; k < A.Cols(); k++ {
-				sum += A.Get(i, k) * B.Get(k, j)
-			}
-			C.Set(i, j, sum)
+func Product(A MatrixRO, Bs ...MatrixRO) (C *DenseMatrix) {
+	C = MakeDenseCopy(A)
+	
+	for _, B := range Bs {
+		Cm, err := C.Times(B)
+		if err != nil {
+			return
 		}
+		C = Cm.(*DenseMatrix)
 	}
-
-	return C
+	
+	return
 }
 
 /*
 Uses a number of goroutines to do the dot products necessary
 for the matrix multiplication in parallel.
 */
-func ParallelProduct(A, B MatrixRO) *DenseMatrix {
+func ParallelProduct(A, B MatrixRO) (C *DenseMatrix) {
 	if A.Cols() != B.Rows() {
 		return nil
 	}
 
-	C := Zeros(A.Rows(), B.Cols())
+	C = Zeros(A.Rows(), B.Cols())
 
 	in := make(chan int)
 	quit := make(chan bool)
@@ -102,16 +103,16 @@ func ParallelProduct(A, B MatrixRO) *DenseMatrix {
 		quit <- true
 	}
 
-	return C
+	return
 }
 
 /*
 Scales a matrix by a scalar.
 */
-func Scaled(A MatrixRO, f float64) *DenseMatrix {
-	B := MakeDenseCopy(A)
+func Scaled(A MatrixRO, f float64) (B *DenseMatrix) {
+	B = MakeDenseCopy(A)
 	B.Scale(f)
-	return B
+	return
 }
 
 /*
@@ -149,32 +150,3 @@ func ApproxEquals(A, B MatrixRO, ε float64) bool {
 	return true
 }
 
-/*
-Finds the product of any number of matrices.
-*/
-/*
-//this stopped compiling
-func MultipleProduct(values ...) Matrix {
-	v := reflect.NewValue(values).(*reflect.StructValue)
-	if v.NumField() < 2 {
-		return nil
-	}
-
-	inter := v.Field(0).Interface()
-	B, ok := inter.(MatrixRO)
-	if ok {
-		C := MakeDenseCopy(B)
-		for i := 1; i < v.NumField(); i++ {
-			inter := v.Field(i).Interface()
-			if A, ok := inter.(MatrixRO); ok {
-				C = Product(C, A)
-			} else {
-				return nil
-			}
-		}
-		return C
-	}
-
-	return nil
-}
-*/

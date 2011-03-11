@@ -4,28 +4,32 @@
 
 package matrix
 
-func (P *PivotMatrix) Minus(A MatrixRO) (Matrix, Error) {
+import (
+	"os"
+)
+
+func (P *PivotMatrix) Minus(A MatrixRO) (Matrix, os.Error) {
 	if P.rows != A.Rows() || P.cols != A.Cols() {
 		return nil, ErrorDimensionMismatch
 	}
 	B := P.DenseMatrix()
 	B.Subtract(A)
-	return B, NoError
+	return B, nil
 }
 
-func (P *PivotMatrix) Plus(A MatrixRO) (Matrix, Error) {
+func (P *PivotMatrix) Plus(A MatrixRO) (Matrix, os.Error) {
 	if P.rows != A.Rows() || P.cols != A.Cols() {
 		return nil, ErrorDimensionMismatch
 	}
 	B := P.DenseMatrix()
 	B.Add(A)
-	return B, NoError
+	return B, nil
 }
 
 /*
 Multiply this pivot matrix by another.
 */
-func (P *PivotMatrix) Times(A MatrixRO) (Matrix, Error) {
+func (P *PivotMatrix) Times(A MatrixRO) (Matrix, os.Error) {
 	if P.Cols() != A.Rows() {
 		return nil, ErrorDimensionMismatch
 	}
@@ -38,13 +42,13 @@ func (P *PivotMatrix) Times(A MatrixRO) (Matrix, Error) {
 			B.Set(i, j, A.Get(k, j))
 		}
 	}
-	return B, NoError
+	return B, nil
 }
 
 /*
 Multiplication optimized for when two pivots are the operands.
 */
-func (P *PivotMatrix) TimesPivot(A *PivotMatrix) (*PivotMatrix, Error) {
+func (P *PivotMatrix) TimesPivot(A *PivotMatrix) (*PivotMatrix, os.Error) {
 	if P.rows != A.rows {
 		return nil, ErrorDimensionMismatch
 	}
@@ -56,13 +60,13 @@ func (P *PivotMatrix) TimesPivot(A *PivotMatrix) (*PivotMatrix, Error) {
 		newPivots[i] = P.pivots[A.pivots[i]]
 	}
 
-	return MakePivotMatrix(newPivots, newSign), NoError
+	return MakePivotMatrix(newPivots, newSign), nil
 }
 
 /*
 Equivalent to PxA, but streamlined to take advantage of the datastructures.
 */
-func (P *PivotMatrix) RowPivotDense(A *DenseMatrix) (*DenseMatrix, Error) {
+func (P *PivotMatrix) RowPivotDense(A *DenseMatrix) (*DenseMatrix, os.Error) {
 	if P.rows != A.rows {
 		return nil, ErrorDimensionMismatch
 	}
@@ -75,13 +79,13 @@ func (P *PivotMatrix) RowPivotDense(A *DenseMatrix) (*DenseMatrix, Error) {
 			B.elements[Bstart+j] = A.elements[Astart+j]
 		}
 	}
-	return B, NoError
+	return B, nil
 }
 
 /*
 Equivalent to AxP, but streamlined to take advantage of the datastructures.
 */
-func (P *PivotMatrix) ColPivotDense(A *DenseMatrix) (*DenseMatrix, Error) {
+func (P *PivotMatrix) ColPivotDense(A *DenseMatrix) (*DenseMatrix, os.Error) {
 	if P.rows != A.cols {
 		return nil, ErrorDimensionMismatch
 	}
@@ -94,13 +98,13 @@ func (P *PivotMatrix) ColPivotDense(A *DenseMatrix) (*DenseMatrix, Error) {
 			B.elements[Bstart+dj] = A.elements[Astart+sj]
 		}
 	}
-	return B, NoError
+	return B, nil
 }
 
 /*
 Equivalent to PxA, but streamlined to take advantage of the datastructures.
 */
-func (P *PivotMatrix) RowPivotSparse(A *SparseMatrix) (*SparseMatrix, Error) {
+func (P *PivotMatrix) RowPivotSparse(A *SparseMatrix) (*SparseMatrix, os.Error) {
 	if P.rows != A.rows {
 		return nil, ErrorDimensionMismatch
 	}
@@ -111,13 +115,13 @@ func (P *PivotMatrix) RowPivotSparse(A *SparseMatrix) (*SparseMatrix, Error) {
 		B.Set(di, j, value)
 	}
 
-	return B, NoError
+	return B, nil
 }
 
 /*
 Equivalent to AxP, but streamlined to take advantage of the datastructures.
 */
-func (P *PivotMatrix) ColPivotSparse(A *SparseMatrix) (*SparseMatrix, Error) {
+func (P *PivotMatrix) ColPivotSparse(A *SparseMatrix) (*SparseMatrix, os.Error) {
 	if P.rows != A.cols {
 		return nil, ErrorDimensionMismatch
 	}
@@ -128,5 +132,5 @@ func (P *PivotMatrix) ColPivotSparse(A *SparseMatrix) (*SparseMatrix, Error) {
 		B.Set(i, dj, value)
 	}
 
-	return B, NoError
+	return B, nil
 }

@@ -4,19 +4,22 @@
 
 package matrix
 
-import "math"
+import (
+	"math"
+	"os"
+)
 
 /*
 Swap two rows in this PivotMatrix.
 */
-func (P *PivotMatrix) SwapRows(r1, r2 int) Error {
+func (P *PivotMatrix) SwapRows(r1, r2 int) os.Error {
 	//	tmp := P.pivots[r1];
 	//	P.pivots[r1] = P.pivots[r2];
 	//	P.pivots[r2] = tmp;
 	P.pivots[r1], P.pivots[r2] = P.pivots[r2], P.pivots[r1]
 	P.pivotSign *= -1
 
-	return NoError
+	return nil
 }
 
 func (P *PivotMatrix) Symmetric() bool {
@@ -52,7 +55,7 @@ func (P *PivotMatrix) Trace() (r float64) {
 /*
 Returns x such that Px=b.
 */
-func (P *PivotMatrix) Solve(b MatrixRO) (Matrix, Error) {
+func (P *PivotMatrix) Solve(b MatrixRO) (Matrix, os.Error) {
 	return P.Transpose().Times(b) //error comes from times
 }
 
