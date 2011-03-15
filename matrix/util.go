@@ -71,7 +71,7 @@ func parFor(inputs <-chan box, foo func(i box)) (wait func()) {
 		go func() {
 			for {
 				m.Lock()
-				i, done := <-inputs, closed(inputs)
+				i, done := <-inputs
 				m.Unlock()
 				if done {
 					break
