@@ -3,6 +3,8 @@
 // license that can be found in the LICENSE file.
 
 //target:gomatrix.googlecode.com/hg/matrix
+
+//Linear algebra.
 package matrix
 
 import (
