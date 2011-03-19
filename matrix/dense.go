@@ -94,11 +94,11 @@ func (A *DenseMatrix) GetMatrix(i, j, rows, cols int) *DenseMatrix {
 }
 
 func (A *DenseMatrix) GetColVector(j int) *DenseMatrix {
-	return A.GetMatrix(0, j, A.rows, j+1)
+	return A.GetMatrix(0, j, A.rows, 1)
 }
 
 func (A *DenseMatrix) GetRowVector(i int) *DenseMatrix {
-	return A.GetMatrix(i, 0, i+1, A.cols)
+	return A.GetMatrix(i, 0, 1, A.cols)
 }
 
 /*
