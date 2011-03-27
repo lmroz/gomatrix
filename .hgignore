@@ -1,7 +1,10 @@
+.DS_Store
 _obj
 bin
+build
 gomatrix.xcodeproj
 _go_.6
-matrix/_obj
-.DS_Store
-build
+demo/demo1/demo1
+demo/demo2/demo2
+demo/demo3/demo3
+matrix/_test
