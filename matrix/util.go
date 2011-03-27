@@ -4,8 +4,6 @@
 
 package matrix
 
-import "sync"
-
 func max(x, y float64) float64 {
 	if x > y {
 		return x
@@ -64,15 +62,12 @@ func countBoxes(start, cap int) chan box {
 
 
 func parFor(inputs <-chan box, foo func(i box)) (wait func()) {
-	m := new(sync.Mutex)
 	n := MaxProcs
 	block := make(chan bool, n)
 	for j := 0; j < n; j++ {
 		go func() {
 			for {
-				m.Lock()
 				i, done := <-inputs
-				m.Unlock()
 				if done {
 					break
 				}
