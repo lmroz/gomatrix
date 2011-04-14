@@ -67,8 +67,8 @@ func parFor(inputs <-chan box, foo func(i box)) (wait func()) {
 	for j := 0; j < n; j++ {
 		go func() {
 			for {
-				i, done := <-inputs
-				if done {
+				i, ok := <-inputs
+				if !ok {
 					break
 				}
 				foo(i)
