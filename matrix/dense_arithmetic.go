@@ -162,9 +162,9 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 			<-sync0
 			currentGoroutineCount--
 		case currentGoroutineCount < maxGoroutines && ce-cs >= threshold:
-			currentGoroutineCount++
 			sync0 := make(chan bool, 1)
 			cm := (cs + ce) / 2
+			currentGoroutineCount++
 			go aux(sync0, A, B, C, rs, re, cs, cm, ks, ke)
 			aux(nil, A, B, C, rs, re, cm, ce, ks, ke)
 			<-sync0
@@ -195,7 +195,10 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 	return
 }
 
-var WhichParMethod = 2
+var (
+	WhichParMethod = 2
+	WhichSyncMethod = 1
+)
 
 func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	if A.cols != B.rows {
@@ -210,14 +213,18 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 			C = parTimes2(A, B)
 		}
 	} else {
-		C = Zeros(A.rows, B.cols)
-		for i := 0; i < A.rows; i++ {
-			sums := C.elements[i*C.step : (i+1)*C.step]
-			for k := 0; k < A.cols; k++ {
-				for j := 0; j < B.cols; j++ {
-					sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
+		switch {
+		case A.cols > 100 && WhichSyncMethod == 2:
+			C = transposeTimes(A, B)
+		default:
+			C = Zeros(A.rows, B.cols)
+			for i := 0; i < A.rows; i++ {
+				sums := C.elements[i*C.step : (i+1)*C.step]
+				for k := 0; k < A.cols; k++ {
+					for j := 0; j < B.cols; j++ {
+						sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
+					}
 				}
-				//C.elements[i*C.step+j] = sum;
 			}
 		}
 	}
@@ -225,6 +232,24 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	return C, nil
 }
 
+func transposeTimes(A, B *DenseMatrix) (C *DenseMatrix) {
+	Bt := B.Transpose()
+	C = Zeros(A.rows, B.cols)
+	
+	Bcols := Bt.Arrays()
+	
+	for i := 0; i < A.rows; i++ {
+		Arow := A.elements[i*A.step : i*A.step+A.cols]
+		for j := 0; j < B.cols; j++ {
+			Bcol := Bcols[j]
+			for k := range Arow {
+				C.elements[i*C.step+j] += Arow[k]*Bcol[k]
+			} 
+		}
+	}
+	
+	return
+}
 
 func (A *DenseMatrix) ElementMult(B MatrixRO) (Matrix, os.Error) {
 	C := A.Copy()
