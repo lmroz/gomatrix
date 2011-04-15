@@ -71,7 +71,6 @@ func tred2(V [][]float64, d []float64, e []float64) {
 		d[j] = V[n-1][j]
 	}
 
-
 	// Householder reduction to tridiagonal form.
 
 	for i := n - 1; i > 0; i-- {
@@ -144,7 +143,6 @@ func tred2(V [][]float64, d []float64, e []float64) {
 		}
 		d[i] = h
 	}
-
 
 	// Accumulate transformations.
 

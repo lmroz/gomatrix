@@ -153,7 +153,6 @@ func (Arg *DenseMatrix) SVD() (theU, Σ, theV *DenseMatrix, err os.Error) {
 		}
 	}
 
-
 	// Set up the final bidiagonal matrix or order p.
 
 	p := minInt(n, m+1)

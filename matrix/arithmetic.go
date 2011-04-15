@@ -21,7 +21,7 @@ func Sum(A MatrixRO, Bs ...MatrixRO) (C *DenseMatrix) {
 			break
 		}
 	}
-	if (err != nil) {
+	if err != nil {
 		C = nil
 	}
 	return
@@ -33,7 +33,7 @@ Finds the difference between two matrices.
 func Difference(A, B MatrixRO) (C *DenseMatrix) {
 	C = MakeDenseCopy(A)
 	err := C.Subtract(MakeDenseCopy(B))
-	if (err != nil) {
+	if err != nil {
 		C = nil
 	}
 	return
@@ -44,7 +44,7 @@ Finds the Product of two matrices.
 */
 func Product(A MatrixRO, Bs ...MatrixRO) (C *DenseMatrix) {
 	C = MakeDenseCopy(A)
-	
+
 	for _, B := range Bs {
 		Cm, err := C.Times(B)
 		if err != nil {
@@ -52,7 +52,7 @@ func Product(A MatrixRO, Bs ...MatrixRO) (C *DenseMatrix) {
 		}
 		C = Cm.(*DenseMatrix)
 	}
-	
+
 	return
 }
 
@@ -149,4 +149,3 @@ func ApproxEquals(A, B MatrixRO, ε float64) bool {
 	}
 	return true
 }
-

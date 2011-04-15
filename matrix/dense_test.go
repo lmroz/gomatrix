@@ -155,6 +155,20 @@ func TestParallelProduct(t *testing.T) {
 	}
 }
 
+func TestTimesDenseProcs(t *testing.T) {
+	A := Normals(10, 10)
+	B := Normals(10, 10)
+
+	MaxProcs = 1
+	C, _ := A.TimesDense(B)
+	MaxProcs = 2
+	Cp, _ := A.TimesDense(B)
+	if !Equals(C, Cp) {
+		t.Fail()
+	}
+	MaxProcs = 1
+}
+
 func TestElementMult(t *testing.T) {
 
 	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
@@ -612,7 +626,7 @@ func TestAugment(t *testing.T) {
 	A = Normals(2, 2)
 	B = Normals(4, 4)
 	C, err := A.Augment(B)
-	if (err == nil) {
+	if err == nil {
 		t.Fail()
 	}
 
@@ -660,7 +674,7 @@ func TestStack(t *testing.T) {
 	A = Normals(4, 4)
 	B = Normals(4, 2)
 	C, err := A.Stack(B)
-	if (err == nil) {
+	if err == nil {
 		t.Fail()
 	}
 
