@@ -159,6 +159,7 @@ func TestTimesDenseProcs(t *testing.T) {
 	A := Normals(10, 10)
 	B := Normals(10, 10)
 
+	old := MaxProcs
 	MaxProcs = 1
 	C, _ := A.TimesDense(B)
 	MaxProcs = 2
@@ -166,7 +167,7 @@ func TestTimesDenseProcs(t *testing.T) {
 	if !Equals(C, Cp) {
 		t.Fail()
 	}
-	MaxProcs = 1
+	MaxProcs = old
 }
 
 func TestElementMult(t *testing.T) {
