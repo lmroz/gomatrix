@@ -148,11 +148,12 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 	const threshold = 8
 
 	currentGoroutineCount := 1
+	maxGoroutines := MaxProcs+2
 
 	var aux func(sync chan bool, A, B, C *DenseMatrix, rs, re, cs, ce, ks, ke int)
 	aux = func(sync chan bool, A, B, C *DenseMatrix, rs, re, cs, ce, ks, ke int) {
 		switch {
-		case currentGoroutineCount < MaxProcs && re-rs >= threshold:
+		case currentGoroutineCount < maxGoroutines && re-rs >= threshold:
 			sync0 := make(chan bool, 1)
 			rm := (rs + re) / 2
 			currentGoroutineCount++
@@ -160,7 +161,7 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 			aux(nil, A, B, C, rm, re, cs, ce, ks, ke)
 			<-sync0
 			currentGoroutineCount--
-		case currentGoroutineCount < MaxProcs && ce-cs >= threshold:
+		case currentGoroutineCount < maxGoroutines && ce-cs >= threshold:
 			currentGoroutineCount++
 			sync0 := make(chan bool, 1)
 			cm := (cs + ce) / 2
@@ -168,7 +169,7 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 			aux(nil, A, B, C, rs, re, cm, ce, ks, ke)
 			<-sync0
 			currentGoroutineCount++
-		case currentGoroutineCount < MaxProcs && ke-ks >= threshold:
+		case currentGoroutineCount < maxGoroutines && ke-ks >= threshold:
 			km := (ks + ke) / 2
 			//why don't we split here, too?
 			//one answer - at this point we've already got way more goroutines than procs
