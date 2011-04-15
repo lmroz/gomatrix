@@ -168,7 +168,7 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 			go aux(sync0, A, B, C, rs, re, cs, cm, ks, ke)
 			aux(nil, A, B, C, rs, re, cm, ce, ks, ke)
 			<-sync0
-			currentGoroutineCount++
+			currentGoroutineCount--
 		case currentGoroutineCount < maxGoroutines && ke-ks >= threshold:
 			km := (ks + ke) / 2
 			//why don't we split here, too?
