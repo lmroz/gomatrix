@@ -145,7 +145,7 @@ func parTimes1(A, B *DenseMatrix) (C *DenseMatrix) {
 func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 	C = Zeros(A.rows, B.cols)
 
-	const threshold = 8
+	const threshold = 100
 
 	var aux func(sync chan bool, A, B, C *DenseMatrix, rs, re, cs, ce, ks, ke int)
 	aux = func(sync chan bool, A, B, C *DenseMatrix, rs, re, cs, ce, ks, ke int) {
@@ -165,13 +165,15 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 		case ke-ks >= threshold:
 			km := (ks + ke) / 2
 			//why don't we split here, too?
+			//one answer - at this point we've already got way more goroutines than procs
 			aux(nil, A, B, C, rs, re, cs, ce, ks, km)
 			aux(nil, A, B, C, rs, re, cs, ce, km, ke)
 		default:
-			for r := rs; r < re; r++ {
-				for c := cs; c < ce; c++ {
-					for k := ks; k < ke; k++ {
-						C.elements[r*C.step+c] += A.elements[r*A.step+k] * B.elements[k*B.step+c]
+			for row := rs; row < re; row++ {
+				sums := C.elements[row*C.step : (row+1)*C.step]
+				for k := ks; k < ke; k++ {
+					for col := cs; col < ce; col++ {
+						sums[col] += A.elements[row*A.step+k] * B.elements[k*B.step+col]
 					}
 				}
 			}
@@ -186,7 +188,7 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 	return
 }
 
-var WhichParMethod = 1
+var WhichParMethod = 2
 
 func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	if A.cols != B.rows {
