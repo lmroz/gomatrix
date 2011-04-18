@@ -4,6 +4,8 @@
 
 package matrix
 
+import "runtime"
+
 func max(x, y float64) float64 {
 	if x > y {
 		return x
@@ -62,7 +64,7 @@ func countBoxes(start, cap int) chan box {
 
 
 func parFor(inputs <-chan box, foo func(i box)) (wait func()) {
-	n := MaxProcs
+	n := runtime.GOMAXPROCS(0)
 	block := make(chan bool, n)
 	for j := 0; j < n; j++ {
 		go func() {

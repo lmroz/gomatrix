@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-	for w := 0; w <= 100; w += 100 {
-		for h := 0; h <= 100; h += 100 {
+	for w := 0; w <= 200; w += 200 {
+		for h := 0; h <= 200; h += 200 {
 			if w == 0 && h != 0 {
 				fmt.Printf("%d\t", h)
 			}
@@ -26,9 +26,10 @@ func main() {
 			B := Normals(w, h)
 			times := []float64{0, 0, 0}
 			
-			const Count = 500
+			const Count = 100
 			
-			MaxProcs = 1
+			MaxProcs := runtime.GOMAXPROCS(0)
+			runtime.GOMAXPROCS(1)
 			start := time.Nanoseconds()
 			for i := 0; i < Count; i++ {
 				A.Times(B)
@@ -38,7 +39,7 @@ func main() {
 			times[0] = float64(duration) / 1e9
 			
 			for WhichParMethod=1; WhichParMethod<3; WhichParMethod++ {
-				MaxProcs = runtime.GOMAXPROCS(0)
+				runtime.GOMAXPROCS(MaxProcs)
 				start = time.Nanoseconds()
 				for i := 0; i < Count; i++ {
 					A.Times(B)
