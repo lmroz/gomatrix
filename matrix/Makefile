@@ -18,7 +18,6 @@ GOFILES=\
 	pivot.go\
 	pivot_arithmetic.go\
 	pivot_basic.go\
-	settings.go\
 	sparse.go\
 	sparse_arithmetic.go\
 	sparse_basic.go\

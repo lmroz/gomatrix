@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 	"os"
+	"runtime"
 	. "gomatrix.googlecode.com/hg/matrix"
 )
 
@@ -24,7 +25,8 @@ func main() {
 
 	count = 2
 
-	for MaxProcs = 1; MaxProcs < 3; MaxProcs++ {
+	for MaxProcs := 1; MaxProcs < 3; MaxProcs++ {
+		runtime.GOMAXPROCS(MaxProcs)
 		fmt.Printf("With MaxProcs=%d:\n", MaxProcs)
 		start = time.Nanoseconds()
 		for i := 0; i < count; i++ {

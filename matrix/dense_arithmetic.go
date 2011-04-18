@@ -6,6 +6,7 @@ package matrix
 
 import (
 	"os"
+	"runtime"
 )
 
 func (A *DenseMatrix) Plus(B MatrixRO) (Matrix, os.Error) {
@@ -125,14 +126,38 @@ func (A *DenseMatrix) Times(B MatrixRO) (Matrix, os.Error) {
 	return C, nil
 }
 
+type parJob struct {
+	start, finish int
+}
+
 func parTimes1(A, B *DenseMatrix) (C *DenseMatrix) {
 	C = Zeros(A.rows, B.cols)
-	wait := parFor(countBoxes(0, A.rows), func(iBox box) {
-		i := iBox.(int)
-		sums := C.elements[i*C.step : (i+1)*C.step]
-		for k := 0; k < A.cols; k++ {
-			for j := 0; j < B.cols; j++ {
-				sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
+	
+	mp := runtime.GOMAXPROCS(0)
+	
+	jobChan := make(chan box, 1 + mp)
+	
+	go func() {
+		rowCount := A.rows / mp
+		for startRow := 0; startRow < A.rows; startRow += rowCount {
+			start := startRow
+			finish := startRow + rowCount
+			if finish >= A.rows {
+				finish = A.rows
+			}
+			jobChan <- parJob{ start: start, finish : finish }
+		}
+		close(jobChan)
+	}()
+	
+	wait := parFor(jobChan, func(iBox box) {
+		job := iBox.(parJob)
+		for i := job.start; i < job.finish; i++ {
+			sums := C.elements[i*C.step : (i+1)*C.step]
+			for k := 0; k < A.cols; k++ {
+				for j := 0; j < B.cols; j++ {
+					sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
+				}
 			}
 		}
 	})
@@ -148,12 +173,15 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 	const threshold = 8
 
 	currentGoroutineCount := 1
-	maxGoroutines := MaxProcs+2
+	maxGoroutines := runtime.GOMAXPROCS(0)+2
 
 	var aux func(sync chan bool, A, B, C *DenseMatrix, rs, re, cs, ce, ks, ke int)
 	aux = func(sync chan bool, A, B, C *DenseMatrix, rs, re, cs, ce, ks, ke int) {
+		dr := re - rs
+		dc := ce - cs
+		dk := ke - ks
 		switch {
-		case currentGoroutineCount < maxGoroutines && re-rs >= threshold:
+		case currentGoroutineCount < maxGoroutines && dr >= dc && dr >= dk && dr >= threshold:
 			sync0 := make(chan bool, 1)
 			rm := (rs + re) / 2
 			currentGoroutineCount++
@@ -161,7 +189,7 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 			aux(nil, A, B, C, rm, re, cs, ce, ks, ke)
 			<-sync0
 			currentGoroutineCount--
-		case currentGoroutineCount < maxGoroutines && ce-cs >= threshold:
+		case currentGoroutineCount < maxGoroutines && dc >= dk && dc >= dr && dc >= threshold:
 			sync0 := make(chan bool, 1)
 			cm := (cs + ce) / 2
 			currentGoroutineCount++
@@ -169,10 +197,8 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 			aux(nil, A, B, C, rs, re, cm, ce, ks, ke)
 			<-sync0
 			currentGoroutineCount--
-		case currentGoroutineCount < maxGoroutines && ke-ks >= threshold:
+		case currentGoroutineCount < maxGoroutines && dk >= dc && dk >= dr && dk >= threshold:
 			km := (ks + ke) / 2
-			//why don't we split here, too?
-			//one answer - at this point we've already got way more goroutines than procs
 			aux(nil, A, B, C, rs, re, cs, ce, ks, km)
 			aux(nil, A, B, C, rs, re, cs, ce, km, ke)
 		default:
@@ -205,7 +231,7 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 		return nil, ErrorDimensionMismatch
 	}
 	var C *DenseMatrix
-	if MaxProcs > 1 {
+	if runtime.GOMAXPROCS(0) > 1 {
 		switch WhichParMethod {
 		case 1:
 			C = parTimes1(A, B)
