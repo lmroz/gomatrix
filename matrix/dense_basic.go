@@ -59,7 +59,7 @@ func (A *DenseMatrix) Inverse() (*DenseMatrix, os.Error) {
 	for i := 0; i < aug.Rows(); i++ {
 		j := i
 		for k := i; k < aug.Rows(); k++ {
-			if math.Fabs(aug.Get(k, i)) > math.Fabs(aug.Get(j, i)) {
+			if math.Abs(aug.Get(k, i)) > math.Abs(aug.Get(j, i)) {
 				j = k
 			}
 		}

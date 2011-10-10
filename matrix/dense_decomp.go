@@ -47,7 +47,6 @@ func (A *DenseMatrix) Cholesky() (L *DenseMatrix, err os.Error) {
 	return
 }
 
-
 /*
 return L,U,P, st PLU=A.
 */
@@ -101,7 +100,7 @@ func (A *DenseMatrix) LUInPlace() (P *PivotMatrix) {
 
 		p := j
 		for i := j + 1; i < m; i++ {
-			if math.Fabs(LUcolj[i]) > math.Fabs(LUcolj[p]) {
+			if math.Abs(LUcolj[i]) > math.Abs(LUcolj[p]) {
 				p = i
 			}
 		}
@@ -124,7 +123,6 @@ func (A *DenseMatrix) LUInPlace() (P *PivotMatrix) {
 
 	return
 }
-
 
 func (A *DenseMatrix) QR() (Q, R *DenseMatrix) {
 	m := A.Rows()

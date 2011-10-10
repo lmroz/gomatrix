@@ -142,7 +142,7 @@ func ApproxEquals(A, B MatrixRO, ε float64) bool {
 	}
 	for i := 0; i < A.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
-			if math.Fabs(A.Get(i, j)-B.Get(i, j)) > ε {
+			if math.Abs(A.Get(i, j)-B.Get(i, j)) > ε {
 				return false
 			}
 		}
