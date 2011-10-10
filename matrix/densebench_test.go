@@ -7,6 +7,7 @@ import (
 )
 
 func BenchmarkTransposeTimes(b *testing.B) {
+	fmt.Println("benchmark")
 	for s := 25; s<=100; s+=25 {
 		w, h := s/2, s*2
 	

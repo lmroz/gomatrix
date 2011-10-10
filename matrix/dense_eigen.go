@@ -80,7 +80,7 @@ func tred2(V [][]float64, d []float64, e []float64) {
 		scale := float64(0)
 		h := float64(0)
 		for k := 0; k < i; k++ {
-			scale = scale + math.Fabs(d[k])
+			scale = scale + math.Abs(d[k])
 		}
 		if scale == 0.0 {
 			e[i] = d[i-1]
@@ -176,7 +176,6 @@ func tred2(V [][]float64, d []float64, e []float64) {
 	e[0] = 0.0
 }
 
-
 func tql2(V [][]float64, d []float64, e []float64) {
 
 	//  This is derived from the Algol procedures tql2, by
@@ -198,10 +197,10 @@ func tql2(V [][]float64, d []float64, e []float64) {
 
 		// Find small subdiagonal element
 
-		tst1 = max(tst1, math.Fabs(d[l])+math.Fabs(e[l]))
+		tst1 = max(tst1, math.Abs(d[l])+math.Abs(e[l]))
 		m := l
 		for m < n {
-			if math.Fabs(e[m]) <= eps*tst1 {
+			if math.Abs(e[m]) <= eps*tst1 {
 				break
 			}
 			m++
@@ -267,7 +266,7 @@ func tql2(V [][]float64, d []float64, e []float64) {
 				d[l] = c * p
 
 				// Check for convergence.
-				if !(math.Fabs(e[l]) > eps*tst1) {
+				if !(math.Abs(e[l]) > eps*tst1) {
 					break
 				}
 			}
@@ -317,7 +316,7 @@ func orthes(V [][]float64, d []float64, e []float64, H [][]float64, ort []float6
 
 		scale := float64(0)
 		for i := m; i <= high; i++ {
-			scale = scale + math.Fabs(H[i][m-1])
+			scale = scale + math.Abs(H[i][m-1])
 		}
 		if scale != 0.0 {
 
@@ -429,7 +428,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 			e[i] = 0.0
 		}
 		for j := int(max(float64(i)-1, 0)); j < nn; j++ {
-			norm = norm + math.Fabs(H[i][j])
+			norm = norm + math.Abs(H[i][j])
 		}
 	}
 
@@ -442,11 +441,11 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 
 		l := n
 		for l > low {
-			s = math.Fabs(H[l-1][l-1]) + math.Fabs(H[l][l])
+			s = math.Abs(H[l-1][l-1]) + math.Abs(H[l][l])
 			if s == 0.0 {
 				s = norm
 			}
-			if math.Fabs(H[l][l-1]) < eps*s {
+			if math.Abs(H[l][l-1]) < eps*s {
 				break
 			}
 			l--
@@ -468,7 +467,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 			w = H[n][n-1] * H[n-1][n]
 			p = (H[n-1][n-1] - H[n][n]) / 2.0
 			q = p*p + w
-			z = math.Sqrt(math.Fabs(q))
+			z = math.Sqrt(math.Abs(q))
 			H[n][n] = H[n][n] + exshift
 			H[n-1][n-1] = H[n-1][n-1] + exshift
 			x = H[n][n]
@@ -489,7 +488,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 				e[n-1] = 0.0
 				e[n] = 0.0
 				x = H[n][n-1]
-				s = math.Fabs(x) + math.Fabs(z)
+				s = math.Abs(x) + math.Abs(z)
 				p = x / s
 				q = z / s
 				r = math.Sqrt(p*p + q*q)
@@ -552,7 +551,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 				for i := low; i <= n; i++ {
 					H[i][i] -= x
 				}
-				s = math.Fabs(H[n][n-1]) + math.Fabs(H[n-1][n-2])
+				s = math.Abs(H[n][n-1]) + math.Abs(H[n-1][n-2])
 				y = 0.75 * s
 				x = y
 				w = -0.4375 * s * s
@@ -591,16 +590,16 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 				p = (r*s-w)/H[m+1][m] + H[m][m+1]
 				q = H[m+1][m+1] - z - r - s
 				r = H[m+2][m+1]
-				s = math.Fabs(p) + math.Fabs(q) + math.Fabs(r)
+				s = math.Abs(p) + math.Abs(q) + math.Abs(r)
 				p = p / s
 				q = q / s
 				r = r / s
 				if m == l {
 					break
 				}
-				if math.Fabs(H[m][m-1])*(math.Fabs(q)+math.Fabs(r)) <
-					eps*(math.Fabs(p)*(math.Fabs(H[m-1][m-1])+math.Fabs(z)+
-						math.Fabs(H[m+1][m+1]))) {
+				if math.Abs(H[m][m-1])*(math.Abs(q)+math.Abs(r)) <
+					eps*(math.Abs(p)*(math.Abs(H[m-1][m-1])+math.Abs(z)+
+						math.Abs(H[m+1][m+1]))) {
 					break
 				}
 				m--
@@ -626,7 +625,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 						r = 0
 					}
 
-					x = math.Fabs(p) + math.Fabs(q) + math.Fabs(r)
+					x = math.Abs(p) + math.Abs(q) + math.Abs(r)
 					if x != 0.0 {
 						p = p / x
 						q = q / x
@@ -734,7 +733,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 						q = (d[i]-p)*(d[i]-p) + e[i]*e[i]
 						t = (x*s - z*r) / q
 						H[i][n] = t
-						if math.Fabs(x) > math.Fabs(z) {
+						if math.Abs(x) > math.Abs(z) {
 							H[i+1][n] = (-r - w*t) / x
 						} else {
 							H[i+1][n] = (-s - y*t) / z
@@ -743,7 +742,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 
 					// Overflow control
 
-					t = math.Fabs(H[i][n])
+					t = math.Abs(H[i][n])
 					if (eps*t)*t > 1 {
 						for j := i; j <= n; j++ {
 							H[j][n] = H[j][n] / t
@@ -759,7 +758,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 
 			// Last vector component imaginary so matrix is triangular
 
-			if math.Fabs(H[n][n-1]) > math.Fabs(H[n-1][n]) {
+			if math.Abs(H[n][n-1]) > math.Abs(H[n-1][n]) {
 				H[n-1][n-1] = q / H[n][n-1]
 				H[n-1][n] = -(H[n][n] - p) / H[n][n-1]
 			} else {
@@ -798,13 +797,13 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 						vr = (d[i]-p)*(d[i]-p) + e[i]*e[i] - q*q
 						vi = (d[i] - p) * 2.0 * q
 						if vr == 0.0 && vi == 0.0 {
-							vr = eps * norm * (math.Fabs(w) + math.Fabs(q) +
-								math.Fabs(x) + math.Fabs(y) + math.Fabs(z))
+							vr = eps * norm * (math.Abs(w) + math.Abs(q) +
+								math.Abs(x) + math.Abs(y) + math.Abs(z))
 						}
 						cdivr, cdivi := cdiv(x*r-z*ra+q*sa, x*s-z*sa-q*ra, vr, vi)
 						H[i][n-1] = cdivr
 						H[i][n] = cdivi
-						if math.Fabs(x) > (math.Fabs(z) + math.Fabs(q)) {
+						if math.Abs(x) > (math.Abs(z) + math.Abs(q)) {
 							H[i+1][n-1] = (-ra - w*H[i][n-1] + q*H[i][n]) / x
 							H[i+1][n] = (-sa - w*H[i][n] - q*H[i][n-1]) / x
 						} else {
@@ -816,7 +815,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 
 					// Overflow control
 
-					t = max(math.Fabs(H[i][n-1]), math.Fabs(H[i][n]))
+					t = max(math.Abs(H[i][n-1]), math.Abs(H[i][n]))
 					if (eps*t)*t > 1 {
 						for j := i; j <= n; j++ {
 							H[j][n-1] = H[j][n-1] / t
@@ -853,7 +852,7 @@ func hqr2(V [][]float64, d []float64, e []float64, H [][]float64, ort []float64)
 
 func cdiv(xr float64, xi float64, yr float64, yi float64) (cdivr float64, cdivi float64) {
 	var r, d float64
-	if math.Fabs(yr) > math.Fabs(yi) {
+	if math.Abs(yr) > math.Abs(yi) {
 		r = yi / yr
 		d = yr + r*yi
 		cdivr = (xr + r*xi) / d

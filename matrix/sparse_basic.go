@@ -84,7 +84,7 @@ func (A *SparseMatrix) Trace() (res float64) {
 
 func (A *SparseMatrix) OneNorm() (res float64) {
 	for _, value := range A.elements {
-		res += math.Fabs(value)
+		res += math.Abs(value)
 	}
 	return
 }
@@ -99,7 +99,7 @@ func (A *SparseMatrix) TwoNorm() float64 {
 
 func (A *SparseMatrix) InfinityNorm() (res float64) {
 	for _, value := range A.elements {
-		res = max(res, math.Fabs(value))
+		res = max(res, math.Abs(value))
 	}
 	return
 }

@@ -252,8 +252,8 @@ func (Arg *DenseMatrix) SVD() (theU, Σ, theV *DenseMatrix, err os.Error) {
 			if k == -1 {
 				break
 			}
-			if math.Fabs(e[k]) <=
-				tiny+eps*(math.Fabs(s[k])+math.Fabs(s[k+1])) {
+			if math.Abs(e[k]) <=
+				tiny+eps*(math.Abs(s[k])+math.Abs(s[k+1])) {
 				e[k] = 0.0
 				break
 			}
@@ -268,14 +268,14 @@ func (Arg *DenseMatrix) SVD() (theU, Σ, theV *DenseMatrix, err os.Error) {
 				}
 				t := float64(0)
 				if ks != p {
-					t = math.Fabs(e[ks])
+					t = math.Abs(e[ks])
 				}
 				if ks != k+1 {
-					t += math.Fabs(e[ks-1])
+					t += math.Abs(e[ks-1])
 				}
 				//double t = (ks != p ? Math.abs(e[ks]) : 0.) +
 				//           (ks != k+1 ? Math.abs(e[ks-1]) : 0.);
-				if math.Fabs(s[ks]) <= tiny+eps*t {
+				if math.Abs(s[ks]) <= tiny+eps*t {
 					s[ks] = 0.0
 					break
 				}
@@ -353,10 +353,10 @@ func (Arg *DenseMatrix) SVD() (theU, Σ, theV *DenseMatrix, err os.Error) {
 				// Calculate the shift.
 
 				scale := max(max(max(max(
-					math.Fabs(s[p-1]), math.Fabs(s[p-2])),
-					math.Fabs(e[p-2])),
-					math.Fabs(s[k])),
-					math.Fabs(e[k]))
+					math.Abs(s[p-1]), math.Abs(s[p-2])),
+					math.Abs(e[p-2])),
+					math.Abs(s[k])),
+					math.Abs(e[k]))
 				sp := s[p-1] / scale
 				spm1 := s[p-2] / scale
 				epm1 := e[p-2] / scale

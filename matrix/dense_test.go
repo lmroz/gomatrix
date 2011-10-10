@@ -155,6 +155,8 @@ func TestParallelProduct(t *testing.T) {
 	}
 }
 
+var MaxProcs int = 1
+
 func TestTimesDenseProcs(t *testing.T) {
 	A := Normals(10, 10)
 	B := Normals(10, 10)
