@@ -64,7 +64,6 @@ func (A *DenseMatrix) Get(i int, j int) (v float64) {
 	return
 }
 
-
 /*
 Set the element in the ith row and jth column to v.
 */
@@ -91,6 +90,17 @@ func (A *DenseMatrix) GetMatrix(i, j, rows, cols int) *DenseMatrix {
 	B.cols = cols
 	B.step = A.step
 	return B
+}
+
+/*
+Copy B into A, with B's 0, 0 aligning with A's i, j
+*/
+func (A *DenseMatrix) SetMatrix(i, j int, B *DenseMatrix) {
+	for r := 0; r < B.rows; r++ {
+		for c := 0; c < B.cols; c++ {
+			A.Set(i+r, j+c, B.Get(r, c))
+		}
+	}
 }
 
 func (A *DenseMatrix) GetColVector(j int) *DenseMatrix {
@@ -157,7 +167,6 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, os.Error) {
 	}
 	return C, nil
 }
-
 
 /*
 Get a new matrix [A; B], with A above B.

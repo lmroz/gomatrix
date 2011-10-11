@@ -11,7 +11,6 @@ import (
 	"rand"
 )
 
-
 const ε = 0.000001
 const verbose = false
 const speedTest = true
@@ -235,7 +234,6 @@ func TestScaleMatrix(t *testing.T) {
 }
 
 /* TEST: basic.go */
-
 
 func TestSymmetric(t *testing.T) {
 	A := MakeDenseMatrix([]float64{
@@ -712,7 +710,6 @@ func TestZeros(t *testing.T) {
 	}
 }
 
-
 func TestNumbers(t *testing.T) {
 	n := float64(1.0)
 	A := Numbers(3, 3, n)
@@ -756,6 +753,28 @@ func TestNormals(t *testing.T) {
 	//test that it's filled with random data?
 	A := Normals(3, 4)
 	if A.Rows() != 3 || A.Cols() != 4 {
+		t.Fail()
+	}
+}
+
+func TestKronecker(t *testing.T) {
+	A := MakeDenseMatrix([]float64{0, 1, 2, 3}, 2, 2)
+	B := MakeDenseMatrix([]float64{5, 6, 7, 8, 9, 10}, 2, 3)
+	C := Kronecker(A, B)
+	Cp := MakeDenseMatrix([]float64{0, 0, 0, 5, 6, 7,
+		0, 0, 0, 8, 9, 10,
+		10, 12, 14, 15, 18, 21,
+		16, 18, 20, 24, 27, 30}, 4, 6)
+	if !Equals(C, Cp) {
+		t.Fail()
+	}
+}
+
+func TestVectorize(t *testing.T) {
+	A := MakeDenseMatrix([]float64{0, 1, 2, 3, 4, 5}, 2, 3)
+	V := Vectorize(A)
+	Vp := MakeDenseMatrix([]float64{0, 3, 1, 4, 2, 5}, 6, 1)
+	if !Equals(V, Vp) {
 		t.Fail()
 	}
 }

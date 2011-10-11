@@ -4,7 +4,6 @@
 
 package matrix
 
-
 //returns a copy of the row (not a slice)
 func (A *DenseMatrix) RowCopy(i int) []float64 {
 	row := make([]float64, A.cols)

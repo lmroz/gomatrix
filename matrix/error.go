@@ -40,7 +40,6 @@ func (e error) String() string {
 	return fmt.Sprintf("Unknown error code %d", e)
 }
 
-
 var (
 	//The matrix returned was nil.
 	ErrorNilMatrix os.Error = error(errorNilMatrix)

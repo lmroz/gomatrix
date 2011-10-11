@@ -59,7 +59,6 @@ func (P *PivotMatrix) Solve(b MatrixRO) (Matrix, os.Error) {
 	return P.Transpose().Times(b) //error comes from times
 }
 
-
 func (A *PivotMatrix) OneNorm() float64      { return float64(A.rows) }
 func (A *PivotMatrix) TwoNorm() float64      { return math.Sqrt(float64(A.rows)) }
 func (A *PivotMatrix) InfinityNorm() float64 { return 1 }
