@@ -132,11 +132,11 @@ type parJob struct {
 
 func parTimes1(A, B *DenseMatrix) (C *DenseMatrix) {
 	C = Zeros(A.rows, B.cols)
-	
+
 	mp := runtime.GOMAXPROCS(0)
-	
-	jobChan := make(chan box, 1 + mp)
-	
+
+	jobChan := make(chan box, 1+mp)
+
 	go func() {
 		rowCount := A.rows / mp
 		for startRow := 0; startRow < A.rows; startRow += rowCount {
@@ -145,11 +145,11 @@ func parTimes1(A, B *DenseMatrix) (C *DenseMatrix) {
 			if finish >= A.rows {
 				finish = A.rows
 			}
-			jobChan <- parJob{ start: start, finish : finish }
+			jobChan <- parJob{start: start, finish: finish}
 		}
 		close(jobChan)
 	}()
-	
+
 	wait := parFor(jobChan, func(iBox box) {
 		job := iBox.(parJob)
 		for i := job.start; i < job.finish; i++ {
@@ -173,7 +173,7 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 	const threshold = 8
 
 	currentGoroutineCount := 1
-	maxGoroutines := runtime.GOMAXPROCS(0)+2
+	maxGoroutines := runtime.GOMAXPROCS(0) + 2
 
 	var aux func(sync chan bool, A, B, C *DenseMatrix, rs, re, cs, ce, ks, ke int)
 	aux = func(sync chan bool, A, B, C *DenseMatrix, rs, re, cs, ce, ks, ke int) {
@@ -222,7 +222,7 @@ func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
 }
 
 var (
-	WhichParMethod = 2
+	WhichParMethod  = 2
 	WhichSyncMethod = 1
 )
 
@@ -261,19 +261,19 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, os.Error) {
 func transposeTimes(A, B *DenseMatrix) (C *DenseMatrix) {
 	Bt := B.Transpose()
 	C = Zeros(A.rows, B.cols)
-	
+
 	Bcols := Bt.Arrays()
-	
+
 	for i := 0; i < A.rows; i++ {
 		Arow := A.elements[i*A.step : i*A.step+A.cols]
 		for j := 0; j < B.cols; j++ {
 			Bcol := Bcols[j]
 			for k := range Arow {
-				C.elements[i*C.step+j] += Arow[k]*Bcol[k]
-			} 
+				C.elements[i*C.step+j] += Arow[k] * Bcol[k]
+			}
 		}
 	}
-	
+
 	return
 }
 

@@ -84,7 +84,6 @@ func (A *matrix) GetSize() (rows, cols int) {
 	return
 }
 
-
 func String(A MatrixRO) string {
 	condense := func(vs string) string {
 		if strings.Index(vs, ".") != -1 {

@@ -62,7 +62,6 @@ func countBoxes(start, cap int) chan box {
 	return ints
 }
 
-
 func parFor(inputs <-chan box, foo func(i box)) (wait func()) {
 	n := runtime.GOMAXPROCS(0)
 	block := make(chan bool, n)

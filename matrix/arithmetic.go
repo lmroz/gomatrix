@@ -57,6 +57,33 @@ func Product(A MatrixRO, Bs ...MatrixRO) (C *DenseMatrix) {
 }
 
 /*
+The Kronecker product. (http://en.wikipedia.org/wiki/Kronecker_product)
+*/
+func Kronecker(A, B MatrixRO) (C *DenseMatrix) {
+	ars, acs := A.Rows(), A.Cols()
+	brs, bcs := B.Rows(), B.Cols()
+	C = Zeros(ars*brs, acs*bcs)
+	for i := 0; i < ars; i++ {
+		for j := 0; j < acs; j++ {
+			Cij := C.GetMatrix(i*brs, j*bcs, brs, bcs)
+			Cij.SetMatrix(0, 0, Scaled(B, A.Get(i, j)))
+		}
+	}
+	return
+}
+
+func Vectorize(Am MatrixRO) (V *DenseMatrix) {
+	elems := Am.DenseMatrix().Transpose().Array()
+	V = MakeDenseMatrix(elems, Am.Rows() * Am.Cols(), 1)
+	return
+}
+
+func Unvectorize(V MatrixRO, rows, cols int) (A *DenseMatrix) {
+	A = MakeDenseMatrix(V.DenseMatrix().Array(), cols, rows).Transpose()
+	return
+}
+
+/*
 Uses a number of goroutines to do the dot products necessary
 for the matrix multiplication in parallel.
 */

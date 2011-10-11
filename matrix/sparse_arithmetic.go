@@ -102,7 +102,6 @@ func (A *SparseMatrix) Subtract(B MatrixRO) os.Error {
 	return nil
 }
 
-
 /*
 Subtract another matrix from this one in place, optimized for sparsity.
 */
@@ -149,7 +148,6 @@ func (A *SparseMatrix) Times(B MatrixRO) (Matrix, os.Error) {
 
 	return C, nil
 }
-
 
 /*
 Get the product of this matrix and another, optimized for sparsity.
