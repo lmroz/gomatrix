@@ -56,6 +56,36 @@ func Product(A MatrixRO, Bs ...MatrixRO) (C *DenseMatrix) {
 	return
 }
 
+func Transpose(A MatrixRO) (B Matrix) {
+	switch Am := A.(type) {
+	case *DenseMatrix:
+		B = Am.Transpose()
+		return
+	case *SparseMatrix:
+		B = Am.Transpose()
+		return
+	}
+	B = A.DenseMatrix().Transpose()
+	return
+}
+
+func Inverse(A MatrixRO) (B Matrix) {
+	var err os.Error
+	switch Am := A.(type) {
+	case *DenseMatrix:
+		B, err = Am.Inverse()
+		if err != nil {
+			panic(err)
+		}
+		return
+	}
+	B, err = A.DenseMatrix().Inverse()
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
 /*
 The Kronecker product. (http://en.wikipedia.org/wiki/Kronecker_product)
 */
