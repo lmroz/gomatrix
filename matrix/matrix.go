@@ -8,6 +8,7 @@
 package matrix
 
 import (
+	"strconv"
 	"strings"
 	"fmt"
 	"os"
@@ -81,6 +82,91 @@ func (A *matrix) NumElements() int { return A.rows * A.cols }
 func (A *matrix) GetSize() (rows, cols int) {
 	rows = A.rows
 	cols = A.cols
+	return
+}
+
+/*
+	Take a matlab-style matrix representation
+
+	eg [a b c; d e f]
+*/
+func ParseMatlab(txt string) (A *DenseMatrix, err os.Error) {
+	var arrays [][]float64
+	
+	spaceSep := strings.Fields(txt)
+
+	tok := func() (t string, eos bool) {
+		defer func() {
+			for len(spaceSep) != 0 && len(spaceSep[0]) == 0 {
+				spaceSep = spaceSep[1:]
+			}
+		}()
+
+		isNotNumber := func(c byte) bool {
+			return c != '[' || c != ']' || c == ';'
+		}
+
+		if len(spaceSep) == 0 {
+			eos = true
+			return
+		}
+
+		top := spaceSep[0]
+		
+		var lof int
+		for ; lof < len(top) && !isNotNumber(top[lof]); lof++ {}
+
+		if lof != 0 {
+			t = top[:lof]
+			spaceSep[0] = top[lof:]
+			return
+		} else {
+			t = top[:1]
+			spaceSep[0] = top[1:]
+			return
+		}
+
+		panic("unreachable")
+	}
+
+	stack := func(row []float64) (err os.Error) {
+		if len(arrays) == 0 {
+			arrays = [][]float64{row}
+			return
+		}
+		if len(arrays[0]) != len(row) {
+			err = os.NewError("misaligned row")
+		}
+		arrays = append(arrays, row)
+		return
+	}
+
+	var row []float64
+
+	loop:
+	for {
+		t, eos := tok()
+		if eos {
+			break loop
+		}
+		switch t {
+		case "[":
+		case ";":
+			stack(row)
+			row = []float64{}
+		case "]":
+			stack(row)
+			break loop
+		default:
+			var v float64
+			v, err = strconv.Atof64(t)
+			if err != nil {
+				return
+			}
+			row = append(row, v)
+		}
+	}
+	A = MakeDenseMatrixStacked(arrays)
 	return
 }
 
