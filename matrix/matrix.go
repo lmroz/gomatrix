@@ -152,10 +152,12 @@ func ParseMatlab(txt string) (A *DenseMatrix, err os.Error) {
 		switch t {
 		case "[":
 		case ";":
-			stack(row)
+			err = stack(row)
+			if err != nil { return }
 			row = []float64{}
 		case "]":
-			stack(row)
+			err = stack(row)
+			if err != nil { return }
 			break loop
 		default:
 			var v float64
