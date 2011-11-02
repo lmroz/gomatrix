@@ -8,10 +8,10 @@
 package matrix
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 	"fmt"
-	"os"
 )
 
 //The MatrixRO interface defines matrix operations that do not change the
@@ -36,9 +36,9 @@ type MatrixRO interface {
 	//The element in the ith row and jth column.
 	Get(i, j int) float64
 
-	Plus(MatrixRO) (Matrix, os.Error)
-	Minus(MatrixRO) (Matrix, os.Error)
-	Times(MatrixRO) (Matrix, os.Error)
+	Plus(MatrixRO) (Matrix, error)
+	Minus(MatrixRO) (Matrix, error)
+	Times(MatrixRO) (Matrix, error)
 
 	//The determinant of this matrix.
 	Det() float64
@@ -61,8 +61,8 @@ type Matrix interface {
 	//Set the element at the ith row and jth column to v.
 	Set(i int, j int, v float64)
 
-	Add(MatrixRO) os.Error
-	Subtract(MatrixRO) os.Error
+	Add(MatrixRO) error
+	Subtract(MatrixRO) error
 	Scale(float64)
 }
 
@@ -90,9 +90,9 @@ func (A *matrix) GetSize() (rows, cols int) {
 
 	eg [a b c; d e f]
 */
-func ParseMatlab(txt string) (A *DenseMatrix, err os.Error) {
+func ParseMatlab(txt string) (A *DenseMatrix, err error) {
 	var arrays [][]float64
-	
+
 	spaceSep := strings.Fields(txt)
 
 	tok := func() (t string, eos bool) {
@@ -112,9 +112,10 @@ func ParseMatlab(txt string) (A *DenseMatrix, err os.Error) {
 		}
 
 		top := spaceSep[0]
-		
+
 		var lof int
-		for ; lof < len(top) && !isNotNumber(top[lof]); lof++ {}
+		for ; lof < len(top) && !isNotNumber(top[lof]); lof++ {
+		}
 
 		if lof != 0 {
 			t = top[:lof]
@@ -129,13 +130,13 @@ func ParseMatlab(txt string) (A *DenseMatrix, err os.Error) {
 		panic("unreachable")
 	}
 
-	stack := func(row []float64) (err os.Error) {
+	stack := func(row []float64) (err error) {
 		if len(arrays) == 0 {
 			arrays = [][]float64{row}
 			return
 		}
 		if len(arrays[0]) != len(row) {
-			err = os.NewError("misaligned row")
+			err = errors.New("misaligned row")
 		}
 		arrays = append(arrays, row)
 		return
@@ -143,7 +144,7 @@ func ParseMatlab(txt string) (A *DenseMatrix, err os.Error) {
 
 	var row []float64
 
-	loop:
+loop:
 	for {
 		t, eos := tok()
 		if eos {
@@ -153,11 +154,15 @@ func ParseMatlab(txt string) (A *DenseMatrix, err os.Error) {
 		case "[":
 		case ";":
 			err = stack(row)
-			if err != nil { return }
+			if err != nil {
+				return
+			}
 			row = []float64{}
 		case "]":
 			err = stack(row)
-			if err != nil { return }
+			if err != nil {
+				return
+			}
 			break loop
 		default:
 			var v float64

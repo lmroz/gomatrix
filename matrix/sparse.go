@@ -4,10 +4,7 @@
 
 package matrix
 
-import (
-	"rand"
-	"os"
-)
+import "rand"
 
 /*
 A sparse matrix based on go's map datastructure.
@@ -146,7 +143,7 @@ func (A *SparseMatrix) GetRowVector(i int) *SparseMatrix {
 /*
 Creates a new matrix [A B].
 */
-func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, os.Error) {
+func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, error) {
 	if A.rows != B.rows {
 		return nil, ErrorDimensionMismatch
 	}
@@ -168,7 +165,7 @@ func (A *SparseMatrix) Augment(B *SparseMatrix) (*SparseMatrix, os.Error) {
 /*
 Creates a new matrix [A;B], where A is above B.
 */
-func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, os.Error) {
+func (A *SparseMatrix) Stack(B *SparseMatrix) (*SparseMatrix, error) {
 	if A.cols != B.cols {
 		return nil, ErrorDimensionMismatch
 	}

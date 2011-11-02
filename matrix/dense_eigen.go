@@ -4,15 +4,12 @@
 
 package matrix
 
-import (
-	"math"
-	"os"
-)
+import "math"
 
 /*
 Returns V,D st V*D*inv(V) = A and D is diagonal (or block diagonal).
 */
-func (A *DenseMatrix) Eigen() (V, D *DenseMatrix, err os.Error) {
+func (A *DenseMatrix) Eigen() (V, D *DenseMatrix, err error) {
 	//code translated/ripped off from Jama
 	if A.cols != A.rows {
 		err = ErrorDimensionMismatch

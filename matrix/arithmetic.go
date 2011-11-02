@@ -4,17 +4,14 @@
 
 package matrix
 
-import (
-	"math"
-	"os"
-)
+import "math"
 
 /*
 Finds the sum of two matrices.
 */
 func Sum(A MatrixRO, Bs ...MatrixRO) (C *DenseMatrix) {
 	C = MakeDenseCopy(A)
-	var err os.Error
+	var err error
 	for _, B := range Bs {
 		err = C.Add(MakeDenseCopy(B))
 		if err != nil {
@@ -70,7 +67,7 @@ func Transpose(A MatrixRO) (B Matrix) {
 }
 
 func Inverse(A MatrixRO) (B Matrix) {
-	var err os.Error
+	var err error
 	switch Am := A.(type) {
 	case *DenseMatrix:
 		B, err = Am.Inverse()
@@ -104,7 +101,7 @@ func Kronecker(A, B MatrixRO) (C *DenseMatrix) {
 
 func Vectorize(Am MatrixRO) (V *DenseMatrix) {
 	elems := Am.DenseMatrix().Transpose().Array()
-	V = MakeDenseMatrix(elems, Am.Rows() * Am.Cols(), 1)
+	V = MakeDenseMatrix(elems, Am.Rows()*Am.Cols(), 1)
 	return
 }
 

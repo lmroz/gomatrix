@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"time"
-	"os"
 	"runtime"
 	. "gomatrix.googlecode.com/hg/matrix"
 )
 
-func timeCall(A, B *DenseMatrix, foo func(A, B *DenseMatrix) (*DenseMatrix, os.Error)) {
+func timeCall(A, B *DenseMatrix, foo func(A, B *DenseMatrix) (*DenseMatrix, error)) {
 	foo(A, B)
 }
 

@@ -4,10 +4,7 @@
 
 package matrix
 
-import (
-	"fmt"
-	"os"
-)
+import "fmt"
 
 const (
 	//The matrix returned was nil.
@@ -22,9 +19,9 @@ const (
 	exceptionNotSPD
 )
 
-type error int
+type error_ int
 
-func (e error) String() string {
+func (e error_) Error() string {
 	switch e {
 	case errorNilMatrix:
 		return "Matrix is nil"
@@ -39,16 +36,19 @@ func (e error) String() string {
 	}
 	return fmt.Sprintf("Unknown error code %d", e)
 }
+func (e error_) String() string {
+	return e.Error()
+}
 
 var (
 	//The matrix returned was nil.
-	ErrorNilMatrix os.Error = error(errorNilMatrix)
+	ErrorNilMatrix error_ = error_(errorNilMatrix)
 	//The dimensions of the inputs do not make sense for this operation.
-	ErrorDimensionMismatch os.Error = error(errorDimensionMismatch)
+	ErrorDimensionMismatch error_ = error_(errorDimensionMismatch)
 	//The indices provided are out of bounds.
-	ErrorIllegalIndex os.Error = error(errorIllegalIndex)
+	ErrorIllegalIndex error_ = error_(errorIllegalIndex)
 	//The matrix provided has a singularity.
-	ExceptionSingular os.Error = error(exceptionSingular)
+	ExceptionSingular error_ = error_(exceptionSingular)
 	//The matrix provided is not positive semi-definite.
-	ExceptionNotSPD os.Error = error(exceptionNotSPD)
+	ExceptionNotSPD error_ = error_(exceptionNotSPD)
 )
