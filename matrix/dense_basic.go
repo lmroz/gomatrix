@@ -4,10 +4,7 @@
 
 package matrix
 
-import (
-	"math"
-	"os"
-)
+import "math"
 
 func (A *DenseMatrix) Symmetric() bool {
 	if A.rows != A.cols {
@@ -51,7 +48,7 @@ func (m *DenseMatrix) ScaleAddRow(rd int, rs int, f float64) {
 	}
 }
 
-func (A *DenseMatrix) Inverse() (*DenseMatrix, os.Error) {
+func (A *DenseMatrix) Inverse() (*DenseMatrix, error) {
 	if A.Rows() != A.Cols() {
 		return nil, ErrorDimensionMismatch
 	}
@@ -163,7 +160,7 @@ func solveUpper(A *DenseMatrix, b Matrix) *DenseMatrix {
 	return MakeDenseMatrix(x, A.Cols(), 1)
 }
 
-func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, os.Error) {
+func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, error) {
 	Acopy := A.Copy()
 	P := Acopy.LUInPlace()
 	Pinv := P.Inverse()
@@ -178,6 +175,6 @@ func (A *DenseMatrix) Solve(b MatrixRO) (*DenseMatrix, os.Error) {
 	return x, nil
 }
 
-func (A *DenseMatrix) SolveDense(b *DenseMatrix) (*DenseMatrix, os.Error) {
+func (A *DenseMatrix) SolveDense(b *DenseMatrix) (*DenseMatrix, error) {
 	return A.Solve(b)
 }

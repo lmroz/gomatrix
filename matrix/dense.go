@@ -4,10 +4,7 @@
 
 package matrix
 
-import (
-	"os"
-	"rand"
-)
+import "rand"
 
 /*
 A matrix backed by a flat array of all elements.
@@ -152,7 +149,7 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 /*
 Get a new matrix [A B].
 */
-func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, os.Error) {
+func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, error) {
 	if A.Rows() != B.Rows() {
 		return nil, ErrorDimensionMismatch
 	}
@@ -171,7 +168,7 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, os.Error) {
 /*
 Get a new matrix [A; B], with A above B.
 */
-func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, os.Error) {
+func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, error) {
 	if A.Cols() != B.Cols() {
 		return nil, ErrorDimensionMismatch
 	}
