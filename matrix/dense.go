@@ -4,7 +4,7 @@
 
 package matrix
 
-import "rand"
+import "math/rand"
 
 /*
 A matrix backed by a flat array of all elements.

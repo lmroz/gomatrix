@@ -6,9 +6,9 @@ package matrix
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 	"time"
-	"rand"
 )
 
 const ε = 0.000001

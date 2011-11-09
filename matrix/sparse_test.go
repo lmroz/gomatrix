@@ -5,9 +5,9 @@
 package matrix
 
 import (
-	"testing"
-	"rand"
 	"fmt"
+	"math/rand"
+	"testing"
 )
 
 func TestAdd_Sparse(t *testing.T) {
