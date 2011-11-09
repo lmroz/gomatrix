@@ -4,7 +4,7 @@
 
 package matrix
 
-import "rand"
+import "math/rand"
 
 /*
 A sparse matrix based on go's map datastructure.

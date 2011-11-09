@@ -243,12 +243,23 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, error) {
 			C = Zeros(A.rows, B.cols)
 			for i := 0; i < A.rows; i++ {
 				sums := C.elements[i*C.step : (i+1)*C.step]
+				for k, a := range A.elements[i*A.step : i*A.step + A.cols] {
+					for j, b := range B.elements[k*B.step : k * B.step + B.cols] {
+						sums[j] += a * b
+					}
+				}
+			}
+			/*
+			//too many range checks
+			for i := 0; i < A.rows; i++ {
+				sums := C.elements[i*C.step : (i+1)*C.step]
 				for k := 0; k < A.cols; k++ {
 					for j := 0; j < B.cols; j++ {
 						sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
 					}
 				}
 			}
+			*/
 		}
 	}
 
