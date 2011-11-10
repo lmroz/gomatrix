@@ -162,11 +162,23 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 /*
 Get a new matrix [A B].
 */
-func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, error) {
-	if A.Rows() != B.Rows() {
-		return nil, ErrorDimensionMismatch
+func (A *DenseMatrix) Augment(B *DenseMatrix) (C *DenseMatrix, err error) {
+	if A.rows != B.rows {
+		err = ErrorDimensionMismatch
+		return
 	}
-	C := Zeros(A.Rows(), A.Cols()+B.Cols())
+	C = Zeros(A.rows, A.cols+B.cols)
+	err = A.AugmentFill(B, C)
+	return
+}
+func (A *DenseMatrix) AugmentFill(B, C *DenseMatrix) (err error) {
+	if A.rows != B.rows || C.rows != A.rows || C.cols != A.cols+B.cols {
+		err = ErrorDimensionMismatch
+		return
+	}
+	C.SetMatrix(0, 0, A)
+	C.SetMatrix(0, A.cols, B)
+	/*
 	for i := 0; i < C.Rows(); i++ {
 		for j := 0; j < A.Cols(); j++ {
 			C.Set(i, j, A.Get(i, j))
@@ -174,27 +186,40 @@ func (A *DenseMatrix) Augment(B *DenseMatrix) (*DenseMatrix, error) {
 		for j := 0; j < B.Cols(); j++ {
 			C.Set(i, j+A.Cols(), B.Get(i, j))
 		}
-	}
-	return C, nil
+	}*/
+	return
 }
 
 /*
 Get a new matrix [A; B], with A above B.
 */
-func (A *DenseMatrix) Stack(B *DenseMatrix) (*DenseMatrix, error) {
-	if A.Cols() != B.Cols() {
-		return nil, ErrorDimensionMismatch
+func (A *DenseMatrix) Stack(B *DenseMatrix) (C *DenseMatrix, err error) {
+	if A.cols != B.cols {
+		err = ErrorDimensionMismatch
+		return
 	}
-	C := Zeros(A.Rows()+B.Rows(), A.Cols())
-	for j := 0; j < A.Cols(); j++ {
+	C = Zeros(A.rows+B.rows, A.cols)
+	err = A.StackFill(B, C)
+	return
+}
+func (A *DenseMatrix) StackFill(B, C *DenseMatrix) (err error) {
+	if A.cols != B.cols || C.cols != A.cols || C.rows != A.rows+B.rows {
+		err = ErrorDimensionMismatch
+		return
+	}
+	C.SetMatrix(0, 0, A)
+	C.SetMatrix(A.rows, 0, B)
+	/*
+	for j := 0; j < A.cols; j++ {
 		for i := 0; i < A.Rows(); i++ {
 			C.Set(i, j, A.Get(i, j))
 		}
-		for i := 0; i < B.Cols(); i++ {
-			C.Set(i+A.Rows(), j, B.Get(i, j))
+		for i := 0; i < B.cols; i++ {
+			C.Set(i+A.rows, j, B.Get(i, j))
 		}
 	}
-	return C, nil
+	*/
+	return
 }
 
 /*
