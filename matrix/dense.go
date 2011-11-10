@@ -45,10 +45,15 @@ func (A *DenseMatrix) Array() []float64 {
 	return a
 }
 
+func (A *DenseMatrix) rowSlice(row int) []float64 {
+	return A.elements[row*A.step:row*A.step+A.cols]
+}
+
 /*
 Get the element in the ith row and jth column.
 */
 func (A *DenseMatrix) Get(i int, j int) (v float64) {
+	/*
 	i = i % A.rows
 	if i < 0 {
 		i = A.rows - i
@@ -57,7 +62,11 @@ func (A *DenseMatrix) Get(i int, j int) (v float64) {
 	if j < 0 {
 		j = A.cols - j
 	}
-	v = A.elements[i*A.step+j]
+	*/
+
+	// reslicing like this does efficient range checks, perhaps
+	v = A.elements[i*A.step:i*A.step+A.cols][j]
+	//v = A.elements[i*A.step+j]
 	return
 }
 
@@ -65,6 +74,7 @@ func (A *DenseMatrix) Get(i int, j int) (v float64) {
 Set the element in the ith row and jth column to v.
 */
 func (A *DenseMatrix) Set(i int, j int, v float64) {
+	/*
 	i = i % A.rows
 	if i < 0 {
 		i = A.rows - i
@@ -73,7 +83,10 @@ func (A *DenseMatrix) Set(i int, j int, v float64) {
 	if j < 0 {
 		j = A.cols - j
 	}
-	A.elements[i*A.step+j] = v
+	*/
+	// reslicing like this does efficient range checks, perhaps
+	A.elements[i*A.step:i*A.step+A.cols][j] = v
+	//A.elements[i*A.step+j] = v
 }
 
 /*
@@ -139,9 +152,9 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 	B.rows = A.rows
 	B.cols = A.cols
 	B.step = A.cols
-	B.elements = make([]float64, len(A.elements))
-	for i := 0; i < len(A.elements); i++ {
-		B.elements[i] = A.elements[i]
+	B.elements = make([]float64, B.rows * B.cols)
+	for row := 0; row < B.rows; row++ {
+		copy(B.rowSlice(row), A.rowSlice(row))
 	}
 	return B
 }
