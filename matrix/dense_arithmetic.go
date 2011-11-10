@@ -127,7 +127,7 @@ type parJob struct {
 	start, finish int
 }
 
-func parTimes1(A, B *DenseMatrix) (C *DenseMatrix) {
+func parTimes1(A, B, C *DenseMatrix) {
 	C = Zeros(A.rows, B.cols)
 
 	mp := runtime.GOMAXPROCS(0)
@@ -164,9 +164,7 @@ func parTimes1(A, B *DenseMatrix) (C *DenseMatrix) {
 }
 
 //this is an adaptation of code from a go-nuts post made by Dmitriy Vyukov
-func parTimes2(A, B *DenseMatrix) (C *DenseMatrix) {
-	C = Zeros(A.rows, B.cols)
-
+func parTimes2(A, B, C *DenseMatrix) {
 	const threshold = 8
 
 	currentGoroutineCount := 1
@@ -223,24 +221,28 @@ var (
 	WhichSyncMethod = 1
 )
 
-func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, error) {
-	if A.cols != B.rows {
-		return nil, ErrorDimensionMismatch
+func (A *DenseMatrix) TimesDense(B *DenseMatrix) (C *DenseMatrix, err error) {
+	C = Zeros(A.rows, B.cols)
+	err = A.TimesDenseFill(B, C)
+	return
+}
+func (A *DenseMatrix) TimesDenseFill(B, C *DenseMatrix) (err error) {
+	if C.rows != A.rows || C.cols != B.cols || A.cols != B.rows {
+		err = ErrorDimensionMismatch
+		return
 	}
-	var C *DenseMatrix
 	if runtime.GOMAXPROCS(0) > 1 {
 		switch WhichParMethod {
 		case 1:
-			C = parTimes1(A, B)
+			parTimes1(A, B, C)
 		case 2:
-			C = parTimes2(A, B)
+			parTimes2(A, B, C)
 		}
 	} else {
 		switch {
 		case A.cols > 100 && WhichSyncMethod == 2:
-			C = transposeTimes(A, B)
+			transposeTimes(A, B, C)
 		default:
-			C = Zeros(A.rows, B.cols)
 			for i := 0; i < A.rows; i++ {
 				sums := C.elements[i*C.step : (i+1)*C.step]
 				for k, a := range A.elements[i*A.step : i*A.step + A.cols] {
@@ -249,26 +251,14 @@ func (A *DenseMatrix) TimesDense(B *DenseMatrix) (*DenseMatrix, error) {
 					}
 				}
 			}
-			/*
-			//too many range checks
-			for i := 0; i < A.rows; i++ {
-				sums := C.elements[i*C.step : (i+1)*C.step]
-				for k := 0; k < A.cols; k++ {
-					for j := 0; j < B.cols; j++ {
-						sums[j] += A.elements[i*A.step+k] * B.elements[k*B.step+j]
-					}
-				}
-			}
-			*/
 		}
 	}
 
-	return C, nil
+	return
 }
 
-func transposeTimes(A, B *DenseMatrix) (C *DenseMatrix) {
+func transposeTimes(A, B, C *DenseMatrix) {
 	Bt := B.Transpose()
-	C = Zeros(A.rows, B.cols)
 
 	Bcols := Bt.Arrays()
 
