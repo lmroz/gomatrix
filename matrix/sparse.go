@@ -78,7 +78,11 @@ func (A *SparseMatrix) Set(i int, j int, v float64) {
 		j = A.cols - j
 	}
 	// v == 0 results in removal of key from underlying map
-	A.elements[i*A.step+j+A.offset] = v, v != 0
+	if v == 0 {
+		delete(A.elements, i*A.step+j+A.offset)
+	} else {
+		A.elements[i*A.step+j+A.offset] = v
+	}
 }
 
 /*
@@ -86,7 +90,11 @@ Sets an element given its index.
 */
 func (A *SparseMatrix) SetIndex(index int, v float64) {
 	// v == 0 results in removal of key from underlying map
-	A.elements[index] = v, v != 0
+	if v == 0 {
+		delete(A.elements, index)
+	} else {
+		A.elements[index] = v
+	}
 }
 
 /*
