@@ -1,8 +1,8 @@
 package matrix
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 	"time"
 )
 
@@ -20,21 +20,21 @@ func BenchmarkTransposeTimes(b *testing.B) {
 
 		MaxProcs = 1
 		WhichSyncMethod = 1
-		start := time.Nanoseconds()
+		start := time.Now()
 		for i := 0; i < Count; i++ {
 			A.Times(B)
 		}
-		end := time.Nanoseconds()
-		duration := end - start
+		end := time.Now()
+		duration := end.Sub(start)
 		times[0] = float64(duration) / 1e9
 
 		WhichSyncMethod = 2
-		start = time.Nanoseconds()
+		start = time.Now()
 		for i := 0; i < Count; i++ {
 			A.Times(B)
 		}
-		end = time.Nanoseconds()
-		duration = end - start
+		end = time.Now()
+		duration = end.Sub(start)
 		times[1] = float64(duration) / 1e9
 		fmt.Printf("%d: %.2f\n", h, times[1]/times[0])
 	}

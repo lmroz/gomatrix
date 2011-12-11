@@ -9,9 +9,9 @@ package matrix
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
-	"fmt"
 )
 
 //The MatrixRO interface defines matrix operations that do not change the
@@ -166,7 +166,7 @@ loop:
 			break loop
 		default:
 			var v float64
-			v, err = strconv.Atof64(t)
+			v, err = strconv.ParseFloat(t, 64)
 			if err != nil {
 				return
 			}
