@@ -122,29 +122,29 @@ func TestParallelProduct(t *testing.T) {
 		h = 4
 	}
 
-	rand.Seed(time.Nanoseconds())
+	rand.Seed(time.Now())
 	A := Normals(h, w)
 	B := Normals(w, h)
 
 	var C *DenseMatrix
 	var start, end int64
 
-	start = time.Nanoseconds()
+	start = time.Now()
 	Ctrue, err := A.Times(B)
 	if !(err == nil) {
 		t.Fail()
 	}
-	end = time.Nanoseconds()
+	end = time.Now()
 	if verbose {
 		fmt.Printf("%fs for synchronous\n", float64(end-start)/1000000000)
 	}
 
-	start = time.Nanoseconds()
+	start = time.Now()
 	C = ParallelProduct(A, B)
 	if !(err == nil) {
 		t.Fail()
 	}
-	end = time.Nanoseconds()
+	end = time.Now()
 	if verbose {
 		fmt.Printf("%fs for parallel\n", float64(end-start)/1000000000)
 	}
