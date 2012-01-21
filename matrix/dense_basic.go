@@ -4,7 +4,10 @@
 
 package matrix
 
-import "math"
+import (
+	"math"
+	"errors"
+)
 
 func (A *DenseMatrix) Symmetric() bool {
 	if A.rows != A.cols {
@@ -125,7 +128,11 @@ func (A *DenseMatrix) Transpose() *DenseMatrix {
 	return B
 }
 
-func (A *DenseMatrix) TransposeInPlace() {
+func (A *DenseMatrix) TransposeInPlace() (err error) {
+	if A.rows != A.cols {
+		err = errors.New("Can only transpose a square matrix in place")
+		return
+	}
 	for i := 0; i < A.rows; i++ {
 		for j := 0; j < i; j++ {
 			tmp := A.Get(i, j)
@@ -133,6 +140,7 @@ func (A *DenseMatrix) TransposeInPlace() {
 			A.Set(j, i, tmp)
 		}
 	}
+	return
 }
 
 func solveLower(A *DenseMatrix, b Matrix) *DenseMatrix {
