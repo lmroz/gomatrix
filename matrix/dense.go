@@ -4,7 +4,10 @@
 
 package matrix
 
-import "math/rand"
+import (
+	"math/rand"
+	"fmt"
+)
 
 /*
 A matrix backed by a flat array of all elements.
@@ -95,7 +98,10 @@ the returned matrix show up in the original.
 */
 func (A *DenseMatrix) GetMatrix(i, j, rows, cols int) *DenseMatrix {
 	B := new(DenseMatrix)
-	B.elements = A.elements[i*A.step+j : (i+rows)*A.step]
+	fmt.Printf("GetMatrix(%d, %d, %d, %d)\n", i, j, rows, cols)
+	fmt.Printf(" r:%d c:%d s:%d\n", A.rows, A.cols, A.step)
+	fmt.Printf(" l:%d\n", len(A.elements))
+	B.elements = A.elements[i*A.step+j : i*A.step+j+(rows-1)*A.step+cols]
 	B.rows = rows
 	B.cols = cols
 	B.step = A.step
