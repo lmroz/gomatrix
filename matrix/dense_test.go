@@ -779,6 +779,10 @@ func TestVectorize(t *testing.T) {
 	}
 }
 
+func TestSubmatrix(t *testing.T) {
+	Eye(3).GetMatrix(1, 1, 2, 2).GetColVector(0)
+}
+
 /* TEST: util.go */
 
 /*
