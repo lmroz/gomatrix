@@ -6,7 +6,6 @@ package matrix
 
 import (
 	"math/rand"
-	"fmt"
 )
 
 /*
@@ -49,7 +48,7 @@ func (A *DenseMatrix) Array() []float64 {
 }
 
 func (A *DenseMatrix) rowSlice(row int) []float64 {
-	return A.elements[row*A.step:row*A.step+A.cols]
+	return A.elements[row*A.step : row*A.step+A.cols]
 }
 
 /*
@@ -57,18 +56,18 @@ Get the element in the ith row and jth column.
 */
 func (A *DenseMatrix) Get(i int, j int) (v float64) {
 	/*
-	i = i % A.rows
-	if i < 0 {
-		i = A.rows - i
-	}
-	j = j % A.cols
-	if j < 0 {
-		j = A.cols - j
-	}
+		i = i % A.rows
+		if i < 0 {
+			i = A.rows - i
+		}
+		j = j % A.cols
+		if j < 0 {
+			j = A.cols - j
+		}
 	*/
 
 	// reslicing like this does efficient range checks, perhaps
-	v = A.elements[i*A.step:i*A.step+A.cols][j]
+	v = A.elements[i*A.step : i*A.step+A.cols][j]
 	//v = A.elements[i*A.step+j]
 	return
 }
@@ -78,17 +77,17 @@ Set the element in the ith row and jth column to v.
 */
 func (A *DenseMatrix) Set(i int, j int, v float64) {
 	/*
-	i = i % A.rows
-	if i < 0 {
-		i = A.rows - i
-	}
-	j = j % A.cols
-	if j < 0 {
-		j = A.cols - j
-	}
+		i = i % A.rows
+		if i < 0 {
+			i = A.rows - i
+		}
+		j = j % A.cols
+		if j < 0 {
+			j = A.cols - j
+		}
 	*/
 	// reslicing like this does efficient range checks, perhaps
-	A.elements[i*A.step:i*A.step+A.cols][j] = v
+	A.elements[i*A.step : i*A.step+A.cols][j] = v
 	//A.elements[i*A.step+j] = v
 }
 
@@ -98,9 +97,6 @@ the returned matrix show up in the original.
 */
 func (A *DenseMatrix) GetMatrix(i, j, rows, cols int) *DenseMatrix {
 	B := new(DenseMatrix)
-	fmt.Printf("GetMatrix(%d, %d, %d, %d)\n", i, j, rows, cols)
-	fmt.Printf(" r:%d c:%d s:%d\n", A.rows, A.cols, A.step)
-	fmt.Printf(" l:%d\n", len(A.elements))
 	B.elements = A.elements[i*A.step+j : i*A.step+j+(rows-1)*A.step+cols]
 	B.rows = rows
 	B.cols = cols
@@ -158,7 +154,7 @@ func (A *DenseMatrix) Copy() *DenseMatrix {
 	B.rows = A.rows
 	B.cols = A.cols
 	B.step = A.cols
-	B.elements = make([]float64, B.rows * B.cols)
+	B.elements = make([]float64, B.rows*B.cols)
 	for row := 0; row < B.rows; row++ {
 		copy(B.rowSlice(row), A.rowSlice(row))
 	}
@@ -185,14 +181,14 @@ func (A *DenseMatrix) AugmentFill(B, C *DenseMatrix) (err error) {
 	C.SetMatrix(0, 0, A)
 	C.SetMatrix(0, A.cols, B)
 	/*
-	for i := 0; i < C.Rows(); i++ {
-		for j := 0; j < A.Cols(); j++ {
-			C.Set(i, j, A.Get(i, j))
-		}
-		for j := 0; j < B.Cols(); j++ {
-			C.Set(i, j+A.Cols(), B.Get(i, j))
-		}
-	}*/
+		for i := 0; i < C.Rows(); i++ {
+			for j := 0; j < A.Cols(); j++ {
+				C.Set(i, j, A.Get(i, j))
+			}
+			for j := 0; j < B.Cols(); j++ {
+				C.Set(i, j+A.Cols(), B.Get(i, j))
+			}
+		}*/
 	return
 }
 
@@ -216,14 +212,14 @@ func (A *DenseMatrix) StackFill(B, C *DenseMatrix) (err error) {
 	C.SetMatrix(0, 0, A)
 	C.SetMatrix(A.rows, 0, B)
 	/*
-	for j := 0; j < A.cols; j++ {
-		for i := 0; i < A.Rows(); i++ {
-			C.Set(i, j, A.Get(i, j))
+		for j := 0; j < A.cols; j++ {
+			for i := 0; i < A.Rows(); i++ {
+				C.Set(i, j, A.Get(i, j))
+			}
+			for i := 0; i < B.cols; i++ {
+				C.Set(i+A.rows, j, B.Get(i, j))
+			}
 		}
-		for i := 0; i < B.cols; i++ {
-			C.Set(i+A.rows, j, B.Get(i, j))
-		}
-	}
 	*/
 	return
 }
